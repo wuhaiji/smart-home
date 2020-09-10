@@ -16,6 +16,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        //username 为邮箱
+
         return null;
     }
 }

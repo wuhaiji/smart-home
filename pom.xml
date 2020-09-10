@@ -34,6 +34,8 @@
         <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
         <spring-cloud-openfeign.version>2.1.4.RELEASE</spring-cloud-openfeign.version>
         <spring-cloud-alibaba.version>2.1.0.RELEASE</spring-cloud-alibaba.version>
+
+        <hutool.version>5.4.2</hutool.version>
     </properties>
 
     <dependencyManagement>
@@ -114,6 +116,13 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${ali.fastjson.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
 
 
