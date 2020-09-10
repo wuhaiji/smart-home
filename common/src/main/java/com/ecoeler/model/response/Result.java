@@ -11,7 +11,7 @@ import com.ecoeler.model.code.ResultCode;
  * @author whj
  * @since 2020/9/8
  */
-public class Result {
+public class Result<T> {
 
 
     /**
@@ -26,7 +26,7 @@ public class Result {
     /**
      * 数据
      */
-    protected Object data;
+    protected T data;
 
     public Result() {
     }
@@ -36,7 +36,7 @@ public class Result {
         this.message = message;
     }
 
-    public Result(String code, String message, Object data) {
+    public Result(String code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -45,15 +45,15 @@ public class Result {
     /**
      * 返回成功
      */
-    public static Result success() {
+    public static Result ok() {
         return new Result(CommonCode.SUCCESS.getResultCode(), CommonCode.SUCCESS.getResultMsg());
     }
 
     /**
      * 返回成功
      */
-    public static Result success(Object data) {
-        return new Result(CommonCode.SUCCESS.getResultCode(), CommonCode.SUCCESS.getResultMsg(), data);
+    public static <T> Result<T> ok(T data) {
+        return new Result<T>(CommonCode.SUCCESS.getResultCode(), CommonCode.SUCCESS.getResultMsg(), data);
     }
 
     /**
@@ -104,7 +104,7 @@ public class Result {
         return data;
     }
 
-    public Result setData(Object data) {
+    public Result setData(T data) {
         this.data = data;
         return this;
     }
