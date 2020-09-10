@@ -1,4 +1,4 @@
-package com.ecoeler.app.impl;
+package com.ecoeler.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.entity.AppUser;
