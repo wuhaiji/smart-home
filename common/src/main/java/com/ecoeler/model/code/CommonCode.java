@@ -1,0 +1,47 @@
+package com.ecoeler.model.code;
+
+/**
+ * 常用错误信息枚举
+ *
+ * @author whj
+ */
+public enum CommonCode implements ResultCode {
+
+    SUCCESS("10000", "成功!"),
+
+    FAIL("11111", "操作失败！"),
+
+    UNAUTHENTICATED("10001", "需要登陆系统！"),
+
+    INSUFFICIENT_PERMISSIONS("10002", "权限不足！"),
+
+    INVALID_PARAM("10003", "非法参数！"),
+
+    SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！");;
+
+    CommonCode(String resultCode, String resultMsg) {
+        this.resultCode = resultCode;
+        this.resultMsg = resultMsg;
+    }
+
+    /**
+     * 错误码
+     */
+    private final String resultCode;
+
+    /**
+     * 错误描述
+     */
+    private final String resultMsg;
+
+
+    @Override
+    public String getResultCode() {
+        return this.resultCode;
+    }
+
+    @Override
+    public String getResultMsg() {
+        return this.resultMsg;
+    }
+}
