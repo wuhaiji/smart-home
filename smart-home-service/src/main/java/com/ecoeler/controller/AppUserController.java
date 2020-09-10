@@ -2,6 +2,7 @@ package com.ecoeler.controller;
 
 import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.app.service.IAppUserService;
+import com.ecoeler.model.response.Result;
 import com.ecoeler.utils.HutoolCaptchaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +37,10 @@ public class AppUserController {
     }
 
     @PostMapping("/login")
-    public String login(String email,String password){
-        if(hutoolCaptchaUtil.verify(email,password);
+    public Result login(String email, String password ,String code){
+        if(!hutoolCaptchaUtil.verify(email,code)){
+            return Result.error()
+        }
 
     }
 

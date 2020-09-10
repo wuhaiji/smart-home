@@ -23,6 +23,7 @@
         <module>smart-home-web</module>
         <module>common</module>
         <module>smart-home-app</module>
+        <module>smart-home-facade</module>
     </modules>
 
 
