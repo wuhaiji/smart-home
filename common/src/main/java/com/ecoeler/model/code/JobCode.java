@@ -33,12 +33,12 @@ public enum JobCode implements ResultCode {
 
 
     @Override
-    public String getResultCode() {
+    public String getCode() {
         return this.resultCode;
     }
 
     @Override
-    public String getResultMsg() {
+    public String getMsg() {
         return this.resultMsg;
     }
 }

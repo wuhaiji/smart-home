@@ -1,7 +1,10 @@
 package com.ecoeler.controller;
 
+
 import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.app.service.IAppUserService;
+import com.ecoeler.code.AppUserCode;
+import com.ecoeler.model.code.CommonCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.utils.HutoolCaptchaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,16 +42,16 @@ public class AppUserController {
     @PostMapping("/login")
     public Result login(String email, String password ,String code){
         if(!hutoolCaptchaUtil.verify(email,code)){
-            return Result.error()
+            return Result.error(AppUserCode.CODE_LOGIN_ERROR);
         }
-
+        return null;
     }
 
 
 
     @PostMapping
     public String register(AppUser appUser){
-
+        return null;
     }
 
 

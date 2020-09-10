@@ -13,10 +13,10 @@ public interface ResultCode {
     /**
      * 错误码
      */
-    String getResultCode();
+    String getCode();
 
     /**
      * 错误描述
      */
-    String getResultMsg();
+    String getMsg();
 }
