@@ -25,6 +25,9 @@ import java.util.HashMap;
 public class ExceptionCatch {
 
     private static final Logger log = LoggerFactory.getLogger(ExceptionCatch.class);
+    /**
+     * 已知异常类型map
+     */
     private static final HashMap<Class<? extends Throwable>, ResultCode> exceptionMap;
 
     static {
