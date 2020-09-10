@@ -5,8 +5,7 @@ import com.ecoeler.model.code.ResultCode;
 
 /**
  * @author whj
- * @createTime 2020-02-09 17:29
- * @description
+ * @since  2020-02-09 17:29
  **/
 public class CustomException extends RuntimeException {
     private static final long serialVersionUID = 1L;
