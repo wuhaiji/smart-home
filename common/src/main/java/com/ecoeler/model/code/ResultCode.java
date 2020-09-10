@@ -3,6 +3,7 @@ package com.ecoeler.model.code;
 /**
  * <p>
  * 10000-- 通用错误代码
+ * 20000--
  * </p>
  *
  * @author whj

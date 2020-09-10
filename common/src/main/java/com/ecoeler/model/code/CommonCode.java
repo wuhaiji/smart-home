@@ -17,7 +17,7 @@ public enum CommonCode implements ResultCode {
 
     INVALID_PARAM("10003", "非法参数！"),
 
-    SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！");;
+    SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！");
 
     CommonCode(String resultCode, String resultMsg) {
         this.resultCode = resultCode;
