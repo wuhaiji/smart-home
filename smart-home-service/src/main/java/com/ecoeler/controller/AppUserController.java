@@ -1,6 +1,7 @@
 package com.ecoeler.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.app.service.IAppUserService;
 import com.ecoeler.code.AppUserCode;
@@ -10,6 +11,7 @@ import com.ecoeler.utils.HutoolCaptchaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -34,20 +36,18 @@ public class AppUserController {
      * @param email
      * @return
      */
-    @PostMapping("/image_captcha")
-    public String captcha(String email) {
+    @PostMapping("/captcha")
+    public String captcha(@RequestParam String email) {
         return hutoolCaptchaUtil.getCaptchaImage(email);
     }
 
-    @PostMapping("/login")
-    public Result login(String email, String password ,String code){
-        if(!hutoolCaptchaUtil.verify(email,code)){
-            return Result.error(AppUserCode.CODE_LOGIN_ERROR);
+    @PostMapping("/verify")
+    public Result verify(@RequestParam String email, @RequestParam String code){
+        if(hutoolCaptchaUtil.verify(email,code)){
+            return Result.ok();
         }
-        return null;
+        return Result.error(AppUserCode.CODE_CAPTCHA_ERROR);
     }
-
-
 
     @PostMapping
     public String register(AppUser appUser){

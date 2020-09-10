@@ -2,6 +2,10 @@ server:
   port: 11011
 
 spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.108:8848
   application:
     name: smart-home-service
   redis:
@@ -16,3 +20,16 @@ spring:
         max-idle: 8
         min-idle: 0
     password:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://192.168.0.108:3306/smart-home?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Hongkong
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initialSize: 3
+      max-active: 10
+      max-wait: 50000
+      keep-alive-between-time-millis: 50000
+      keep-alive: false
+

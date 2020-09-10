@@ -46,21 +46,21 @@ public class Result<T> {
      * 返回成功
      */
     public static Result ok() {
-        return new Result(CommonCode.SUCCESS.getResultCode(), CommonCode.SUCCESS.getResultMsg());
+        return new Result(CommonCode.SUCCESS.getCode(), CommonCode.SUCCESS.getMsg());
     }
 
     /**
      * 返回成功
      */
     public static <T> Result<T> ok(T data) {
-        return new Result<T>(CommonCode.SUCCESS.getResultCode(), CommonCode.SUCCESS.getResultMsg(), data);
+        return new Result<T>(CommonCode.SUCCESS.getCode(), CommonCode.SUCCESS.getMsg(), data);
     }
 
     /**
      * 失败
      */
     public static Result error(ResultCode resultCode) {
-        return new Result(resultCode.getResultCode(), resultCode.getResultMsg());
+        return new Result(resultCode.getCode(), resultCode.getMsg());
     }
 
     /**
