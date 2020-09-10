@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .formLogin()
                     //如果不指定loginPage，会使用security自带的登录页面，且地址为/login
-                    .loginPage("/login")//指定登录的地址为login，没有认证的用户会跳转到这个页面
+                    //.loginPage("/login")//指定登录的地址为login，没有认证的用户会跳转到这个页面
                     //.loginProcessingUrl("/login-handler")//处理登录请求的URL，不需要自行实现，spring security已经实现了
                     .successForwardUrl("/login-success");
     }

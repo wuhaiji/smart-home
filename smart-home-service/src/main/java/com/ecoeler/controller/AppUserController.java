@@ -37,13 +37,13 @@ public class AppUserController {
      * @return
      */
     @PostMapping("/captcha")
-    public String captcha(@RequestParam String email) {
-        return hutoolCaptchaUtil.getCaptchaImage(email);
+    public String captcha(@RequestParam String ip) {
+        return hutoolCaptchaUtil.getCaptchaImage(ip);
     }
 
     @PostMapping("/verify")
-    public Result verify(@RequestParam String email, @RequestParam String code){
-        if(hutoolCaptchaUtil.verify(email,code)){
+    public Result verify(@RequestParam String ip, @RequestParam String code){
+        if(hutoolCaptchaUtil.verify(ip,code)){
             return Result.ok();
         }
         return Result.error(AppUserCode.CODE_CAPTCHA_ERROR);
