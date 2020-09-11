@@ -1,19 +1,18 @@
-package com.ecoeler.app;
+package com.test;
 
-
+import com.ecoeler.annotation.EnableSmartHomeApi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 
 /**
  * APP
  * @author tang
- * @since 2020/9/10
+ * @since 2020/9/7
  */
-@EnableOAuth2Sso
 @SpringBootApplication
-public class App {
+@EnableSmartHomeApi
+public class SmartHomeWebApp {
     public static void main(String [] args){
-        SpringApplication.run(App.class,args);
+        SpringApplication.run(SmartHomeWebApp.class,args);
     }
 }

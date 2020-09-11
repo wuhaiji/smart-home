@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * UserDetailsService
      */
     @Autowired
-    private UserDetailsService userServiceImpl;
+    private UserDetailsService myUserDetailService;
 
     /**
      * 配置安全拦截机制
@@ -69,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .userDetailsService(userServiceImpl)
+                .userDetailsService(myUserDetailService)
                 .passwordEncoder(passwordEncoder());
     }
 

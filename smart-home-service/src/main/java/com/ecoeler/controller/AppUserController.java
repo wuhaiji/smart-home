@@ -8,6 +8,7 @@ import com.ecoeler.code.AppUserCode;
 import com.ecoeler.model.code.CommonCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.utils.HutoolCaptchaUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author tang
  * @since 2020/9/10
  */
+@Slf4j
 @RequestMapping("/app_user")
 @RestController
 public class AppUserController {
@@ -37,13 +39,19 @@ public class AppUserController {
      * @return
      */
     @PostMapping("/captcha")
-    public String captcha(@RequestParam String ip) {
-        return hutoolCaptchaUtil.getCaptchaImage(ip);
+    public String captcha(@RequestParam String email) {
+        return hutoolCaptchaUtil.getCaptchaImage(email);
     }
 
+    /**
+     * 图形验证码验证
+     * @param email
+     * @param code
+     * @return
+     */
     @PostMapping("/verify")
-    public Result verify(@RequestParam String ip, @RequestParam String code){
-        if(hutoolCaptchaUtil.verify(ip,code)){
+    public Result verify(@RequestParam String email, @RequestParam String code){
+        if(hutoolCaptchaUtil.verify(email,code)){
             return Result.ok();
         }
         return Result.error(AppUserCode.CODE_CAPTCHA_ERROR);
@@ -54,5 +62,12 @@ public class AppUserController {
         return null;
     }
 
+
+    @PostMapping("/user")
+    public Result user(@RequestParam String email){
+        QueryWrapper<AppUser> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("email",email);
+        return Result.ok(appUserService.getOne(queryWrapper));
+    }
 
 }

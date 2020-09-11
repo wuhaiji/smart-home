@@ -24,6 +24,7 @@
         <module>common</module>
         <module>smart-home-app</module>
         <module>smart-home-facade</module>
+        <module>app-oauth2-client</module>
     </modules>
 
 

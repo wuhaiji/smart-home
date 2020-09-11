@@ -4,7 +4,6 @@ package com.ecoeler.utils;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
 import com.alibaba.fastjson.JSONObject;
-import com.ecoeler.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
