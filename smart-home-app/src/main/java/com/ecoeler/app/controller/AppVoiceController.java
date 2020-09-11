@@ -1,6 +1,7 @@
 package com.ecoeler.app.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ecoeler.app.constant.v1.AppVoiceConstant;
 import com.ecoeler.app.service.AppVoiceService;
 import com.ecoeler.util.RequestUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -24,13 +26,14 @@ public class AppVoiceController {
 
     @RequestMapping(value = "/action")
     public JSONObject googleAction(@RequestBody JSONObject data, Authentication authentication, HttpServletRequest request) {
-        if (data == null) {
-            return new JSONObject();
-        }
+        String principal = (String) authentication.getPrincipal();
+        log.info("client id:{}", principal);
+        log.info("authentication:{}", authentication);
         //获取请求头
-        Map<String, String> headerMap = RequestUtils.getHeaderMap(request);
-        headerMap.put("userId", authentication.getName());
-        String result = appVoiceService.action(data, headerMap);
+        data.put(AppVoiceConstant.DTO_KEY_USER_ID, authentication.getName());
+        data.put(AppVoiceConstant.DTO_KEY_CLIENT_ID, principal);
+        data.put(AppVoiceConstant.DTO_KEY_AUTHORIZATION, request.getHeader(AppVoiceConstant.DTO_KEY_AUTHORIZATION));
+        String result = appVoiceService.action(data);
         return JSONObject.parseObject(result);
     }
 }

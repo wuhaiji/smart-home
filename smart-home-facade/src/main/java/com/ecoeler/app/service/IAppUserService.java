@@ -1,7 +1,10 @@
 package com.ecoeler.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ecoeler.app.dto.v1.UserDto;
 import com.ecoeler.app.entity.AppUser;
+
+import java.util.List;
 
 /**
  * <p>

@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -19,10 +18,10 @@ public class AppVoiceServiceImpl implements AppVoiceService {
     AppVoiceFeignClient appVoiceFeignClient;
 
     @Override
-    public String action(JSONObject data, Map headerMap) {
+    public String action(JSONObject data) {
         Result<String> result;
         try {
-            result = appVoiceFeignClient.action(data, headerMap);
+            result = appVoiceFeignClient.action(data);
         } catch (Exception e) {
             log.error(e.getMessage());
             result = null;
