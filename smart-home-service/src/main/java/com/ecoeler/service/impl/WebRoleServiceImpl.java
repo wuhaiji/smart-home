@@ -3,11 +3,11 @@ package com.ecoeler.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ecoeler.entity.WebRole;
-import com.ecoeler.entity.WebRolePermission;
-import com.ecoeler.mapper.WebRoleMapper;
-import com.ecoeler.service.IWebRolePermissionService;
-import com.ecoeler.service.IWebRoleService;
+import com.ecoeler.app.entity.WebRole;
+import com.ecoeler.app.entity.WebRolePermission;
+import com.ecoeler.app.mapper.WebRoleMapper;
+import com.ecoeler.app.service.IWebRolePermissionService;
+import com.ecoeler.app.service.IWebRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

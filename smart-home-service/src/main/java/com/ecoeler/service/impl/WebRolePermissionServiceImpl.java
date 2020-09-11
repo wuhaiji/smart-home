@@ -2,9 +2,9 @@ package com.ecoeler.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ecoeler.entity.WebRolePermission;
-import com.ecoeler.mapper.WebRolePermissionMapper;
-import com.ecoeler.service.IWebRolePermissionService;
+import com.ecoeler.app.entity.WebRolePermission;
+import com.ecoeler.app.mapper.WebRolePermissionMapper;
+import com.ecoeler.app.service.IWebRolePermissionService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

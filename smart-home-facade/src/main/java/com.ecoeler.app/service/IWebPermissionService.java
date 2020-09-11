@@ -1,8 +1,12 @@
-package com.ecoeler.service;
+package com.ecoeler.app.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ecoeler.entity.WebPermission;
+import com.ecoeler.app.bean.v1.MenuWebPermissionBean;
+import com.ecoeler.app.entity.WebPermission;
+
+import java.util.List;
+
 
 /**
  * <p>
@@ -14,4 +18,5 @@ import com.ecoeler.entity.WebPermission;
  */
 public interface IWebPermissionService extends IService<WebPermission> {
 
+    List<MenuWebPermissionBean> selectAllMenuPermission();
 }

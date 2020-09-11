@@ -1,9 +1,9 @@
 package com.ecoeler.controller;
 
 
-import com.ecoeler.entity.WebRole;
+import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.model.response.Result;
-import com.ecoeler.service.IWebRoleService;
+import com.ecoeler.app.service.IWebRoleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

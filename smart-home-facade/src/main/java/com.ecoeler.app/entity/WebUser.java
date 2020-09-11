@@ -1,4 +1,4 @@
-package com.ecoeler.entity;
+package com.ecoeler.app.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;

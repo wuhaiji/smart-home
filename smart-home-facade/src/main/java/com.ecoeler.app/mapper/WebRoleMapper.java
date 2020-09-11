@@ -1,8 +1,8 @@
-package com.ecoeler.mapper;
+package com.ecoeler.app.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ecoeler.entity.WebPermission;
+import com.ecoeler.app.entity.WebRole;
 
 /**
  * <p>
@@ -12,6 +12,6 @@ import com.ecoeler.entity.WebPermission;
  * @author tang
  * @since 2020-09-10
  */
-public interface WebPermissionMapper extends BaseMapper<WebPermission> {
+public interface WebRoleMapper extends BaseMapper<WebRole> {
 
 }

@@ -1,8 +1,8 @@
-package com.ecoeler.mapper;
+package com.ecoeler.app.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ecoeler.entity.WebUser;
+import com.ecoeler.app.entity.WebUser;
 
 /**
  * <p>
