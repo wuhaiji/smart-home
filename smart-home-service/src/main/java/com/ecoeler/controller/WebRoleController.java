@@ -1,6 +1,7 @@
 package com.ecoeler.controller;
 
 
+import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.app.service.IWebRoleService;
@@ -9,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.ListResourceBundle;
 
 
 /**
@@ -20,7 +24,7 @@ import org.springframework.stereotype.Controller;
  * @author tang
  * @since 2020-09-10
  */
-@Controller
+@RestController
 @RequestMapping("/web-role")
 public class WebRoleController {
     @Autowired
@@ -54,6 +58,15 @@ public class WebRoleController {
     @RequestMapping("delete")
     public Result deleteRole(Long id){
         iWebRoleService.deleteRole(id);
+        return Result.ok();
+    }
+    /**
+     * 角色列表
+     * @return
+     */
+    @RequestMapping("query/list")
+    public Result queryRoleList(){
+        List<WebRoleBean> result=iWebRoleService.selectRoleList();
         return Result.ok();
     }
 

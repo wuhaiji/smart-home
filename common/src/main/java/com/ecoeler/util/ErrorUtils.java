@@ -1,8 +1,10 @@
 package com.ecoeler.util;
 
 import com.ecoeler.exception.CustomException;
+
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 /**
@@ -134,6 +136,29 @@ public class ErrorUtils {
     public static void isStringEmptyByCustom(String o, String message) throws CustomException {
         if (StrIsEmpty(o)) {
             throw new CustomException("S_STR_EMPTY", message + "！");
+        }
+    }
+
+   //>=min && <=max
+    public static void isNumberValueIn(Number val, Number min,Number max, String message) {
+        if(val==null){
+            throw new CustomException("S_NUM_EMPTY", message + "不能为空");
+        }
+        if (val.doubleValue() <= min.doubleValue()||val.doubleValue() >= max.doubleValue()) {
+            throw new CustomException("S_NUM_LENGTH", message + "在" + min+"~"+max+"之间");
+        }
+    }
+
+
+    public static void isStringMatch(String val, String regex, String message) {
+        if (!val.matches(regex)){
+            throw new CustomException("S_STR_MATCH", message + "格式不匹配");
+        }
+    }
+
+    public static void isTimeBefore(LocalDateTime startTime, LocalDateTime endTime, String message) {
+        if (startTime.isAfter(endTime)){
+            throw new CustomException("S_TIME_AFTER", message + "开始时间不能比结束时间晚");
         }
     }
 }

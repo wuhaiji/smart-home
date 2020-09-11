@@ -21,4 +21,12 @@ public class MenuWebPermissionBean {
      * 子菜单
      */
     private List<MenuWebPermissionBean> children;
+
+    public MenuWebPermissionBean() {
+    }
+
+    public MenuWebPermissionBean(Long id, String menu) {
+        this.id = id;
+        this.menu = menu;
+    }
 }

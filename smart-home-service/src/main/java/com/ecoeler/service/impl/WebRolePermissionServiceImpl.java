@@ -1,10 +1,15 @@
 package com.ecoeler.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.entity.WebRolePermission;
 import com.ecoeler.app.mapper.WebRolePermissionMapper;
 import com.ecoeler.app.service.IWebRolePermissionService;
+import com.ecoeler.cache.ClearCache;
+import com.ecoeler.exception.CustomException;
+import com.ecoeler.model.code.CommonCode;
+import com.ecoeler.model.code.PermissionCode;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,21 +31,45 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
      * @param permissionIds 权限ids
      * @param roleId 角色id
      */
+    @ClearCache("PER#${roleId}")
     @Override
     public void customizationPermission(List<Long> permissionIds, Long roleId) {
-        if (permissionIds!=null&&permissionIds.size()!=0){
-            List<WebRolePermission> list=new ArrayList<>();
-            for (Long permissionId : permissionIds) {
-                WebRolePermission webRolePermission=new WebRolePermission();
-                webRolePermission.setPermissionId(permissionId);
-                webRolePermission.setRoleId(roleId);
-                list.add(webRolePermission);
-            }
-            //批量插入
-            saveBatch(list);
-        }else {
-            //throw new Exception("未选择权限");
-        }
+       try {
+           //先将之前的权限删除
+           QueryWrapper<WebRolePermission> queryWrapper=new QueryWrapper<>();
+           queryWrapper.eq("role_id",roleId);
+           baseMapper.delete(queryWrapper);
+           if (permissionIds!=null&&permissionIds.size()!=0){
+               List<WebRolePermission> list=new ArrayList<>();
+               for (Long permissionId : permissionIds) {
+                   WebRolePermission webRolePermission=new WebRolePermission();
+                   webRolePermission.setPermissionId(permissionId);
+                   webRolePermission.setRoleId(roleId);
+                   list.add(webRolePermission);
+               }
+               saveBatch(list);
+           }else {
+               log.error("未选择权限");
+               throw  new CustomException(CommonCode.INVALID_PARAM);
+           }
+       }catch (CustomException e){
+           throw  new CustomException(e.getCode(),e.getMsg());
+       }catch (Exception e){
+           log.error("定制权限异常");
+           throw  new CustomException(PermissionCode.CUSTOMIZATION);
+       }
+    }
 
+    /**
+     * 根据roleId查询关联数据
+     * @param roleId
+     * @return
+     */
+    @Override
+    public List<WebRolePermission> selectPermissionList(Long roleId) {
+        QueryWrapper<WebRolePermission> queryWrapper=new QueryWrapper<>();
+        queryWrapper.select("role_id","permission_id");
+        queryWrapper.eq("role_id",roleId);
+        return baseMapper.selectList(queryWrapper);
     }
 }

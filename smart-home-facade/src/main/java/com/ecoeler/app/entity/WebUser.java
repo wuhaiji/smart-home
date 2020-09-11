@@ -1,5 +1,7 @@
 package com.ecoeler.app.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -22,7 +24,7 @@ import lombok.experimental.Accessors;
 public class WebUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -44,6 +46,10 @@ public class WebUser implements Serializable {
      * 头像
      */
     private String headImage;
+    /**
+     * 手机号
+     */
+    private String phoneNumber;
 
     private LocalDateTime updateTime;
 
