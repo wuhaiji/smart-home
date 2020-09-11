@@ -1,4 +1,4 @@
-package com.ecoeler.entity;
+package com.ecoeler.app.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -31,6 +31,11 @@ public class WebPermission implements Serializable {
     private String description;
 
     private Integer sourceType;
+
+    /**
+     * 父菜单
+     */
+    private Long parentId;
 
 
 }

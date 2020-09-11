@@ -2,12 +2,10 @@ package com.ecoeler.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ecoeler.entity.WebUser;
-import com.ecoeler.mapper.WebUserMapper;
-import com.ecoeler.service.IWebUserService;
+import com.ecoeler.app.entity.WebUser;
+import com.ecoeler.app.mapper.WebUserMapper;
+import com.ecoeler.app.service.IWebUserService;
 import org.springframework.stereotype.Service;
-
-import javax.management.relation.Role;
 
 /**
  * <p>

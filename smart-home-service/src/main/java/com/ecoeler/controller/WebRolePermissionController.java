@@ -2,7 +2,7 @@ package com.ecoeler.controller;
 
 
 import com.ecoeler.model.response.Result;
-import com.ecoeler.service.IWebRolePermissionService;
+import com.ecoeler.app.service.IWebRolePermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 

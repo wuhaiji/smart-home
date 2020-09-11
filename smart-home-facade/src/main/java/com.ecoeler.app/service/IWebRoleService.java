@@ -1,8 +1,9 @@
-package com.ecoeler.service;
+package com.ecoeler.app.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ecoeler.entity.WebRole;
+import com.ecoeler.app.entity.WebRole;
+
 
 import javax.management.relation.Role;
 
