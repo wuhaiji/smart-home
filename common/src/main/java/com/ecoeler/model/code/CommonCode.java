@@ -9,13 +9,15 @@ public enum CommonCode implements ResultCode {
 
     SUCCESS("10000", "成功!"),
 
-    FAIL("11111", "操作失败！"),
-
     UNAUTHENTICATED("10001", "需要登陆系统！"),
 
     INSUFFICIENT_PERMISSIONS("10002", "权限不足！"),
 
     INVALID_PARAM("10003", "非法参数！"),
+
+    NETWORK_ANOMALY("10004", "网络异常!"),
+
+    FAIL("11111", "操作失败！"),
 
     SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！");
 
