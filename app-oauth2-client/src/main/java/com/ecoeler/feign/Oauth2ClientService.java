@@ -1,28 +1,47 @@
 package com.ecoeler.feign;
 
+import com.ecoeler.model.request.OauthPasswordRequest;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * 账号密码模式token
+ * @author tang
+ * @since 2020/9/11
+ */
 @FeignClient(value = "app-oauth2", path = "/oauth")
-public class Oauth2ClientService {
+public interface Oauth2ClientService {
 
-//    /**
-//     * 获取图片验证码
-//     * @param email
-//     * @return
-//     */
-//    @PostMapping("/captcha")
-//    Result<String> captcha(@RequestParam String email) ;
+    /**
+     * 账号密码获取token
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/token")
+    Result<OAuth2AccessToken> getTokenByPasswordModel(OauthPasswordRequest request);
+
+
+    /**
+     * 账号密码获取token
+     * @param request
+     * @return
+     */
+//    @PostMapping("/token")
+//    Result<OAuth2AccessToken> getTokenByPasswordModel(
+//            @RequestParam String username,
 //
-//    /**
-//     * 登录验证码验证
-//     * @param email
-//     * @param code
-//     * @return
-//     */
-//    @PostMapping("/verify")
-//    Result verify(@RequestParam String email,@RequestParam String code);
+//            @RequestParam String password,
+//
+//            @RequestParam String clientId,
+//
+//            @RequestParam String clientSecret,
+//
+//            @RequestParam String grantType
+//
+//    );
 
 }

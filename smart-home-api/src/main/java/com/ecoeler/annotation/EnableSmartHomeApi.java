@@ -3,6 +3,7 @@ package com.ecoeler.annotation;
 
 import com.ecoeler.common.ApiRegister;
 import com.ecoeler.common.EnableApi;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
@@ -20,6 +21,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Import(ApiRegister.class)
 @EnableApi("com.ecoeler")
+@EnableFeignClients("com.ecoeler.feign")
 public @interface EnableSmartHomeApi {
 
 }

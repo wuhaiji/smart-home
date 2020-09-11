@@ -1,5 +1,8 @@
 package com.ecoeler.common;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.ResourceLoaderAware;
@@ -22,9 +25,11 @@ import java.util.*;
  * @author tang
  * @since 2020/9/7
  */
-public class ApiRegister implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
+public class ApiRegister implements ImportBeanDefinitionRegistrar, ResourceLoaderAware , BeanFactoryAware {
 
     private ResourceLoader resourceLoader;
+
+    private BeanFactory beanFactory;
 
     /**
      * 注册bean定义
@@ -39,6 +44,7 @@ public class ApiRegister implements ImportBeanDefinitionRegistrar, ResourceLoade
         scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
         scanner.addIncludeFilter(new AnnotationTypeFilter(Service.class));
         scanner.addIncludeFilter(new AnnotationTypeFilter(Repository.class));
+        //scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
         scanner.setResourceLoader(this.resourceLoader);
 
         List<Class<?>> annotationList = this.getAnnotations(annotationMetadata);
@@ -75,5 +81,10 @@ public class ApiRegister implements ImportBeanDefinitionRegistrar, ResourceLoade
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader=resourceLoader;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory=beanFactory;
     }
 }

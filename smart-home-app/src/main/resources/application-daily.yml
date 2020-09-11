@@ -1,16 +1,33 @@
-server:
-  port: 11001
-
 spring:
   application:
     name: smart-home-app
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.108:8848
 security:
   oauth2:
     client:
       client-id: c1
       client-secret: secret
-      access-token-uri: http://127.0.0.1:11111/oauth/check_token
+      access-token-uri: http://127.0.0.1:11111/oauth/token
       user-authorization-uri: http://127.0.0.1:11111/oauth/authorize
-      grant-type: password,refresh_token
+      scope: all
+      authorized-grant-types:
+        - password
+        - authorization_code
+        - implicit
+        - refresh_token
+      resource-ids:
+        - rs1
     resource:
       token-info-uri: http://127.0.0.1:11111/oauth/check_token
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+server:
+  port: 11031

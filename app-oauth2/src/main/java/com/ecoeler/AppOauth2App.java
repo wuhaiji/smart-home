@@ -13,8 +13,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 @EnableFeignClients
 @EnableDiscoveryClient
-@SpringBootApplication
 @EnableSmartHomeApi
+@SpringBootApplication
 public class AppOauth2App {
     public static void main(String [] args){
         SpringApplication.run(AppOauth2App.class,args);
