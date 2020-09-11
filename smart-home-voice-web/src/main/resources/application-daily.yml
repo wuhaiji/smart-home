@@ -1,0 +1,31 @@
+server:
+  port: 11021
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.108:8848
+    sentinel:
+      transport:
+        dashboard: 192.168.0.108:8858
+  application:
+    name: smart-home-service
+  redis:
+    database: 0
+    host: 192.168.0.108
+    port: 6379
+    timeout: 5000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 8
+        min-idle: 0
+    password:
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
