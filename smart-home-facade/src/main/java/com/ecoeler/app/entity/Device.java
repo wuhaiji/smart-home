@@ -52,7 +52,10 @@ public class Device implements Serializable {
      */
     private Long familyId;
 
-    public static final Long DEVICE_ROOM_ID_DEFAULT_VALUE = 0L;
+    /**
+     * 在线离线 ，1在线 ，0离线
+     */
+    private Integer netState;
 
 
 }

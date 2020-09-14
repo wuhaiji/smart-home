@@ -2,7 +2,8 @@ package com.ecoeler.action;
 
 import cn.hutool.core.util.StrUtil;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
-import com.ecoeler.app.dto.v1.UserDto;
+import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
+import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.exception.ServiceException;
 import com.google.actions.api.smarthome.*;
@@ -13,9 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -38,19 +37,50 @@ public class MySmartHomeApp extends SmartHomeApp {
     @NotNull
     @Override
     public QueryResponse onQuery(@NotNull QueryRequest queryRequest, @Nullable Map<?, ?> map) {
-        return null;
+
+        if (map == null)
+            throw new ServiceException("params map can not be empty");
+
+        Long userId = Long.valueOf((String) map.get("userId"));
+
+        QueryRequest.Inputs.Payload.Device[] devices = ((QueryRequest.Inputs) queryRequest.getInputs()[0]).payload.devices;
+        Map<String, Map<String, Object>> deviceStates = new HashMap<>();
+        QueryResponse res = new QueryResponse();
+        res.setRequestId(queryRequest.requestId);
+        res.setPayload(new QueryResponse.Payload());
+        for (QueryRequest.Inputs.Payload.Device device : devices) {
+            try {
+                DeviceVoiceDto userVoiceDto = DeviceVoiceDto.of().setDeviceId(Long.valueOf(device.getId()));
+                Map<String, Object> states = appVoiceActionService.getUserDeviceStates(userVoiceDto);
+                if (states.containsKey("on")) {
+                    String on = (String) states.get("on");
+                    states.put("on", !on.equals("0"));
+                }
+                deviceStates.put(device.id, states);
+                // ReportState.makeRequest(this, userId, device.id, states);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("QUERY FAILED");
+                Map<String, Object> failedDevice = new HashMap<>();
+                failedDevice.put("errorCode", e.getMessage());
+                deviceStates.put(device.id, failedDevice);
+            }
+        }
+        res.payload.setDevices(deviceStates);
+        return res;
     }
 
     @NotNull
     @Override
     public SyncResponse onSync(@NotNull SyncRequest syncRequest, @Nullable Map<?, ?> map) {
 
-        if (map == null) throw new ServiceException("google voice params map can not be empty");
+        if (map == null)
+            throw new ServiceException(" params map can not be empty");
 
         Long userId = Long.valueOf((String) map.get("userId"));
 
-        UserDto userDto = UserDto.of().setUserId(userId);
-        List<DeviceVoiceBean> deviceVoiceBeans = appVoiceActionService.getDeviceVoiceBeans(userDto);
+        UserVoiceDto userVoiceDto = UserVoiceDto.of().setUserId(userId);
+        List<DeviceVoiceBean> deviceVoiceBeans = appVoiceActionService.getDeviceVoiceBeans(userVoiceDto);
 
         SyncResponse response = new SyncResponse();
         response.setRequestId(syncRequest.requestId);

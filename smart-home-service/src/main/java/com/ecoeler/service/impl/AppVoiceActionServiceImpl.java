@@ -4,7 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
-import com.ecoeler.app.dto.v1.UserDto;
+import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
+import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceType;
 import com.ecoeler.app.entity.Room;
@@ -44,20 +45,20 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
     /**
      * 根据用户ID查询用户的设备列表
      *
-     * @param userDto
+     * @param userVoiceDto
      * @return
      */
     @Override
-    public List<DeviceVoiceBean> getDeviceVoiceBeans(UserDto userDto) {
+    public List<DeviceVoiceBean> getDeviceVoiceBeans(UserVoiceDto userVoiceDto) {
 
         List<DeviceVoiceBean> deviceVoiceBeans;
         try {
-            if (userDto == null || userDto.getUserId() == null)
+            if (userVoiceDto == null || userVoiceDto.getUserId() == null)
                 throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
 
             //查询出用户拥有的家庭ids
             QueryWrapper<UserFamily> userFamilyQuery = new QueryWrapper<>();
-            userFamilyQuery.eq("user_id", userDto.getUserId());
+            userFamilyQuery.eq("user_id", userVoiceDto.getUserId());
             List<UserFamily> families = iUserFamilyService.list(userFamilyQuery);
             if (CollUtil.isEmpty(families)) return new ArrayList<>();
             List<Long> familyIds = families.parallelStream().map(UserFamily::getId).collect(Collectors.toList());
@@ -125,6 +126,18 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
             throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_LIST_ERROR);
         }
         return deviceVoiceBeans;
+    }
+
+    @Override
+    public Map<String, Object> getUserDeviceStates(DeviceVoiceDto userVoiceDto) {
+
+        if (userVoiceDto == null || userVoiceDto.getDeviceId() == null)
+            throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
+
+        //先查询设备在线离线
+        Device byId = iDeviceService.getById(userVoiceDto.getDeviceId());
+
+        return null;
     }
 
 }
