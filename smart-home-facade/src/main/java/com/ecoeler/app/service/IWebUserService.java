@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.dto.WebUserDto;
+import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebUser;
 
 
@@ -32,4 +33,9 @@ public interface IWebUserService extends IService<WebUser> {
     void deleteWebUser(Long id);
 
     PageBean<WebUser> queryWebUserList(WebUserDto webUserDto, Page<WebUser> page);
+
+
+    void allocationWebUserRole(Long userId, WebRole roleId);
+
+
 }

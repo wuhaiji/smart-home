@@ -19,6 +19,12 @@ public enum CommonCode implements ResultCode {
 
     FAIL("11111", "操作失败！"),
 
+    TOKEN("10005","token 失效"),
+
+    NULL_TOKEN("10006","token 为空"),
+
+
+
     SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！");
 
     CommonCode(String resultCode, String resultMsg) {

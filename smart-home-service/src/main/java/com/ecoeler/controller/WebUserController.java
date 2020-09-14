@@ -4,6 +4,7 @@ package com.ecoeler.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.dto.WebUserDto;
+import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.app.service.IWebUserService;
 import com.ecoeler.model.response.Result;
@@ -72,7 +73,20 @@ public class WebUserController {
     public Result queryWebUserList(WebUserDto webUserDto, Page<WebUser> page){
         log.info("开始分页查询用户列表");
         PageBean<WebUser> result=iWebUserService.queryWebUserList(webUserDto,page);
+        return Result.ok(result);
+    }
+    /**
+     * 分配角色
+     * @param userId 用户id
+     * @param webRole 角色
+     * @return
+     */
+    @RequestMapping("allocation/role")
+    public Result allocationWebUserRole(Long userId, WebRole webRole){
+        log.info("开始给用户分配角色");
+        iWebUserService.allocationWebUserRole(userId,webRole);
         return Result.ok();
     }
+
 
 }

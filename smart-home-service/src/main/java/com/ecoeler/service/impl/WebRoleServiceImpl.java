@@ -11,12 +11,15 @@ import com.ecoeler.app.service.IWebRolePermissionService;
 import com.ecoeler.app.service.IWebRoleService;
 import com.ecoeler.app.service.IWebUserService;
 import com.ecoeler.cache.ClearCache;
+import com.ecoeler.exception.ServiceException;
+import com.ecoeler.model.code.WebRoleCode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -41,8 +44,13 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public Long addRole(WebRole webRole) {
-        baseMapper.insert(webRole);
-        return webRole.getId();
+       try {
+           baseMapper.insert(webRole);
+           return webRole.getId();
+       }catch (Exception e){
+           log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
+           throw  new ServiceException(WebRoleCode.ADD);
+       }
     }
 
     /**
@@ -51,21 +59,31 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public void updateRole(WebRole webRole) {
-        baseMapper.selectById(webRole);
+        try {
+            baseMapper.updateById(webRole);
+        }catch (Exception e){
+            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
+            throw  new ServiceException(WebRoleCode.UPDATE);
+        }
     }
 
     /**
      * 删除角色
      * @param id
      */
-    @ClearCache("PER#${id}")
+    @ClearCache("PER#${id},PER_BACK#${id}")
     @Override
     public void deleteRole(Long id) {
-        QueryWrapper<WebRolePermission> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("role_id",id);
-        //删除角色权限表中的
-        iWebRolePermissionService.remove(queryWrapper);
-        baseMapper.deleteById(id);
+       try {
+           QueryWrapper<WebRolePermission> queryWrapper=new QueryWrapper<>();
+           queryWrapper.eq("role_id",id);
+           //删除角色权限表中的
+           iWebRolePermissionService.remove(queryWrapper);
+           baseMapper.deleteById(id);
+       }catch (Exception e){
+           log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
+           throw  new ServiceException(WebRoleCode.DELETE);
+       }
     }
 
     /**
@@ -74,25 +92,49 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public List<WebRoleBean> selectRoleList() {
-        List<WebRoleBean> result=new ArrayList<>();
-        QueryWrapper<WebRole> queryWrapper=new QueryWrapper<>();
-        List<WebRole> webRoles = baseMapper.selectList(queryWrapper);
-        if (webRoles!=null&&webRoles.size()!=0){
-            List<WebRoleBean> webRoleBeans = iWebUserService.selectUserCountByRoleId();
-            for (WebRole webRole : webRoles) {
-                Long roleId=webRole.getId();
-                WebRoleBean webRoleBean=new WebRoleBean();
-                BeanUtils.copyProperties(webRole,webRoleBean);
-                //封装角色对应的客户数量
-                for (WebRoleBean roleBean : webRoleBeans) {
-                    if (roleBean.getId().equals(roleId)){
-                        webRoleBean.setCount(roleBean.getCount());
+        try {
+            List<WebRoleBean> result=new ArrayList<>();
+            QueryWrapper<WebRole> queryWrapper=new QueryWrapper<>();
+            List<WebRole> webRoles = baseMapper.selectList(queryWrapper);
+            if (webRoles!=null&&webRoles.size()!=0){
+                List<WebRoleBean> webRoleBeans = iWebUserService.selectUserCountByRoleId();
+                for (WebRole webRole : webRoles) {
+                    Long roleId=webRole.getId();
+                    WebRoleBean webRoleBean=new WebRoleBean();
+                    BeanUtils.copyProperties(webRole,webRoleBean);
+                    //封装角色对应的客户数量
+                    for (WebRoleBean roleBean : webRoleBeans) {
+                        if (roleBean.getId().equals(roleId)){
+                            webRoleBean.setCount(roleBean.getCount());
+                        }
                     }
+                    result.add(webRoleBean);
                 }
-                result.add(webRoleBean);
             }
+            return result;
+        }catch (Exception e){
+            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
+            throw  new ServiceException(WebRoleCode.SELECT);
         }
-        return result;
+
+    }
+
+    /**
+     * 获取不是当前用户角色的列表
+     * @param roleId 角色Id
+     * @return
+     */
+    @Override
+    public List<WebRole> queryRoleListExceptById(Long roleId) {
+        try {
+            QueryWrapper<WebRole> queryWrapper=new QueryWrapper<>();
+            queryWrapper.select("id","role");
+            queryWrapper.ne(roleId!=null,"id",roleId);
+            return baseMapper.selectList(queryWrapper);
+        }catch (Exception e){
+            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
+            throw  new ServiceException(WebRoleCode.SELECT_EXCEPT_BY_ROLE_ID);
+        }
     }
 
 }

@@ -41,42 +41,8 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
            queryWrapper.select("id","permission_name","parent_id");
            queryWrapper.eq("source_type",0);
            //查询所有菜单权限
-           List<WebPermission> webPermissions = baseMapper.selectList(queryWrapper);
-           if (webPermissions!=null&&webPermissions.size()!=0){
-               Map<Long,MenuWebPermissionBean> menuWebIdToPermissionMap=new HashMap<>();
-               List<MenuWebPermissionBean> root=new ArrayList<>();
-               //分类 将统一父节点的分到同一组 Long 父节点的id
-               Map<Long,List<MenuWebPermissionBean>> menuWebPermissionBeanMap=new HashMap<>();
+           return getTree( baseMapper.selectList(queryWrapper));
 
-               for (WebPermission webPermission : webPermissions) {
-                   Long parentId = webPermission.getParentId();
-                   List<MenuWebPermissionBean> children=null;
-                   //有父节点
-                   if (parentId!=null){
-                       if (menuWebPermissionBeanMap.get(parentId)!=null){
-                           children=menuWebPermissionBeanMap.get(parentId);
-                       }else {
-                           children=new ArrayList<>();
-                       }
-                       MenuWebPermissionBean bean=new MenuWebPermissionBean(webPermission.getId(),webPermission.getPermissionName());
-                       menuWebIdToPermissionMap.put(bean.getId(),bean);
-                       children.add(bean);
-                       menuWebPermissionBeanMap.put(parentId,children);
-                   }else {
-                       //根节点
-                       MenuWebPermissionBean bean=new MenuWebPermissionBean(webPermission.getId(),webPermission.getPermissionName());
-                       root.add(bean);
-                       menuWebIdToPermissionMap.put(bean.getId(),bean);
-                   }
-               }
-               //将所有子节点挂载到响应的父节点上
-               for (Map.Entry<Long, List<MenuWebPermissionBean>> entry : menuWebPermissionBeanMap.entrySet()) {
-                   MenuWebPermissionBean bean = menuWebIdToPermissionMap.get(entry.getKey());
-                   bean.setChildren(entry.getValue());
-               }
-               return root;
-           }
-           return null;
        }catch (Exception e){
            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
            throw new ServiceException(PermissionCode.SELECT_ALL_MENU_PERMISSION);
@@ -88,20 +54,88 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
      * @param roleId
      * @return
      */
-    @SetCache("PER#${roleId}")
+    @SetCache("PER_WEB#${roleId}")
     @Override
-    public List<String> selectPermissionByRoleId(Long roleId) {
+    public List<MenuWebPermissionBean> selectPermissionByRoleId(Long roleId) {
        try {
            List<WebRolePermission> permissions= iWebRolePermissionService.selectPermissionList(roleId);
-           List<WebPermission> webPermissions = baseMapper.selectBatchIds(permissions.stream().map(WebRolePermission::getPermissionId).collect(Collectors.toSet()));
-           if (webPermissions!=null&&webPermissions.size()!=0){
-               return webPermissions.stream().map(WebPermission::getPermissionName).collect(Collectors.toList());
-           }
-           return null;
+           return getTree( baseMapper.selectBatchIds(permissions.stream().map(WebRolePermission::getPermissionId).collect(Collectors.toSet())));
        }catch (Exception e){
            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
            throw new ServiceException(PermissionCode.SELECT_PERMISSION_BY_ROLE_ID);
        }
+    }
+
+    /**
+     * 根据角色id查询权限 用户后台权限控制
+     * @param roleId
+     * @return
+     */
+    @SetCache("PER_BACK#${roleId}")
+    @Override
+    public Set<String> selectBackPermissionByRoleId(Long roleId) {
+        try {
+            List<WebRolePermission> permissions= iWebRolePermissionService.selectPermissionList(roleId);
+            QueryWrapper<WebPermission> queryWrapper=new QueryWrapper<>();
+            queryWrapper.select("id","permission","source_type");
+            queryWrapper.in("id",permissions.stream()
+                                   .map(WebRolePermission::getPermissionId)
+                                   .collect(Collectors.toSet()));
+            return baseMapper.selectList(queryWrapper).stream().map(WebPermission::getPermission).collect(Collectors.toSet());
+        }catch (Exception e){
+            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
+            throw new ServiceException(PermissionCode.SELECT_PERMISSION_BY_ROLE_ID);
+        }
+    }
+
+
+
+    @Override
+    public WebPermission selectPermissionByCondition(Integer sourceType, String permissionName) {
+        QueryWrapper<WebPermission> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("source_type",sourceType);
+        queryWrapper.eq("permission_name",permissionName);
+        return baseMapper.selectOne(queryWrapper);
+    }
+
+    /**
+     * 封装菜单权限 包括权限下的子菜单
+     */
+    private List<MenuWebPermissionBean> getTree(List<WebPermission> webPermissions){
+        if (webPermissions!=null&&webPermissions.size()!=0){
+            Map<Long,MenuWebPermissionBean> menuWebIdToPermissionMap=new HashMap<>();
+            List<MenuWebPermissionBean> root=new ArrayList<>();
+            //分类 将统一父节点的分到同一组 Long 父节点的id
+            Map<Long,List<MenuWebPermissionBean>> menuWebPermissionBeanMap=new HashMap<>();
+            for (WebPermission webPermission : webPermissions) {
+                Long parentId = webPermission.getParentId();
+                List<MenuWebPermissionBean> children=null;
+                //有父节点
+                if (parentId!=null){
+                    if (menuWebPermissionBeanMap.get(parentId)!=null){
+                        children=menuWebPermissionBeanMap.get(parentId);
+                    }else {
+                        children=new ArrayList<>();
+                    }
+                    MenuWebPermissionBean bean=new MenuWebPermissionBean(webPermission.getId(),webPermission.getPermissionName());
+                    menuWebIdToPermissionMap.put(bean.getId(),bean);
+                    children.add(bean);
+                    menuWebPermissionBeanMap.put(parentId,children);
+                }else {
+                    //根节点
+                    MenuWebPermissionBean bean=new MenuWebPermissionBean(webPermission.getId(),webPermission.getPermissionName());
+                    root.add(bean);
+                    menuWebIdToPermissionMap.put(bean.getId(),bean);
+                }
+            }
+            //将所有子节点挂载到响应的父节点上
+            for (Map.Entry<Long, List<MenuWebPermissionBean>> entry : menuWebPermissionBeanMap.entrySet()) {
+                MenuWebPermissionBean bean = menuWebIdToPermissionMap.get(entry.getKey());
+                bean.setChildren(entry.getValue());
+            }
+            return root;
+        }
+        return null;
     }
 
 

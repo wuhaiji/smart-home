@@ -67,7 +67,16 @@ public class WebRoleController {
     @RequestMapping("query/list")
     public Result queryRoleList(){
         List<WebRoleBean> result=iWebRoleService.selectRoleList();
-        return Result.ok();
+        return Result.ok(result);
+    }
+    /**
+     * 查询不是当前用户角色列表
+     * @return
+     */
+    @RequestMapping("query/list/except/by/id")
+    public Result queryRoleListExceptById(Long roleId){
+        List<WebRole> result=iWebRoleService.queryRoleListExceptById(roleId);
+        return Result.ok(result);
     }
 
 
