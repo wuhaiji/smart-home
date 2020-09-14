@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 public class GoogleAction {
 
     @Autowired
-    private MySmartHomeApp mySmartHomeApp;
+    private GoogleSmartHomeApp googleSmartHomeApp;
     @Autowired
     private IAppUserService appUserService;
 
@@ -31,7 +31,7 @@ public class GoogleAction {
             InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("yoti-mart.json");
             assert resourceAsStream != null;
             GoogleCredentials credentials = GoogleCredentials.fromStream(resourceAsStream);
-            mySmartHomeApp.setCredentials(credentials);
+            googleSmartHomeApp.setCredentials(credentials);
         } catch (Exception e) {
             log.error("couldn't load credentials");
         }
@@ -59,22 +59,22 @@ public class GoogleAction {
             log.info("intend:" + namespace);
             switch (namespace) {
                 case "action.devices.SYNC":
-                    SyncResponse syncResponse = mySmartHomeApp.onSync((SyncRequest) smartHomeRequest, data);
+                    SyncResponse syncResponse = googleSmartHomeApp.onSync((SyncRequest) smartHomeRequest, data);
                     responseJson = JSONObject.parseObject(syncResponse.build().toString());
                     break;
 
                 case "action.devices.QUERY":
-                    QueryResponse queryResponse = mySmartHomeApp.onQuery((QueryRequest) smartHomeRequest, data);
+                    QueryResponse queryResponse = googleSmartHomeApp.onQuery((QueryRequest) smartHomeRequest, data);
                     responseJson = JSONObject.parseObject(queryResponse.build().toString());
                     break;
 
                 case "action.devices.EXECUTE":
-                    ExecuteResponse executeResponse = mySmartHomeApp.onExecute((ExecuteRequest) smartHomeRequest, data);
+                    ExecuteResponse executeResponse = googleSmartHomeApp.onExecute((ExecuteRequest) smartHomeRequest, data);
                     responseJson = JSONObject.parseObject(executeResponse.build().toString());
                     break;
 
                 case "action.devices.DISCONNECT":
-                    mySmartHomeApp.onDisconnect((DisconnectRequest) smartHomeRequest, data);
+                    googleSmartHomeApp.onDisconnect((DisconnectRequest) smartHomeRequest, data);
                     break;
 
                 default:

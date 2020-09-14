@@ -65,5 +65,7 @@ public class DeviceKey implements Serializable {
      */
     private String alexaStateName;
 
+    private Integer statusType;
+
 
 }

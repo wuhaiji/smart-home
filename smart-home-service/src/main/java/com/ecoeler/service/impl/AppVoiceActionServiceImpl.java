@@ -2,14 +2,14 @@ package com.ecoeler.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ecoeler.app.bean.v1.DeviceInfo;
+import com.ecoeler.app.bean.v1.DeviceStateBean;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
 import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
-import com.ecoeler.app.entity.Device;
-import com.ecoeler.app.entity.DeviceType;
-import com.ecoeler.app.entity.Room;
-import com.ecoeler.app.entity.UserFamily;
+import com.ecoeler.app.entity.*;
 import com.ecoeler.app.service.*;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.AppVoiceCode;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
+
     @Autowired
     IUserFamilyService iUserFamilyService;
 
@@ -41,6 +42,9 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
     @Autowired
     IDeviceKeyService iDeviceKeyService;
+
+    @Autowired
+    IDeviceDataService iDeviceDataService;
 
     /**
      * 根据用户ID查询用户的设备列表
@@ -75,7 +79,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
             //查询设备对应房间信息集合
             QueryWrapper<Room> roomQuery = new QueryWrapper<>();
-            deviceQuery.in("id", roomIds);
+            roomQuery.in("id", roomIds);
             List<Room> rooms = iRoomService.list(roomQuery);
             Map<Long, Room> roomMap = rooms.parallelStream().collect(Collectors.toMap(Room::getId, i -> i));
 
@@ -129,15 +133,58 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
     }
 
     @Override
-    public Map<String, Object> getUserDeviceStates(DeviceVoiceDto userVoiceDto) {
+    public DeviceInfo getUserDeviceStates(DeviceVoiceDto userVoiceDto) {
 
         if (userVoiceDto == null || userVoiceDto.getDeviceId() == null)
             throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
+        //查询设备在线离线
+        Device device = iDeviceService.getById(userVoiceDto.getDeviceId());
 
-        //先查询设备在线离线
-        Device byId = iDeviceService.getById(userVoiceDto.getDeviceId());
+        //查询设备data
+        QueryWrapper<DeviceData> deviceDataQuery = new QueryWrapper<>();
+        deviceDataQuery.eq("device_id", device.getProductId());
+        List<DeviceData> deviceDatas = iDeviceDataService.list(deviceDataQuery);
+        List<String> deviceKeyList = deviceDatas.parallelStream().map(deviceData -> deviceData.getDataKey()).collect(Collectors.toList());
+        Map<String, DeviceData> deviceDataMap = deviceDatas.parallelStream().collect(Collectors.toMap(DeviceData::getDataKey, i -> i));
 
-        return null;
+
+        //查询设备可控可上传key
+        QueryWrapper<DeviceKey> deviceKeyQuery = new QueryWrapper<>();
+        deviceKeyQuery.in("device_key", deviceKeyList);
+        deviceKeyQuery.eq("status_type", 1);
+        List<DeviceKey> deviceKeys = iDeviceKeyService.list(deviceKeyQuery);
+
+
+        DeviceInfo deviceInfo = DeviceInfo.of().setOnline(device.getNetState() == 1);
+
+        List<DeviceStateBean> deviceStateBeans = deviceKeys.parallelStream().map(it -> {
+
+            DeviceStateBean deviceStateBean = DeviceStateBean.of()
+                    .setDeviceId(device.getId())
+                    .setAlexaStateName(it.getAlexaStateName())
+                    .setGoogleStateName(it.getGoogleStateName())
+                    .setAlexaNamespace(it.getAlexaNamespace());
+
+            DeviceData deviceData = deviceDataMap.get(it.getDataKey());
+            if (deviceData != null) {
+                deviceStateBean.setValue(deviceData.getDataValue());
+            }
+
+            return deviceStateBean;
+        }).collect(Collectors.toList());
+
+        deviceInfo.setDeviceStateBeans(deviceStateBeans);
+
+        return deviceInfo;
+    }
+
+
+    @Override
+    public Device getDeviceNetState(DeviceVoiceDto deviceVoiceDto) {
+        if (deviceVoiceDto == null || deviceVoiceDto.getDeviceId() == null)
+            throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
+        //查询设备在线离线
+        return iDeviceService.getById(deviceVoiceDto.getDeviceId());
     }
 
 }

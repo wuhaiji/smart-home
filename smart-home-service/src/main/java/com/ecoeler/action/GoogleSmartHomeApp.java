@@ -1,6 +1,8 @@
 package com.ecoeler.action;
 
 import cn.hutool.core.util.StrUtil;
+import com.ecoeler.app.bean.v1.DeviceInfo;
+import com.ecoeler.app.bean.v1.DeviceStateBean;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
 import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
@@ -14,11 +16,17 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class MySmartHomeApp extends SmartHomeApp {
+public class GoogleSmartHomeApp extends SmartHomeApp {
+
+    public static final String GOOGLE_NET_STATE_KEY = "on";
 
     @Autowired
     private AppVoiceActionService appVoiceActionService;
@@ -51,11 +59,13 @@ public class MySmartHomeApp extends SmartHomeApp {
         for (QueryRequest.Inputs.Payload.Device device : devices) {
             try {
                 DeviceVoiceDto userVoiceDto = DeviceVoiceDto.of().setDeviceId(Long.valueOf(device.getId()));
-                Map<String, Object> states = appVoiceActionService.getUserDeviceStates(userVoiceDto);
-                if (states.containsKey("on")) {
-                    String on = (String) states.get("on");
-                    states.put("on", !on.equals("0"));
-                }
+                DeviceInfo deviceInfo = appVoiceActionService.getUserDeviceStates(userVoiceDto);
+                List<DeviceStateBean> deviceStateBeans = deviceInfo.getDeviceStateBeans();
+
+                Map<String, Object> states = deviceStateBeans.parallelStream()
+                        .collect(Collectors.toMap(DeviceStateBean::getGoogleStateName, DeviceStateBean::getValue));
+
+                states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
                 deviceStates.put(device.id, states);
                 // ReportState.makeRequest(this, userId, device.id, states);
             } catch (Exception e) {

@@ -34,10 +34,10 @@ import java.util.Map;
  * values.
  * 请求上报状态
  */
-final class ReportState {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MySmartHomeApp.class);
+final class GoogleReportState {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleSmartHomeApp.class);
 
-    private ReportState() {
+    private GoogleReportState() {
     }
 
     /**
@@ -52,7 +52,7 @@ final class ReportState {
         LOGGER.info("begin state report!!!!!");
         // Convert a Map of states to a JsonObject
         JsonObject jsonStates = (JsonObject) JsonParser.parseString(new Gson().toJson(states));
-        ReportState.makeRequest(actionsApp, userId, deviceId, jsonStates);
+        GoogleReportState.makeRequest(actionsApp, userId, deviceId, jsonStates);
     }
 
     /**
