@@ -3,11 +3,10 @@ package com.ecoeler.action;
 import cn.hutool.core.util.StrUtil;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
 import com.ecoeler.app.dto.v1.UserDto;
-import com.ecoeler.app.service.IAppUserService;
-import com.ecoeler.exception.CustomException;
+import com.ecoeler.app.service.AppVoiceActionService;
+import com.ecoeler.exception.ServiceException;
 import com.google.actions.api.smarthome.*;
 import com.google.home.graph.v1.DeviceProto;
-
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +22,7 @@ import java.util.Map;
 public class MySmartHomeApp extends SmartHomeApp {
 
     @Autowired
-    private IAppUserService appUserService;
+    private AppVoiceActionService appVoiceActionService;
 
     @Override
     public void onDisconnect(@NotNull DisconnectRequest disconnectRequest, @Nullable Map<?, ?> map) {
@@ -46,12 +45,12 @@ public class MySmartHomeApp extends SmartHomeApp {
     @Override
     public SyncResponse onSync(@NotNull SyncRequest syncRequest, @Nullable Map<?, ?> map) {
 
-        if (map == null) throw new CustomException("google voice params map can not be empty");
+        if (map == null) throw new ServiceException("google voice params map can not be empty");
 
         Long userId = Long.valueOf((String) map.get("userId"));
 
         UserDto userDto = UserDto.of().setUserId(userId);
-        List<DeviceVoiceBean> deviceVoiceBeans = appUserService.getDeviceVoiceBeans(userDto);
+        List<DeviceVoiceBean> deviceVoiceBeans = appVoiceActionService.getDeviceVoiceBeans(userDto);
 
         SyncResponse response = new SyncResponse();
         response.setRequestId(syncRequest.requestId);

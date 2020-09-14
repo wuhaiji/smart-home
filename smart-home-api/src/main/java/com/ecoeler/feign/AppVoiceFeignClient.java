@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @author whj
  * @since 2020/9/11
  */
-@FeignClient(
-        value = "smart-home-service",
-        path = "/app-voice"
-)
+@FeignClient(name = "smart-home-service", path = "/app-voice",contextId="voice")
 public interface AppVoiceFeignClient {
 
     /**
