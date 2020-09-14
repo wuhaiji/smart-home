@@ -25,30 +25,30 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class RestUtils {
     private static final Logger log = LoggerFactory.getLogger(RestUtils.class);
     private static RestTemplate restTemplate = SpringUtils.getBean("restTemplate");
-    private static ThreadPoolExecutor executor = SpringUtils.getBean("threadPoolExecutor");
+    // private static ThreadPoolExecutor executor = SpringUtils.getBean("threadPoolExecutor");
 
 
-    /**
-     * 异步发送放在requestBody里面的formData格式参数的post请求
-     *
-     * @param map 请求参数
-     * @param url 请求地址
-     * @return 包装responseBody的string内容的future对象
-     */
-    public static Future<String> asyncPostForBody(Map<String, Object> map, String url) {
-        return executor.submit(() -> postForBody(map, url));
-    }
-
-    /**
-     * 异步发送放在requestBody里面的formData格式参数的post请求
-     *
-     * @param map 请求参数
-     * @param url 请求地址
-     * @return 包装responseBody的JSONObject的future对象
-     */
-    public static Future<String> asyncPostForJson(Map<String, Object> map, String url) {
-        return executor.submit(() -> postForBody(map, url));
-    }
+    // /**
+    //  * 异步发送放在requestBody里面的formData格式参数的post请求
+    //  *
+    //  * @param map 请求参数
+    //  * @param url 请求地址
+    //  * @return 包装responseBody的string内容的future对象
+    //  */
+    // public static Future<String> asyncPostForBody(Map<String, Object> map, String url) {
+    //     return executor.submit(() -> postForBody(map, url));
+    // }
+    //
+    // /**
+    //  * 异步发送放在requestBody里面的formData格式参数的post请求
+    //  *
+    //  * @param map 请求参数
+    //  * @param url 请求地址
+    //  * @return 包装responseBody的JSONObject的future对象
+    //  */
+    // public static Future<String> asyncPostForJson(Map<String, Object> map, String url) {
+    //     return executor.submit(() -> postForBody(map, url));
+    // }
 
     /**
      * 发送放在requestBody里面的formData格式参数的post请求，返回responseBody的string内容

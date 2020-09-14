@@ -44,6 +44,19 @@ public class DeviceType implements Serializable {
     private LocalDateTime updateTime;
 
     private LocalDateTime createTime;
+    /**
+     * 谷歌类型名称
+     */
+    private String googleTypeName;
+    /**
+     * 谷歌类型所具有的特性，逗号分隔
+     */
+    private String googleTraitName;
+    /**
+     * 设备类型对应alexa app的展示名称
+     */
+    private String alexaDisplayName;
+
 
 
 }

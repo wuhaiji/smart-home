@@ -1,6 +1,7 @@
 package com.ecoeler.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ecoeler.app.bean.v1.DeviceVoiceBean;
 import com.ecoeler.app.dto.v1.UserDto;
 import com.ecoeler.app.entity.AppUser;
 
@@ -15,5 +16,10 @@ import java.util.List;
  * @since 2020-09-10
  */
 public interface IAppUserService extends IService<AppUser> {
-
+    /**
+     * 根据用户ID查询用户的设备列表
+     * @param userDto
+     * @return
+     */
+    List<DeviceVoiceBean> getDeviceVoiceBeans(UserDto userDto);
 }
