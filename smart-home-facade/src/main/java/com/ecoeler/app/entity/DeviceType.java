@@ -51,7 +51,7 @@ public class DeviceType implements Serializable {
     /**
      * 谷歌类型所具有的特性，逗号分隔
      */
-    private String googleTraitName;
+    private String googleTraitNames;
     /**
      * 设备类型对应alexa app的展示名称
      */

@@ -24,11 +24,25 @@ public interface Oauth2ClientService {
      * @return
      */
     @PostMapping(value = "/token?client_id={clientId}&client_secret={clientSecret}&username={username}&password={password}&grant_type=password")
-    Oauth2Token getTokenByPasswordModel(
+    Oauth2Token getToken(
             @PathVariable("clientId") String clientId,
             @PathVariable("clientSecret") String clientSecret,
             @PathVariable("username") String username,
             @PathVariable("password") String password);
+
+
+    /**
+     * 刷新token
+     * @param clientId
+     * @param clientSecret
+     * @param refreshToken
+     * @return
+     */
+    @PostMapping(value = "/token?client_id={clientId}&client_secret={clientSecret}&grant_type=refresh_token&refresh_token={refreshToken}")
+    Oauth2Token refreshToken(
+            @PathVariable("clientId") String clientId,
+            @PathVariable("clientSecret") String clientSecret,
+            @PathVariable("refreshToken") String refreshToken);
 
 
 }

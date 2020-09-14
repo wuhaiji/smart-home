@@ -6,8 +6,10 @@ import com.ecoeler.exception.ServiceException;
 import com.ecoeler.utils.AliMail;
 import com.ecoeler.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,12 +26,16 @@ public class AliEmailCodeServiceImpl implements IEmailCodeService {
     @Autowired
     private RedisUtil redisUtil;
 
+    private Random random=new Random();
+
     String generateCode(){
-        StringBuilder stringBuilder=new StringBuilder();
+        StringBuilder code= new StringBuilder();
+
         for(int i=0;i<6;i++){
-            stringBuilder.append(Math.random()*10);
+            code.append( Math.abs(random.nextInt(10) ));
         }
-        return stringBuilder.toString();
+
+        return code.toString();
     }
 
     @Override
@@ -39,6 +45,7 @@ public class AliEmailCodeServiceImpl implements IEmailCodeService {
         }
     }
 
+    @Async
     @Override
     public void sendCode(String email) {
         String code=generateCode();

@@ -1,12 +1,13 @@
-package com.ecoeler.code;
+package com.ecoeler.model.code;
 
-
-import com.ecoeler.model.code.ResultCode;
 
 public enum AppVoiceCode implements ResultCode {
 
-    ACTION_EXECUTION_EXCEPTION("30000", "action执行异常"),
+    ACTION_EXECUTION_ERROR("30000", " error occurred in action execute"),
 
+    ACTION_SELECT_DEVICE_LIST_ERROR("30001", " error occurred in query user device list "),
+
+    ACTION_PARAMS_ERROR("30002", " userId can not be null "),
     ;
 
 

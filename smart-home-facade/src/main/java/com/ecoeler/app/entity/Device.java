@@ -43,9 +43,19 @@ public class Device implements Serializable {
     private LocalDateTime updateTime;
 
     /**
-     * roomId
+     * 设备所属房间ID，没有的房间默认为0
      */
     private Long roomId;
+
+    /**
+     * 所属家庭id
+     */
+    private Long familyId;
+
+    /**
+     * 在线离线 ，1在线 ，0离线
+     */
+    private Integer netState;
 
 
 }

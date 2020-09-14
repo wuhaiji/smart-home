@@ -41,7 +41,13 @@ public class OpenController {
     public Result login(String email,String password){
         ExceptionUtil.notBlank(email, TangCode.CODE_EMAIL_EMPTY_ERROR);
         ExceptionUtil.notBlank(password,TangCode.CODE_PASSWORD_EMPTY_ERROR);
-        return Result.ok(oauth2ClientService.getTokenByPasswordModel(clientId,clientSecret,email,password));
+        return Result.ok(oauth2ClientService.getToken(clientId,clientSecret,email,password));
+    }
+
+    @RequestMapping("/refresh_token")
+    public Result refreshToken(String refreshToken){
+        ExceptionUtil.notBlank(refreshToken,TangCode.CODE_REFRESH_TOKEN_EMPTY_ERROR);
+        return Result.ok(oauth2ClientService.refreshToken(clientId,clientSecret,refreshToken));
     }
 
     @RequestMapping("/captcha")
