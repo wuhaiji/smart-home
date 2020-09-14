@@ -22,4 +22,12 @@ public interface IAppUserService extends IService<AppUser> {
      * @return
      */
     List<DeviceVoiceBean> getDeviceVoiceBeans(UserDto userDto);
+
+    /**
+     * 新增用户
+     * @param user
+     * @return
+     */
+    Long createUser(AppUser user);
+
 }

@@ -12,7 +12,6 @@ import com.ecoeler.app.mapper.WebUserMapper;
 import com.ecoeler.app.service.IWebUserService;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.WebUserCode;
-import com.ecoeler.util.ErrorUtils;
 import com.ecoeler.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,12 +52,12 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      */
     @Override
     public Long addWebUser(WebUser webUser) {
-        ErrorUtils.isStringEmpty(webUser.getUserName(),"用户名");
-        ErrorUtils.isStringEmpty(webUser.getPassword(),"密码");
-        ErrorUtils.isNumberValueIn(webUser.getPassword().length(),6,16,"密码长度");
-        ErrorUtils.isStringEmpty(webUser.getEmail(),"邮箱");
-        ErrorUtils.isStringMatch(webUser.getEmail(),"^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$","邮箱格式");
-        ErrorUtils.isNullable(webUser.getPhoneNumber(),"手机号");
+//        ErrorUtils.isStringEmpty(webUser.getUserName(),"用户名");
+//        ErrorUtils.isStringEmpty(webUser.getPassword(),"密码");
+//        ErrorUtils.isNumberValueIn(webUser.getPassword().length(),6,16,"密码长度");
+//        ErrorUtils.isStringEmpty(webUser.getEmail(),"邮箱");
+//        ErrorUtils.isStringMatch(webUser.getEmail(),"^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$","邮箱格式");
+//        ErrorUtils.isNullable(webUser.getPhoneNumber(),"手机号");
 
         try {
             String password=passwordEncoder.encode(webUser.getPassword());
@@ -77,7 +76,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      */
     @Override
     public void updateWebUser(WebUser webUser) {
-        ErrorUtils.isNullable(webUser.getId(),"用户Id");
+        //ErrorUtils.isNullable(webUser.getId(),"用户Id");
         try {
             baseMapper.updateById(webUser);
         }catch (Exception e){
@@ -120,7 +119,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
             endTime= TimeUtil.timeFormat(end);
         }
         if (startTime!=null&&endTime!=null){
-            ErrorUtils.isTimeBefore(startTime,endTime,"");
+            //ErrorUtils.isTimeBefore(startTime,endTime,"");
         }
         QueryWrapper<WebUser> queryWrapper=new QueryWrapper<>();
         queryWrapper.select("id","user_name","email","update_time","create_time","phone_number","role_id","role");

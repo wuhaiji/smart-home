@@ -4,6 +4,7 @@ package com.ecoeler.utils;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @author tang
  * @since 2020/9/10
  */
+@Slf4j
 @Component
 public class HutoolCaptchaUtil {
 
@@ -30,7 +32,9 @@ public class HutoolCaptchaUtil {
 
         ShearCaptcha shearCaptcha = CaptchaUtil.createShearCaptcha(200, 100, 4, 4);
 
-        redisUtil.setEx("APP_CAPTCHA:"+username, JSONObject.toJSONString(shearCaptcha),5L, TimeUnit.MINUTES);
+        redisUtil.setEx("APP_CAPTCHA:"+username, shearCaptcha.getCode(),5L, TimeUnit.MINUTES);
+
+        log.info("----username:{},code:{}",username,shearCaptcha.getCode());
 
         return shearCaptcha.getImageBase64Data();
 
@@ -39,12 +43,15 @@ public class HutoolCaptchaUtil {
 
     public boolean verify(String username , String code){
 
-        ShearCaptcha shearCaptcha = JSONObject.parseObject(redisUtil.get("APP_CAPTCHA:" + username), ShearCaptcha.class);
+        String realCode=redisUtil.get("APP_CAPTCHA:" + username);
 
         //无论验证成功失败，都删除验证码
         redisUtil.delete("APP_CAPTCHA:" + username);
+        if(realCode==null){
+            return false;
+        }
 
-        return shearCaptcha.verify(code);
+        return realCode.equals(code);
     }
 
 

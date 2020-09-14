@@ -1,30 +1,28 @@
 package com.ecoeler.code;
 
-
 import com.ecoeler.model.code.ResultCode;
 
-public enum AppUserCode implements ResultCode {
+
+/**
+ * OAUTH2错误码
+ * @author tang
+ * @since 2020/9/14
+ */
+public enum  Oauth2ClientCode implements ResultCode {
 
     /** 登录失败 **/
-    CODE_LOGIN_ERROR("20000", "登录失败，账号或密码错误！"),
+    CODE_BAD_CREDENTIALS("40000", "登录失败，账号或密码错误");
 
-    /** 验证码错误 **/
-    CODE_CAPTCHA_ERROR("20001","图片验证码错误！");
+    Oauth2ClientCode(String code,String msg){
 
-
-    AppUserCode(String code, String msg) {
         this.code = code;
+
         this.msg = msg;
+
     }
 
-    /**
-     * 错误码
-     */
     private final String code;
 
-    /**
-     * 错误描述
-     */
     private final String msg;
 
 
