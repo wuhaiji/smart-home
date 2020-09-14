@@ -2,11 +2,11 @@ package com.ecoeler.feign;
 
 import com.ecoeler.model.request.OauthPasswordRequest;
 import com.ecoeler.model.response.Result;
+import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 账号密码模式token
@@ -22,7 +22,8 @@ public interface Oauth2ClientService {
      * @return
      */
     @PostMapping(value = "/token")
-    Result<OAuth2AccessToken> getTokenByPasswordModel(OauthPasswordRequest request);
+    @Headers(value={"ContentType=application/x-www-form-urlencoded"})
+    Result<OAuth2AccessToken> getTokenByPasswordModel(@RequestBody OauthPasswordRequest request);
 
 
     /**
