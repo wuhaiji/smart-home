@@ -7,6 +7,7 @@ package com.ecoeler.model.code;
  */
 public enum CommonCode implements ResultCode {
 
+    //
     SUCCESS("10000", "成功!"),
 
     UNAUTHENTICATED("10001", "需要登陆系统！"),
