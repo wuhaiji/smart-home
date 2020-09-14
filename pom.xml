@@ -45,6 +45,7 @@
         <spring-cloud-alibaba.version>2.1.0.RELEASE</spring-cloud-alibaba.version>
 
         <hutool.version>5.4.2</hutool.version>
+        <alidm.version>3.1.0</alidm.version>
     </properties>
 
     <dependencyManagement>
@@ -63,6 +64,11 @@
                 <version>${spring-cloud-openfeign.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-dm</artifactId>
+                <version>${alidm.version}</version>
+            </dependency>
 
             <!-- oauth2 -->
             <dependency>

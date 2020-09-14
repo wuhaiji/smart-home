@@ -30,11 +30,6 @@ public class AppUser implements Serializable {
     private Long id;
 
     /**
-     * 账号
-     */
-    private String account;
-
-    /**
      * 用户姓名
      */
     private String username;

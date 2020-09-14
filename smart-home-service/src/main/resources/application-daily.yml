@@ -41,3 +41,9 @@ management:
     web:
       exposure:
         include: "*"
+
+# 阿里邮箱
+ali:
+  account:
+    accessKey: LTAI4FwCUMja2wn74aYAtG2i
+    secret: wYGK907NaHNvK7jDvocLC1v4m7H7vj

@@ -1,5 +1,6 @@
 package com.ecoeler.feign;
 
+import com.ecoeler.config.Oauth2FeignExceptionConfiguration;
 import com.ecoeler.model.response.Oauth2Token;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @author tang
  * @since 2020/9/11
  */
-@FeignClient(value = "app-oauth2", path = "/oauth")
+@FeignClient(value = "app-oauth2", path = "/oauth" , configuration = Oauth2FeignExceptionConfiguration.class)
 public interface Oauth2ClientService {
 
     /**
