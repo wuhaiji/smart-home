@@ -23,7 +23,7 @@ public interface AppVoiceFeignClient {
      * @param data 请求数据
      * @return
      */
-    @PostMapping("/google/action")
+    @PostMapping("/action")
     Result<String> action(JSONObject data);
 
 }

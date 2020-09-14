@@ -11,6 +11,7 @@
 
     <artifactId>smart-home-service</artifactId>
 
+    <!--        com.google.protobuf:protobuf-java:3.10.0-->
     <dependencies>
         <dependency>
             <groupId>com.ecoeler</groupId>
@@ -80,7 +81,6 @@
             <groupId>com.google.actions</groupId>
             <artifactId>actions-on-google</artifactId>
             <version>1.8.0</version>
-            <scope>compile</scope>
         </dependency>
 
         <!--gson-->
@@ -96,6 +96,14 @@
             <artifactId>guava</artifactId>
             <version>28.1-jre</version>
         </dependency>
+
+        <!--protobuf-->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.10.0</version>
+        </dependency>
+
     </dependencies>
 
 

@@ -55,7 +55,7 @@ public class GoogleAction {
             LinkedHashMap intent = (LinkedHashMap) inputs.get(0);
             String namespace = (String) intent.get("intent");
 
-            System.out.println("begin========================================================================================================================");
+            System.out.println("begin================================================================================");
             log.info("intend:" + namespace);
             switch (namespace) {
                 case "action.devices.SYNC":
@@ -94,7 +94,7 @@ public class GoogleAction {
 
         log.info("responseJson:" + responseJson.toJSONString());
 
-        System.out.println("begin===========================================================================================================================");
+        System.out.println("begin====================================================================================");
 
         return responseJson.toJSONString();
     }

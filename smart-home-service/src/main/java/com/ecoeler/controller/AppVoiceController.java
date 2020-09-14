@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppVoiceController {
 
     private static final String GOOGLE_CLIENT = "google_client";
-    private static final String ALEXA_CLIENT = "ALEXA_CLIENT";
+    private static final String ALEXA_CLIENT = "alexa_client";
 
     @Autowired
     GoogleAction googleAction;
@@ -24,7 +24,7 @@ public class AppVoiceController {
     @Autowired
     AlexaAction alexaAction;
 
-    @PostMapping("action")
+    @PostMapping("/action")
     public Result action(JSONObject data) {
 
         String clientId = data.getString(AppVoiceConstant.DTO_KEY_CLIENT_ID);
