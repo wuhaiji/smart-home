@@ -9,6 +9,8 @@ import com.ecoeler.app.mapper.AppUserMapper;
 import com.ecoeler.app.service.IAppUserService;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.exception.ServiceException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,8 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
         return null;
     }
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Long createUser(AppUser user) {
@@ -39,6 +43,8 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
         if(baseMapper.selectCount(queryWrapper)>0){
             throw new ServiceException(TangCode.CODE_USER_EXIST);
         }
+
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
         //新增用户
         baseMapper.insert(user);

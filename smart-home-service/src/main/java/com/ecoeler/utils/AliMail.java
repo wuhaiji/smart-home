@@ -29,7 +29,6 @@ public class AliMail {
     @Value("${ali.account.secret}")
     private String secret;
 
-    @Async
     public void sendCode(String mail,String code) {
         // 如果是除杭州region外的其它region（如新加坡、澳洲Region），需要将下面的"cn-hangzhou"替换为"ap-southeast-1"、或"ap-southeast-2"。
         IClientProfile profile = DefaultProfile.getProfile(
