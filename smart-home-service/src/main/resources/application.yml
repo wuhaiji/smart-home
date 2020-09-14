@@ -1,6 +1,7 @@
-server:
-  port: 11010
-
 spring:
   profiles:
     active: daily
+  cloud:
+    nacos:
+      discovery:
+        namespace: tang
