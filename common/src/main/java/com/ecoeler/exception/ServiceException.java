@@ -9,7 +9,7 @@ import lombok.Data;
  * @since  2020-02-09 17:29
  **/
 @Data
-public class CustomException extends RuntimeException {
+public class ServiceException extends RuntimeException {
 
     /**
      * 错误码
@@ -20,34 +20,34 @@ public class CustomException extends RuntimeException {
      */
     protected String msg;
 
-    public CustomException() {
+    public ServiceException() {
         super();
     }
 
-    public CustomException(ResultCode errorInfoInterface) {
+    public ServiceException(ResultCode errorInfoInterface) {
         super(errorInfoInterface.getCode());
         this.code = errorInfoInterface.getCode();
         this.msg = errorInfoInterface.getMsg();
     }
 
-    public CustomException(ResultCode code, Throwable cause) {
+    public ServiceException(ResultCode code, Throwable cause) {
         super(code.getCode(), cause);
         this.code = code.getCode();
         this.msg = code.getMsg();
     }
 
-    public CustomException(String msg) {
+    public ServiceException(String msg) {
         super(msg);
         this.msg = msg;
     }
 
-    public CustomException(String code, String msg) {
+    public ServiceException(String code, String msg) {
         super(code);
         this.code = code;
         this.msg = msg;
     }
 
-    public CustomException(String code, String msg, Throwable cause) {
+    public ServiceException(String code, String msg, Throwable cause) {
         super(code, cause);
         this.code = code;
         this.msg = msg;

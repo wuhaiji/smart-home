@@ -11,7 +11,7 @@ import com.ecoeler.model.response.Result;
  **/
 public class ExceptionCast {
     public static void cast(ResultCode resultCode) {
-        throw new CustomException(resultCode);
+        throw new ServiceException(resultCode);
     }
 
     /**
@@ -22,11 +22,11 @@ public class ExceptionCast {
     public static void feignCast(Result result) {
         //网络异常
         if (result == null) {
-            throw new CustomException(CommonCode.NETWORK_ANOMALY);
+            throw new ServiceException(CommonCode.NETWORK_ANOMALY);
         }
         //业务异常
         if (!CommonCode.SUCCESS.getCode().equals(result.getCode())) {
-            throw new CustomException(result.getCode(), result.getMessage());
+            throw new ServiceException(result.getCode(), result.getMessage());
         }
 
     }
