@@ -18,4 +18,6 @@ import java.util.List;
 public interface IWebRolePermissionService extends IService<WebRolePermission> {
 
     void customizationPermission(List<Long> permissionIds, Long roleId);
+
+    List<WebRolePermission> selectPermissionList(Long roleId);
 }

@@ -2,10 +2,12 @@ package com.ecoeler.app.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.entity.WebRole;
 
 
 import javax.management.relation.Role;
+import java.util.List;
 
 /**
  * <p>
@@ -22,4 +24,6 @@ public interface IWebRoleService extends IService<WebRole> {
     void updateRole(WebRole webRole);
 
     void deleteRole(Long id);
+
+    List<WebRoleBean> selectRoleList();
 }

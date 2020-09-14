@@ -2,7 +2,10 @@ package com.ecoeler.app.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.entity.WebUser;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,4 +17,5 @@ import com.ecoeler.app.entity.WebUser;
  */
 public interface WebUserMapper extends BaseMapper<WebUser> {
 
+    List<WebRoleBean> selectUserCountByRoleId();
 }

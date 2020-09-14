@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.format.ResolverStyle;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
  * @since 2020-09-10
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/web-permission")
 public class WebPermissionController {
     @Autowired
@@ -31,10 +32,22 @@ public class WebPermissionController {
      * 查询所有菜单权限
      * @return
      */
+    @RequestMapping("/query/all/menu/permission")
     public Result queryAllMenuPermission(){
         log.info("开始查询所有菜单权限");
         List<MenuWebPermissionBean> result=iWebPermissionService.selectAllMenuPermission();
         return Result.ok(result);
     }
+    /***
+     * 根据roleId获取权限
+     * @return
+     */
+    @RequestMapping("/query/by/roleId")
+    public Result queryPermissionByRoleId(Long roleId){
+        log.info("开始根据角色Id 获取用户权限");
+        List<String> result=iWebPermissionService.selectPermissionByRoleId(roleId);
+        return Result.ok(result);
+    }
+
 
 }

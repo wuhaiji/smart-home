@@ -19,4 +19,6 @@ import java.util.List;
 public interface IWebPermissionService extends IService<WebPermission> {
 
     List<MenuWebPermissionBean> selectAllMenuPermission();
+
+    List<String> selectPermissionByRoleId(Long roleId);
 }

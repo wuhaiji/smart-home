@@ -5,14 +5,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.bean.v1.MenuWebPermissionBean;
 import com.ecoeler.app.entity.WebPermission;
+import com.ecoeler.app.entity.WebRolePermission;
 import com.ecoeler.app.mapper.WebPermissionMapper;
 import com.ecoeler.app.service.IWebPermissionService;
+import com.ecoeler.app.service.IWebRolePermissionService;
+import com.ecoeler.cache.SetCache;
+import com.ecoeler.exception.CustomException;
+import com.ecoeler.model.code.PermissionCode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -24,44 +28,82 @@ import java.util.Map;
  */
 @Service
 public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, WebPermission> implements IWebPermissionService {
+    @Autowired
+    private IWebRolePermissionService iWebRolePermissionService;
     /**
      * 查询所菜单权限
      * @return
      */
     @Override
     public List<MenuWebPermissionBean> selectAllMenuPermission() {
-        QueryWrapper<WebPermission> queryWrapper=new QueryWrapper<>();
-        queryWrapper.select("id","permission_name","parent_id");
-        queryWrapper.eq("source_type",1);
-        //查询所有菜单权限
-        List<WebPermission> webPermissions = baseMapper.selectList(queryWrapper);
-        if (webPermissions!=null&&webPermissions.size()!=0){
-            List<Long> exit=new ArrayList<>();
-            //可以用id获取到权限
-            Map<Long,WebPermission> menuWebPermissionBeanMap=new HashMap<>();
-            for (WebPermission webPermission : webPermissions) {
-                menuWebPermissionBeanMap.put(webPermission.getId(),webPermission);
-            }
-            //封装结果
-            List<MenuWebPermissionBean> result=new ArrayList<>();
-            //封装无父菜单
-            for (WebPermission webPermission : webPermissions) {
-                if (menuWebPermissionBeanMap.get(webPermission.getId()).getParentId()==null){
-                    MenuWebPermissionBean bean=new MenuWebPermissionBean();
-                    bean.setId(webPermission.getId());
-                    bean.setMenu(webPermission.getPermissionName());
-                    result.add(bean);
-                }
-            }
-            //封装子菜单
-            for (WebPermission webPermission : webPermissions) {
-                if (menuWebPermissionBeanMap.get(webPermission.getId()).getParentId()!=null){
-                    WebPermission parent;
-                }
-            }
+       try {
+           QueryWrapper<WebPermission> queryWrapper=new QueryWrapper<>();
+           queryWrapper.select("id","permission_name","parent_id");
+           queryWrapper.eq("source_type",0);
+           //查询所有菜单权限
+           List<WebPermission> webPermissions = baseMapper.selectList(queryWrapper);
+           if (webPermissions!=null&&webPermissions.size()!=0){
+               Map<Long,MenuWebPermissionBean> menuWebIdToPermissionMap=new HashMap<>();
+               List<MenuWebPermissionBean> root=new ArrayList<>();
+               //分类 将统一父节点的分到同一组 Long 父节点的id
+               Map<Long,List<MenuWebPermissionBean>> menuWebPermissionBeanMap=new HashMap<>();
 
-
-        }
-        return null;
+               for (WebPermission webPermission : webPermissions) {
+                   Long parentId = webPermission.getParentId();
+                   List<MenuWebPermissionBean> children=null;
+                   //有父节点
+                   if (parentId!=null){
+                       if (menuWebPermissionBeanMap.get(parentId)!=null){
+                           children=menuWebPermissionBeanMap.get(parentId);
+                       }else {
+                           children=new ArrayList<>();
+                       }
+                       MenuWebPermissionBean bean=new MenuWebPermissionBean(webPermission.getId(),webPermission.getPermissionName());
+                       menuWebIdToPermissionMap.put(bean.getId(),bean);
+                       children.add(bean);
+                       menuWebPermissionBeanMap.put(parentId,children);
+                   }else {
+                       //根节点
+                       MenuWebPermissionBean bean=new MenuWebPermissionBean(webPermission.getId(),webPermission.getPermissionName());
+                       root.add(bean);
+                       menuWebIdToPermissionMap.put(bean.getId(),bean);
+                   }
+               }
+               //将所有子节点挂载到响应的父节点上
+               for (Map.Entry<Long, List<MenuWebPermissionBean>> entry : menuWebPermissionBeanMap.entrySet()) {
+                   MenuWebPermissionBean bean = menuWebIdToPermissionMap.get(entry.getKey());
+                   bean.setChildren(entry.getValue());
+               }
+               return root;
+           }
+           return null;
+       }catch (Exception e){
+           log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
+           throw new CustomException(PermissionCode.SELECT_ALL_MENU_PERMISSION);
+       }
     }
+
+    /**
+     * 根据角色id查询权限
+     * @param roleId
+     * @return
+     */
+    @SetCache("PER#${roleId}")
+    @Override
+    public List<String> selectPermissionByRoleId(Long roleId) {
+       try {
+           List<WebRolePermission> permissions= iWebRolePermissionService.selectPermissionList(roleId);
+           List<WebPermission> webPermissions = baseMapper.selectBatchIds(permissions.stream().map(WebRolePermission::getPermissionId).collect(Collectors.toSet()));
+           if (webPermissions!=null&&webPermissions.size()!=0){
+               return webPermissions.stream().map(WebPermission::getPermissionName).collect(Collectors.toList());
+           }
+           return null;
+       }catch (Exception e){
+           log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
+           throw new CustomException(PermissionCode.SELECT_PERMISSION_BY_ROLE_ID);
+       }
+    }
+
+
 }
+
