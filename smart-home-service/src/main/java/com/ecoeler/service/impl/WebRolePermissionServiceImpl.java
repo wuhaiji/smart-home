@@ -7,7 +7,7 @@ import com.ecoeler.app.entity.WebRolePermission;
 import com.ecoeler.app.mapper.WebRolePermissionMapper;
 import com.ecoeler.app.service.IWebRolePermissionService;
 import com.ecoeler.cache.ClearCache;
-import com.ecoeler.exception.CustomException;
+import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.CommonCode;
 import com.ecoeler.model.code.PermissionCode;
 import org.springframework.stereotype.Service;
@@ -50,13 +50,13 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
                saveBatch(list);
            }else {
                log.error("未选择权限");
-               throw  new CustomException(CommonCode.INVALID_PARAM);
+               throw  new ServiceException(CommonCode.INVALID_PARAM);
            }
-       }catch (CustomException e){
-           throw  new CustomException(e.getCode(),e.getMsg());
+       }catch (ServiceException e){
+           throw  new ServiceException(e.getCode(),e.getMsg());
        }catch (Exception e){
            log.error("定制权限异常");
-           throw  new CustomException(PermissionCode.CUSTOMIZATION);
+           throw  new ServiceException(PermissionCode.CUSTOMIZATION);
        }
     }
 

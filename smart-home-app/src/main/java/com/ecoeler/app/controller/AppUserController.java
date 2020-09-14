@@ -1,17 +1,12 @@
 package com.ecoeler.app.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.ecoeler.feign.AppUserService;
 import com.ecoeler.feign.Oauth2ClientService;
-import com.ecoeler.model.request.OauthPasswordRequest;
 import com.ecoeler.model.response.Result;
 
-import com.ecoeler.util.Oauth2PasswordRequestFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,26 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AppUserController {
 
-    @Autowired
-    private AppUserService appUserService;
+    @Value("${security.oauth2.client.client-id}")
+    private String clientId;
+
+    @Value("${security.oauth2.client.client-secret}")
+    private String clientSecret;
 
     @Autowired
     private Oauth2ClientService oauth2ClientService;
 
-    @Autowired
-    private Oauth2PasswordRequestFactory oauth2PasswordRequestFactory;
-
-
-
     @PreAuthorize("isAnonymous()")
     @RequestMapping("/login")
     public Result login(String email,String password){
-        OauthPasswordRequest build = oauth2PasswordRequestFactory.build(email, password);
-        log.info(JSONObject.toJSONString(
-                oauth2ClientService.getTokenByPasswordModel(
-                        build
-                )
-        ));
+
+        log.info(oauth2ClientService.getTokenByPasswordModel(clientId,clientSecret,email,password));
+
         return Result.ok();
     }
 

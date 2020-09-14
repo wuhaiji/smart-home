@@ -2,7 +2,7 @@ package com.ecoeler.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.ecoeler.exception.CustomException;
+import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.CommonCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,7 +236,7 @@ public class RestUtils {
 
     private static void errorHandle(String objectStr) {
         if (objectStr == null || objectStr.equals("")) {
-            throw new CustomException(CommonCode.NETWORK_ANOMALY);
+            throw new ServiceException(CommonCode.NETWORK_ANOMALY);
         }
     }
 }

@@ -5,7 +5,6 @@ import com.ecoeler.model.code.ResultCode;
 import com.ecoeler.model.response.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,9 +33,9 @@ public class ExceptionCatch {
         exceptionMap = new HashMap<>();
     }
 
-    @ExceptionHandler(CustomException.class)
+    @ExceptionHandler(ServiceException.class)
     @ResponseBody
-    public Result customException(CustomException e) {
+    public Result customException(ServiceException e) {
         log.error("catch exception:{}", e.getMsg());
         e.printStackTrace();
         return Result.error(e.getCode(), e.getMsg());

@@ -1,12 +1,10 @@
 package com.ecoeler.feign;
 
-import com.ecoeler.model.request.OauthPasswordRequest;
-import com.ecoeler.model.response.Result;
-import feign.Headers;
+import com.ecoeler.model.response.Oauth2Token;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+
 
 /**
  * 账号密码模式token
@@ -18,31 +16,18 @@ public interface Oauth2ClientService {
 
     /**
      * 账号密码获取token
-     * @param request
+     * @param clientId
+     * @param clientSecret
+     * @param username
+     * @param password
      * @return
      */
-    @PostMapping(value = "/token")
-    @Headers(value={"ContentType=application/x-www-form-urlencoded"})
-    Result<OAuth2AccessToken> getTokenByPasswordModel(@RequestBody OauthPasswordRequest request);
+    @PostMapping(value = "/token?client_id={clientId}&client_secret={clientSecret}&username={username}&password={password}&grant_type=password")
+    Oauth2Token getTokenByPasswordModel(
+            @PathVariable("clientId") String clientId,
+            @PathVariable("clientSecret") String clientSecret,
+            @PathVariable("username") String username,
+            @PathVariable("password") String password);
 
-
-    /**
-     * 账号密码获取token
-     * @param request
-     * @return
-     */
-//    @PostMapping("/token")
-//    Result<OAuth2AccessToken> getTokenByPasswordModel(
-//            @RequestParam String username,
-//
-//            @RequestParam String password,
-//
-//            @RequestParam String clientId,
-//
-//            @RequestParam String clientSecret,
-//
-//            @RequestParam String grantType
-//
-//    );
 
 }

@@ -10,7 +10,7 @@ import com.ecoeler.app.mapper.WebPermissionMapper;
 import com.ecoeler.app.service.IWebPermissionService;
 import com.ecoeler.app.service.IWebRolePermissionService;
 import com.ecoeler.cache.SetCache;
-import com.ecoeler.exception.CustomException;
+import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.PermissionCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,7 +79,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
            return null;
        }catch (Exception e){
            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-           throw new CustomException(PermissionCode.SELECT_ALL_MENU_PERMISSION);
+           throw new ServiceException(PermissionCode.SELECT_ALL_MENU_PERMISSION);
        }
     }
 
@@ -100,7 +100,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
            return null;
        }catch (Exception e){
            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-           throw new CustomException(PermissionCode.SELECT_PERMISSION_BY_ROLE_ID);
+           throw new ServiceException(PermissionCode.SELECT_PERMISSION_BY_ROLE_ID);
        }
     }
 

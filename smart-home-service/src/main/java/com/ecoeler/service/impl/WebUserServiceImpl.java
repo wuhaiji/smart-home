@@ -10,7 +10,7 @@ import com.ecoeler.app.dto.WebUserDto;
 import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.app.mapper.WebUserMapper;
 import com.ecoeler.app.service.IWebUserService;
-import com.ecoeler.exception.CustomException;
+import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.WebUserCode;
 import com.ecoeler.util.ErrorUtils;
 import com.ecoeler.util.TimeUtil;
@@ -67,7 +67,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
             return webUser.getId();
         }catch (Exception e){
             log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw  new CustomException(WebUserCode.ADD);
+            throw  new ServiceException(WebUserCode.ADD);
         }
     }
 
@@ -82,7 +82,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
             baseMapper.updateById(webUser);
         }catch (Exception e){
             log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw  new CustomException(WebUserCode.UPDATE);
+            throw  new ServiceException(WebUserCode.UPDATE);
         }
     }
 
@@ -92,7 +92,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
             baseMapper.deleteById(id);
         }catch (Exception e){
             log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw  new CustomException(WebUserCode.DELETE);
+            throw  new ServiceException(WebUserCode.DELETE);
         }
     }
 
