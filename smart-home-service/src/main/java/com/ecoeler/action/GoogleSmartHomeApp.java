@@ -1,13 +1,26 @@
 package com.ecoeler.action;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.bean.v1.DeviceInfo;
 import com.ecoeler.app.bean.v1.DeviceStateBean;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
 import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
+import com.ecoeler.app.entity.Device;
+import com.ecoeler.app.entity.DeviceType;
 import com.ecoeler.app.service.AppVoiceActionService;
+import com.ecoeler.app.service.IDeviceService;
+import com.ecoeler.app.service.IDeviceTypeService;
+import com.ecoeler.core.DeviceEvent;
+import com.ecoeler.core.msg.OrderInfo;
 import com.ecoeler.exception.ServiceException;
+import com.ecoeler.model.code.AppVoiceCode;
+import com.ecoeler.util.SpringUtils;
+import com.ecoeler.utils.SpringUtil;
 import com.google.actions.api.smarthome.*;
 import com.google.home.graph.v1.DeviceProto;
 import lombok.extern.slf4j.Slf4j;
@@ -16,20 +29,30 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class GoogleSmartHomeApp extends SmartHomeApp {
 
-    public static final String GOOGLE_NET_STATE_KEY = "on";
+    public static final String GOOGLE_NET_STATE_KEY = "online";
+    public static final String GOOGLE_ON_OFF_KEY = "on";
+    public static final String GOOGLE_COMMAND_BRIGHTNESS = "action.devices.commands.BrightnessAbsolute";
+    public static final String GOOGLE_COMMAND_ONOFF = "action.devices.commands.OnOff";
+    public static final String BRIGHTNESS_GOOGLE_PARAMS_NAME = "brightness";
+    public static final String BRIGHTNESS_YUNTUN_JSON_KEY_NAME = "light";
+    public static final int YUNTUN_ON_VALUE = 1;
+    public static final int YUNTUN_OFF_VALUE = 0;
 
     @Autowired
-    private AppVoiceActionService appVoiceActionService;
+    AppVoiceActionService appVoiceActionService;
+
+    @Autowired
+    IDeviceTypeService iDeviceTypeService;
+
+    @Autowired
+    IDeviceService iDeviceService;
 
     @Override
     public void onDisconnect(@NotNull DisconnectRequest disconnectRequest, @Nullable Map<?, ?> map) {
@@ -39,7 +62,116 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
     @NotNull
     @Override
     public ExecuteResponse onExecute(@NotNull ExecuteRequest executeRequest, @Nullable Map<?, ?> map) {
-        return null;
+        if (map == null)
+            throw new ServiceException("params map can not be empty");
+
+        Long userId = Long.valueOf((String) map.get("userId"));
+
+        ExecuteResponse res = new ExecuteResponse();
+
+        List<ExecuteResponse.Payload.Commands> commandsResponse = new ArrayList<>();
+
+        Map<String, Object> states = new HashMap<>();
+
+        ExecuteRequest.Inputs.Payload.Commands[] commands = ((ExecuteRequest.Inputs) executeRequest.inputs[0]).payload.commands;
+
+        List<String> successfulDevices = ListUtil.list(false);
+
+        for (ExecuteRequest.Inputs.Payload.Commands command : commands) {
+
+            for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
+                try {
+                    states = execute(Long.valueOf(device.id), command.execution[0]);
+                    successfulDevices.add(device.id);
+                    GoogleReportState.makeRequest(this, String.valueOf(userId), device.id, states);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ExecuteResponse.Payload.Commands failedDevice = new ExecuteResponse.Payload.Commands();
+                    failedDevice.ids = new String[]{device.id};
+                    failedDevice.status = "ERROR";
+                    failedDevice.setErrorCode(e.getMessage());
+                    commandsResponse.add(failedDevice);
+                    continue;
+                }
+            }
+        }
+
+        ExecuteResponse.Payload.Commands successfulCommands = new ExecuteResponse.Payload.Commands();
+        successfulCommands.status = "SUCCESS";
+        successfulCommands.setStates(states);
+        successfulCommands.ids = successfulDevices.toArray(new String[]{});
+        commandsResponse.add(successfulCommands);
+
+        res.requestId = executeRequest.requestId;
+        ExecuteResponse.Payload payload = new ExecuteResponse.Payload(
+                commandsResponse.toArray(new ExecuteResponse.Payload.Commands[]{})
+        );
+        res.setPayload(payload);
+        return res;
+
+    }
+
+    private Map<String, Object> execute(Long deviceId, ExecuteRequest.Inputs.Payload.Commands.Execution execution) {
+
+        Map<String, Object> states = this.getDeviceStatesMap(DeviceVoiceDto.of().setDeviceId(deviceId));
+
+        if (!(Boolean) states.get(GOOGLE_NET_STATE_KEY))
+            throw new ServiceException();
+
+        //下发命令的json内容
+        JSONObject jobJson = new JSONObject();
+
+        switch (execution.command) {
+
+            case GOOGLE_COMMAND_BRIGHTNESS:
+
+                Object brightness = Objects.requireNonNull(execution.getParams()).get(BRIGHTNESS_GOOGLE_PARAMS_NAME);
+                jobJson.put(BRIGHTNESS_YUNTUN_JSON_KEY_NAME, brightness);
+                states.put(BRIGHTNESS_GOOGLE_PARAMS_NAME, brightness);
+                break;
+
+            case GOOGLE_COMMAND_ONOFF:
+
+                boolean onOffValue = (boolean) Objects.requireNonNull(execution.getParams()).get(GOOGLE_ON_OFF_KEY);
+
+                DeviceInfo deviceStates = appVoiceActionService.getDeviceStates(DeviceVoiceDto.of().setDeviceId(deviceId));
+
+                List<DeviceStateBean> deviceStateBeans = deviceStates.getDeviceStateBeans();
+                log.info("设备状态信息集合：{}", JSON.toJSONString(deviceStateBeans));
+
+                //这里因为google "on" 的key对应的指令device key有多个(多路开关)，我只能查出所有on对应的data key执行统一命令
+                deviceStateBeans.parallelStream()
+
+                        .filter(i -> i.getGoogleStateName().equals(GOOGLE_ON_OFF_KEY))
+
+                        .map(DeviceStateBean::getDataKey)
+
+                        .collect(Collectors.toList())
+
+                        .forEach(i -> jobJson.put(i, onOffValue ? YUNTUN_ON_VALUE : YUNTUN_OFF_VALUE));
+
+                states.put(GOOGLE_ON_OFF_KEY, onOffValue);
+                break;
+        }
+
+        Device device = iDeviceService.getById(deviceId);
+        if (device == null) return null;
+
+        QueryWrapper<DeviceType> deviceTypeQuery = new QueryWrapper<>();
+        DeviceType deviceType = iDeviceTypeService.getOne(deviceTypeQuery);
+
+
+        //查询设备对应的设备类型
+        String eventClass = deviceType.getEventClass();
+
+        DeviceEvent deviceEvent = SpringUtils.getBean(eventClass);
+        deviceEvent.order(OrderInfo.of()
+                .setDeviceId(device.getDeviceId())
+                .setMsg(jobJson)
+                .setProductId(deviceType.getProductId())
+        );
+        log.info("states:" + states);
+        return states;
     }
 
     @NotNull
@@ -59,15 +191,10 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         for (QueryRequest.Inputs.Payload.Device device : devices) {
             try {
                 DeviceVoiceDto userVoiceDto = DeviceVoiceDto.of().setDeviceId(Long.valueOf(device.getId()));
-                DeviceInfo deviceInfo = appVoiceActionService.getUserDeviceStates(userVoiceDto);
-                List<DeviceStateBean> deviceStateBeans = deviceInfo.getDeviceStateBeans();
+                Map<String, Object> states = this.getDeviceStatesMap(userVoiceDto);
 
-                Map<String, Object> states = deviceStateBeans.parallelStream()
-                        .collect(Collectors.toMap(DeviceStateBean::getGoogleStateName, DeviceStateBean::getValue));
-
-                states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
                 deviceStates.put(device.id, states);
-                // ReportState.makeRequest(this, userId, device.id, states);
+                GoogleReportState.makeRequest(this, String.valueOf(userId), device.id, states);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("QUERY FAILED");
@@ -78,6 +205,28 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         }
         res.payload.setDevices(deviceStates);
         return res;
+    }
+
+    /**
+     * 根据设备ID获取设备的各项语音相关的key状态 map
+     *
+     * @param dto
+     * @return
+     */
+    @NotNull
+    private Map<String, Object> getDeviceStatesMap(DeviceVoiceDto dto) {
+        DeviceInfo deviceInfo = appVoiceActionService.getDeviceStates(dto);
+        List<DeviceStateBean> deviceStateBeans = deviceInfo.getDeviceStateBeans();
+
+        Map<String, Object> states = deviceStateBeans.parallelStream()
+                .collect(Collectors.toMap(
+                        DeviceStateBean::getGoogleStateName,
+                        DeviceStateBean::getValue
+                        )
+                );
+
+        states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
+        return states;
     }
 
     @NotNull

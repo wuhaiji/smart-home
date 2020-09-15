@@ -2,6 +2,7 @@ package com.ecoeler.app.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ecoeler.app.entity.AppUser;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.ecoeler.app.entity.AppUser;
  * @author tang
  * @since 2020-09-10
  */
+
 public interface AppUserMapper extends BaseMapper<AppUser> {
 
 }

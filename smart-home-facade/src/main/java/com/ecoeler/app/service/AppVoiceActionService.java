@@ -6,6 +6,7 @@ import com.ecoeler.app.bean.v1.DeviceVoiceBean;
 import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.app.entity.Device;
+import com.ecoeler.app.entity.DeviceType;
 
 import java.util.List;
 
@@ -19,20 +20,16 @@ public interface AppVoiceActionService {
     List<DeviceVoiceBean> getDeviceVoiceBeans(UserVoiceDto deviceVoiceDto);
 
     /**
+     * 根据deviceId获取设备状态信息
      * @param deviceVoiceDto
      * @return
      */
-    DeviceInfo getUserDeviceStates(DeviceVoiceDto deviceVoiceDto);
+    DeviceInfo getDeviceStates(DeviceVoiceDto deviceVoiceDto);
 
     /**
-     * 查询设备信息
-     *
-     * @param deviceVoiceDto
+     * 根据设备id获取设备类型
+     * @param setDeviceId
      * @return
      */
-    Device getDeviceNetState(DeviceVoiceDto deviceVoiceDto);
-
-    String DEVICE_STATE_BEANS = "deviceStateBeans";
-
-    String ONLINE = "online";
+    DeviceType getDeviceType(DeviceVoiceDto setDeviceId);
 }

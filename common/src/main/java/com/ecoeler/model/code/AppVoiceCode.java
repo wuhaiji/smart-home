@@ -8,6 +8,10 @@ public enum AppVoiceCode implements ResultCode {
     ACTION_SELECT_DEVICE_LIST_ERROR("30001", " error occurred in query user device list "),
 
     ACTION_PARAMS_ERROR("30002", " userId can not be null "),
+
+    ACTION_SELECT_DEVICE_STATES_ERROR("30003", " error occurred in query  device states "),
+
+    ACTION_SELECT_DEVICE_TYPE_ERROR("30004", " error occurred in query  device states "),
     ;
 
 

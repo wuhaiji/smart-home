@@ -11,6 +11,8 @@ public class DeviceStateBean {
 
     private Long deviceId;
 
+    private String dataKey;
+
     private String googleStateName;
 
     private String alexaStateName;
