@@ -1,6 +1,7 @@
 package com.ecoeler.core.deliver;
 
 import com.ecoeler.config.mqtt.MqttSenderUtil;
+import com.ecoeler.constant.MqttTopicConst;
 import com.ecoeler.core.msg.OrderInfo;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,6 @@ public class OrderDeliver implements Deliver {
 
     @Override
     public void deliver(OrderInfo order) {
-        MqttSenderUtil.getMqttSender().sendToMqtt("/cmd/"+order.getDeviceId(),order.getMsg().toJSONString());
+        MqttSenderUtil.getMqttSender().sendToMqtt(MqttTopicConst.CMD_CHANNEL +order.getDeviceId(),order.getMsg().toJSONString());
     }
 }

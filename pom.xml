@@ -25,6 +25,8 @@
         <module>smart-home-app</module>
         <module>smart-home-facade</module>
         <module>app-oauth2-client</module>
+        <module>web-oauth2</module>
+        <module>web-oauth2-client</module>
     </modules>
 
 
