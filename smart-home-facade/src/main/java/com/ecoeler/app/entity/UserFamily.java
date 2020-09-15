@@ -39,6 +39,11 @@ public class UserFamily implements Serializable {
     private Integer role;
 
     /**
+     * 昵称
+     */
+    private String nickName;
+
+    /**
      * 更新时间
      */
     private LocalDateTime updateTime;

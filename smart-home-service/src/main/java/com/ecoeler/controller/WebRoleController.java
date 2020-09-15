@@ -18,7 +18,7 @@ import java.util.ListResourceBundle;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author tang
@@ -32,50 +32,59 @@ public class WebRoleController {
 
     /**
      * 新增角色
+     *
      * @param webRole
      * @return
      */
     @RequestMapping("save")
-    public Result addRole(WebRole webRole){
-        Long roleId=iWebRoleService.addRole(webRole);
+    public Result addRole(WebRole webRole) {
+        Long roleId = iWebRoleService.addRole(webRole);
         return Result.ok(roleId);
     }
+
     /**
      * 修改角色
+     *
      * @param webRole
      * @return
      */
     @RequestMapping("update")
-    public Result updateRole(WebRole webRole){
+    public Result updateRole(WebRole webRole) {
         iWebRoleService.updateRole(webRole);
         return Result.ok();
     }
+
     /**
      * 删除角色
+     *
      * @param id
      * @return
      */
     @RequestMapping("delete")
-    public Result deleteRole(Long id){
+    public Result deleteRole(Long id) {
         iWebRoleService.deleteRole(id);
         return Result.ok();
     }
+
     /**
      * 角色列表
+     *
      * @return
      */
     @RequestMapping("query/list")
-    public Result queryRoleList(){
-        List<WebRoleBean> result=iWebRoleService.selectRoleList();
+    public Result queryRoleList() {
+        List<WebRoleBean> result = iWebRoleService.selectRoleList();
         return Result.ok(result);
     }
+
     /**
      * 查询不是当前用户角色列表
+     *
      * @return
      */
     @RequestMapping("query/list/except/by/id")
-    public Result queryRoleListExceptById(Long roleId){
-        List<WebRole> result=iWebRoleService.queryRoleListExceptById(roleId);
+    public Result queryRoleListExceptById(Long roleId) {
+        List<WebRole> result = iWebRoleService.queryRoleListExceptById(roleId);
         return Result.ok(result);
     }
 

@@ -1,0 +1,25 @@
+spring:
+  redis:
+    host: 192.168.0.108
+    port: 6379
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.108:8848
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://192.168.0.108:3306/smart-home?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Hongkong
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    default-property-inclusion: non_null
+  application:
+    name: app-oauth2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+server:
+  port: 11111

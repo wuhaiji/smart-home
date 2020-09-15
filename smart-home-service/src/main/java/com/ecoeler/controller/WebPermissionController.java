@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author tang
@@ -28,24 +28,26 @@ import java.util.List;
 public class WebPermissionController {
     @Autowired
     private IWebPermissionService iWebPermissionService;
+
     /***
      * 查询所有菜单权限
      * @return
      */
     @RequestMapping("/query/all/menu/permission")
-    public Result queryAllMenuPermission(){
+    public Result queryAllMenuPermission() {
         log.info("开始查询所有菜单权限");
-        List<MenuWebPermissionBean> result=iWebPermissionService.selectAllMenuPermission();
+        List<MenuWebPermissionBean> result = iWebPermissionService.selectAllMenuPermission();
         return Result.ok(result);
     }
+
     /***
      * 根据roleId获取权限
      * @return
      */
     @RequestMapping("/query/by/roleId")
-    public Result queryPermissionByRoleId(Long roleId){
+    public Result queryPermissionByRoleId(Long roleId) {
         log.info("开始根据角色Id 获取用户权限");
-        List<MenuWebPermissionBean> result=iWebPermissionService.selectPermissionByRoleId(roleId);
+        List<MenuWebPermissionBean> result = iWebPermissionService.selectPermissionByRoleId(roleId);
         return Result.ok(result);
     }
 

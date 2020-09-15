@@ -1,10 +1,10 @@
-package com.ecoeler.app.dto;
+package com.ecoeler.app.dto.v1;
 
 import lombok.Data;
 
 
 @Data
-public class WebUserDto {
+public class WebUserDto extends QueryTimeDto {
     private String userName;
     private String email;
     private String phoneNumber;
@@ -12,13 +12,6 @@ public class WebUserDto {
      * 查询时间段类型
      */
     private Integer timeType;
-    /**
-     * 开始时间
-     */
-    private String startTime;
-    /**
-     * 结束时间
-     */
-    private String endTime;
+
 
 }

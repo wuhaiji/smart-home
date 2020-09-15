@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 权限控制
+ *
  * @author tang
  * @since 2020/8/11
  */
@@ -17,8 +18,9 @@ public @interface Limit {
 
     boolean needLogin() default true;
 
-    String [] hasPerm() default {};
+    //权限
+    String[] hasPerm() default {};
 
-    String [] hasRole() default {};
+    String[] hasRole() default {};
 
 }
