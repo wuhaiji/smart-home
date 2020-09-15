@@ -19,4 +19,9 @@ public class MqttTopicConst {
     /** 统一消息上报通道 **/
     public static final String V2_ALIVE_CHANNEL="$share/g1/msg";
 
+    //-----------------------指令下发通道-------------------------------
+
+    public static final String CMD_CHANNEL="/cmd/";
+
+
 }
