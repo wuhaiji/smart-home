@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author tang
@@ -25,14 +25,16 @@ import java.util.List;
 public class WebRolePermissionController {
     @Autowired
     private IWebRolePermissionService iWebRolePermissionService;
+
     /**
      * 定制权限
+     *
      * @param permissionIds
      * @return
      */
     @RequestMapping("customization")
-    public Result deleteRole(@RequestParam(value = "permissionIds")List<Long> permissionIds, Long roleId){
-        iWebRolePermissionService.customizationPermission(permissionIds,roleId);
+    public Result deleteRole(@RequestParam(value = "permissionIds") List<Long> permissionIds, Long roleId) {
+        iWebRolePermissionService.customizationPermission(permissionIds, roleId);
         return Result.ok();
     }
 }

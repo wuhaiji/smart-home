@@ -56,5 +56,7 @@ public class DeviceData implements Serializable {
 
     private LocalDateTime createTime;
 
+    private Long dataKeyId;
+
 
 }
