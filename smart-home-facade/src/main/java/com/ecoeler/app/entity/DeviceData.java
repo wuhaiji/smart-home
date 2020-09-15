@@ -45,6 +45,11 @@ public class DeviceData implements Serializable {
     private String dataValue;
 
     /**
+     * 序列号
+     */
+    private Long seq;
+
+    /**
      * 更新时间
      */
     private LocalDateTime updateTime;

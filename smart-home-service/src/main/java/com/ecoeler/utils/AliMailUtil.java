@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class AliMail {
+public class AliMailUtil {
 
 
     @Value("${ali.account.accessKey}")

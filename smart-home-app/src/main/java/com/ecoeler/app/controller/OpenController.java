@@ -38,9 +38,11 @@ public class OpenController {
     private AppUserService appUserService;
 
     @RequestMapping("/login")
-    public Result login(String email,String password){
+    public Result login(String email,String password,String code){
         ExceptionUtil.notBlank(email, TangCode.CODE_EMAIL_EMPTY_ERROR);
         ExceptionUtil.notBlank(password,TangCode.CODE_PASSWORD_EMPTY_ERROR);
+        ExceptionUtil.notBlank(code , TangCode.CODE_CODE_EMPTY_ERROR);
+        appUserService.verify(email,code);
         return Result.ok(oauth2ClientService.getToken(clientId,clientSecret,email,password));
     }
 
@@ -54,13 +56,6 @@ public class OpenController {
     public String captcha(String email){
         ExceptionUtil.notBlank(email, TangCode.CODE_EMAIL_EMPTY_ERROR);
         return appUserService.captcha(email);
-    }
-
-    @RequestMapping("/verify")
-    public Result verify(String email,String code){
-        ExceptionUtil.notBlank(email, TangCode.CODE_EMAIL_EMPTY_ERROR);
-        ExceptionUtil.notBlank(code , TangCode.CODE_CODE_EMPTY_ERROR);
-        return appUserService.verify(email,code);
     }
 
     @PostMapping("/register")

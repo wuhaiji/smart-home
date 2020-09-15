@@ -47,3 +47,9 @@ ali:
   account:
     accessKey: LTAI4FwCUMja2wn74aYAtG2i
     secret: wYGK907NaHNvK7jDvocLC1v4m7H7vj
+
+# mqtt 配置
+mqtt:
+  host: tcp://106.52.74.193:1883
+  username: tang
+  password: 321456

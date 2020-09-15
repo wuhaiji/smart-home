@@ -3,7 +3,7 @@ package com.ecoeler.service.impl;
 import com.ecoeler.app.service.IEmailCodeService;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.exception.ServiceException;
-import com.ecoeler.utils.AliMail;
+import com.ecoeler.utils.AliMailUtil;
 import com.ecoeler.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class AliEmailCodeServiceImpl implements IEmailCodeService {
 
     @Autowired
-    private AliMail aliMail;
+    private AliMailUtil aliMailUtil;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -50,7 +50,7 @@ public class AliEmailCodeServiceImpl implements IEmailCodeService {
     public void sendCode(String email) {
         String code=generateCode();
         redisUtil.setEx("ALI_EMAIL_CODE:"+email,code,5L,TimeUnit.MINUTES);
-        aliMail.sendCode(email,code);
+        aliMailUtil.sendCode(email,code);
     }
 
     @Override
