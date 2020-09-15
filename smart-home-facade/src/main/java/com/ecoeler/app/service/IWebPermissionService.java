@@ -6,6 +6,7 @@ import com.ecoeler.app.bean.v1.MenuWebPermissionBean;
 import com.ecoeler.app.entity.WebPermission;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -20,5 +21,9 @@ public interface IWebPermissionService extends IService<WebPermission> {
 
     List<MenuWebPermissionBean> selectAllMenuPermission();
 
-    List<String> selectPermissionByRoleId(Long roleId);
+    List<MenuWebPermissionBean> selectPermissionByRoleId(Long roleId);
+
+    Set<String> selectBackPermissionByRoleId(Long roleId);
+
+    WebPermission selectPermissionByCondition(Integer sourceType,String permissionName );
 }

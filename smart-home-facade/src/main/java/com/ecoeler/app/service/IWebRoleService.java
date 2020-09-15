@@ -26,4 +26,6 @@ public interface IWebRoleService extends IService<WebRole> {
     void deleteRole(Long id);
 
     List<WebRoleBean> selectRoleList();
+
+    List<WebRole> queryRoleListExceptById(Long roleId);
 }

@@ -45,9 +45,8 @@ public class WebPermissionController {
     @RequestMapping("/query/by/roleId")
     public Result queryPermissionByRoleId(Long roleId){
         log.info("开始根据角色Id 获取用户权限");
-        List<String> result=iWebPermissionService.selectPermissionByRoleId(roleId);
+        List<MenuWebPermissionBean> result=iWebPermissionService.selectPermissionByRoleId(roleId);
         return Result.ok(result);
     }
-
 
 }

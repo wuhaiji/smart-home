@@ -3,15 +3,16 @@ package com.ecoeler.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ecoeler.app.entity.WebPermission;
 import com.ecoeler.app.entity.WebRolePermission;
 import com.ecoeler.app.mapper.WebRolePermissionMapper;
+import com.ecoeler.app.service.IWebPermissionService;
 import com.ecoeler.app.service.IWebRolePermissionService;
 import com.ecoeler.cache.ClearCache;
 import com.ecoeler.exception.ServiceException;
-import com.ecoeler.model.code.CommonCode;
 import com.ecoeler.model.code.PermissionCode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +27,14 @@ import java.util.List;
 
 @Service
 public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionMapper, WebRolePermission> implements IWebRolePermissionService {
+    @Autowired
+    private IWebPermissionService iWebPermissionService;
     /**
      * 定制权限
      * @param permissionIds 权限ids
      * @param roleId 角色id
      */
-    @ClearCache("PER#${roleId}")
+    @ClearCache("PER_WEB#${roleId},PER_BACK#${roleId}")
     @Override
     public void customizationPermission(List<Long> permissionIds, Long roleId) {
        try {
@@ -39,21 +42,25 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
            QueryWrapper<WebRolePermission> queryWrapper=new QueryWrapper<>();
            queryWrapper.eq("role_id",roleId);
            baseMapper.delete(queryWrapper);
-           if (permissionIds!=null&&permissionIds.size()!=0){
-               List<WebRolePermission> list=new ArrayList<>();
+           List<WebRolePermission> list=new ArrayList<>();
+           //找到概览的权限id
+           WebPermission webPermission = iWebPermissionService.selectPermissionByCondition(0, "概览");
+           if (!permissionIds.contains(webPermission.getId())){
+               //增加默认的权限
+               WebRolePermission webRolePermission=new WebRolePermission();
+               webRolePermission.setRoleId(roleId);
+               webRolePermission.setPermissionId(webPermission.getId());
+               list.add(webRolePermission);
+           }
+           if (permissionIds.size()!=0){
                for (Long permissionId : permissionIds) {
                    WebRolePermission webRolePermission=new WebRolePermission();
                    webRolePermission.setPermissionId(permissionId);
                    webRolePermission.setRoleId(roleId);
                    list.add(webRolePermission);
                }
-               saveBatch(list);
-           }else {
-               log.error("未选择权限");
-               throw  new ServiceException(CommonCode.INVALID_PARAM);
            }
-       }catch (ServiceException e){
-           throw  new ServiceException(e.getCode(),e.getMsg());
+           saveBatch(list);
        }catch (Exception e){
            log.error("定制权限异常");
            throw  new ServiceException(PermissionCode.CUSTOMIZATION);
@@ -61,15 +68,20 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
     }
 
     /**
-     * 根据roleId查询关联数据
+     * 根据roleId查询对应的permissionIds
      * @param roleId
      * @return
      */
     @Override
     public List<WebRolePermission> selectPermissionList(Long roleId) {
-        QueryWrapper<WebRolePermission> queryWrapper=new QueryWrapper<>();
-        queryWrapper.select("role_id","permission_id");
-        queryWrapper.eq("role_id",roleId);
-        return baseMapper.selectList(queryWrapper);
+       try {
+           QueryWrapper<WebRolePermission> queryWrapper=new QueryWrapper<>();
+           queryWrapper.select("role_id","permission_id");
+           queryWrapper.eq("role_id",roleId);
+           return baseMapper.selectList(queryWrapper);
+       }catch (Exception e){
+           log.error("定制权限异常");
+           throw  new ServiceException(PermissionCode.SELECT_PERMISSION_BY_ROLE_ID);
+       }
     }
 }

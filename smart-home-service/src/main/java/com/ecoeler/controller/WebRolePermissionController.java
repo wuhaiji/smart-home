@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class WebRolePermissionController {
      * @return
      */
     @RequestMapping("customization")
-    public Result deleteRole(List<Long> permissionIds,Long roleId){
+    public Result deleteRole(@RequestParam(value = "permissionIds")List<Long> permissionIds, Long roleId){
         iWebRolePermissionService.customizationPermission(permissionIds,roleId);
         return Result.ok();
     }
