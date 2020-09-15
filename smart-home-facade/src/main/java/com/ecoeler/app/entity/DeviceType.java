@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author tang
@@ -57,6 +57,10 @@ public class DeviceType implements Serializable {
      */
     private String alexaDisplayName;
 
+    /**
+     * 执行的指令的class
+     */
+    private String eventClass;
 
 
 }
