@@ -50,8 +50,7 @@ public class OAuth2Server extends AuthorizationServerConfigurerAdapter {
      */
     @Autowired
     private AuthorizationCodeServices authorizationCodeServices;
-
-
+    
     /**
      * 加密方式(client_secret 数据库中的加密方式)
      */
