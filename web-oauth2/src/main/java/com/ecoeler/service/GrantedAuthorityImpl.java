@@ -1,10 +1,8 @@
 package com.ecoeler.service;
 
-import com.ecoeler.app.entity.WebPermission;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,13 +14,13 @@ public class GrantedAuthorityImpl implements GrantedAuthority {
 
     private String perm;
 
-    private GrantedAuthorityImpl(WebPermission permission){
-        this.perm=permission.getPermission();
+    private GrantedAuthorityImpl(String permission){
+        this.perm=permission;
     }
 
-    public static Set<GrantedAuthority> getPerm(List<WebPermission> permissions){
+    public static Set<GrantedAuthority> getPerm(Set<String> permissions){
         Set<GrantedAuthority> set=new HashSet<>();
-        for (WebPermission permission : permissions) {
+        for (String permission : permissions) {
             set.add(new GrantedAuthorityImpl(permission));
         }
         return set;

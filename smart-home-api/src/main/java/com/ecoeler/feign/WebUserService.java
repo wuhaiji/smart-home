@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * web user
@@ -31,7 +32,7 @@ public interface WebUserService {
      * @return
      */
     @PostMapping("/perm")
-    Result<List<WebPermission>> getPerm(@RequestParam Long userId);
+    Result<Set<String>> getPerm(@RequestParam Long userId);
 
 //    /**
 //     * 添加用户
