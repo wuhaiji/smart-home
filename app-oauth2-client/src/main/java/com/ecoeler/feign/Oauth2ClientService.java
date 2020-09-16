@@ -2,6 +2,7 @@ package com.ecoeler.feign;
 
 import com.ecoeler.config.Oauth2FeignExceptionConfiguration;
 import com.ecoeler.model.response.Oauth2Token;
+import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,14 +10,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * 账号密码模式token
+ *
  * @author tang
  * @since 2020/9/11
  */
-@FeignClient(value = "app-oauth2", path = "/oauth" , configuration = Oauth2FeignExceptionConfiguration.class)
+@FeignClient(value = "app-oauth2", path = "/oauth", configuration = Oauth2FeignExceptionConfiguration.class)
 public interface Oauth2ClientService {
 
     /**
      * 账号密码获取token
+     *
      * @param clientId
      * @param clientSecret
      * @param username
@@ -33,6 +36,7 @@ public interface Oauth2ClientService {
 
     /**
      * 刷新token
+     *
      * @param clientId
      * @param clientSecret
      * @param refreshToken
@@ -43,6 +47,14 @@ public interface Oauth2ClientService {
             @PathVariable("clientId") String clientId,
             @PathVariable("clientSecret") String clientSecret,
             @PathVariable("refreshToken") String refreshToken);
+
+    /**
+     * 退出
+     *
+     * @return
+     */
+    @PostMapping(value = "/logout")
+    Oauth2Token logout(String accessToken);
 
 
 }

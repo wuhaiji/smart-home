@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.bean.v1.DeviceInfo;
 import com.ecoeler.app.bean.v1.DeviceStateBean;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
+import com.ecoeler.app.constant.v1.AppVoiceConstant;
 import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.app.entity.Device;
@@ -15,12 +16,13 @@ import com.ecoeler.app.entity.DeviceType;
 import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.app.service.IDeviceService;
 import com.ecoeler.app.service.IDeviceTypeService;
+import com.ecoeler.constant.DeviceStatusConst;
 import com.ecoeler.core.DeviceEvent;
 import com.ecoeler.core.msg.OrderInfo;
 import com.ecoeler.exception.ServiceException;
-import com.ecoeler.model.code.AppVoiceCode;
+import com.ecoeler.feign.Oauth2ClientService;
+import com.ecoeler.model.response.Oauth2Token;
 import com.ecoeler.util.SpringUtils;
-import com.ecoeler.utils.SpringUtil;
 import com.google.actions.api.smarthome.*;
 import com.google.home.graph.v1.DeviceProto;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,10 +43,10 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
     public static final String GOOGLE_ON_OFF_KEY = "on";
     public static final String GOOGLE_COMMAND_BRIGHTNESS = "action.devices.commands.BrightnessAbsolute";
     public static final String GOOGLE_COMMAND_ONOFF = "action.devices.commands.OnOff";
-    public static final String BRIGHTNESS_GOOGLE_PARAMS_NAME = "brightness";
-    public static final String BRIGHTNESS_YUNTUN_JSON_KEY_NAME = "light";
-    public static final int YUNTUN_ON_VALUE = 1;
-    public static final int YUNTUN_OFF_VALUE = 0;
+    public static final String GOOGLE_BRIGHTNESS_KEY = "brightness";
+    public static final String YUNTUN_BRIGHTNESS_DATA_KEY = "light";
+    public static final String GOOGLE_SUCCESS_COMMANDS_RESPONSE = "SUCCESS";
+    public static final String GOOGLE_FAILED_COMMANDS_RESPONSE = "ERROR";
 
     @Autowired
     AppVoiceActionService appVoiceActionService;
@@ -54,18 +57,25 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
     @Autowired
     IDeviceService iDeviceService;
 
+    @Autowired
+    Oauth2ClientService oauth2ClientService;
+
     @Override
     public void onDisconnect(@NotNull DisconnectRequest disconnectRequest, @Nullable Map<?, ?> map) {
-
+        assert map != null;
+        String access_token = (String) map.get(AppVoiceConstant.DTO_KEY_AUTHORIZATION);
+        Oauth2Token logout = oauth2ClientService.logout(access_token);
+        log.info("退出登录返回数据：{}", JSON.toJSON(logout));
     }
 
     @NotNull
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ExecuteResponse onExecute(@NotNull ExecuteRequest executeRequest, @Nullable Map<?, ?> map) {
         if (map == null)
             throw new ServiceException("params map can not be empty");
 
-        Long userId = Long.valueOf((String) map.get("userId"));
+        Long userId = Long.valueOf((String) map.get(AppVoiceConstant.DTO_KEY_USER_ID));
 
         ExecuteResponse res = new ExecuteResponse();
 
@@ -81,14 +91,18 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
             for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
                 try {
+
                     states = execute(Long.valueOf(device.id), command.execution[0]);
+
                     successfulDevices.add(device.id);
+
                     GoogleReportState.makeRequest(this, String.valueOf(userId), device.id, states);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     ExecuteResponse.Payload.Commands failedDevice = new ExecuteResponse.Payload.Commands();
                     failedDevice.ids = new String[]{device.id};
-                    failedDevice.status = "ERROR";
+                    failedDevice.status = GOOGLE_FAILED_COMMANDS_RESPONSE;
                     failedDevice.setErrorCode(e.getMessage());
                     commandsResponse.add(failedDevice);
                     continue;
@@ -97,7 +111,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         }
 
         ExecuteResponse.Payload.Commands successfulCommands = new ExecuteResponse.Payload.Commands();
-        successfulCommands.status = "SUCCESS";
+        successfulCommands.status = GOOGLE_SUCCESS_COMMANDS_RESPONSE;
         successfulCommands.setStates(states);
         successfulCommands.ids = successfulDevices.toArray(new String[]{});
         commandsResponse.add(successfulCommands);
@@ -125,9 +139,9 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
             case GOOGLE_COMMAND_BRIGHTNESS:
 
-                Object brightness = Objects.requireNonNull(execution.getParams()).get(BRIGHTNESS_GOOGLE_PARAMS_NAME);
-                jobJson.put(BRIGHTNESS_YUNTUN_JSON_KEY_NAME, brightness);
-                states.put(BRIGHTNESS_GOOGLE_PARAMS_NAME, brightness);
+                Object brightness = Objects.requireNonNull(execution.getParams()).get(GOOGLE_BRIGHTNESS_KEY);
+                jobJson.put(YUNTUN_BRIGHTNESS_DATA_KEY, brightness);
+                states.put(GOOGLE_BRIGHTNESS_KEY, brightness);
                 break;
 
             case GOOGLE_COMMAND_ONOFF:
@@ -148,7 +162,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
                         .collect(Collectors.toList())
 
-                        .forEach(i -> jobJson.put(i, onOffValue ? YUNTUN_ON_VALUE : YUNTUN_OFF_VALUE));
+                        .forEach(i -> jobJson.put(i, onOffValue ? DeviceStatusConst.ONLINE : DeviceStatusConst.OFFLINE));
 
                 states.put(GOOGLE_ON_OFF_KEY, onOffValue);
                 break;
@@ -181,7 +195,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         if (map == null)
             throw new ServiceException("params map can not be empty");
 
-        Long userId = Long.valueOf((String) map.get("userId"));
+        Long userId = Long.valueOf((String) map.get(AppVoiceConstant.DTO_KEY_USER_ID));
 
         QueryRequest.Inputs.Payload.Device[] devices = ((QueryRequest.Inputs) queryRequest.getInputs()[0]).payload.devices;
         Map<String, Map<String, Object>> deviceStates = new HashMap<>();
@@ -236,7 +250,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         if (map == null)
             throw new ServiceException(" params map can not be empty");
 
-        Long userId = Long.valueOf((String) map.get("userId"));
+        Long userId = Long.valueOf((String) map.get(AppVoiceConstant.DTO_KEY_USER_ID));
 
         UserVoiceDto userVoiceDto = UserVoiceDto.of().setUserId(userId);
         List<DeviceVoiceBean> deviceVoiceBeans = appVoiceActionService.getDeviceVoiceBeans(userVoiceDto);
