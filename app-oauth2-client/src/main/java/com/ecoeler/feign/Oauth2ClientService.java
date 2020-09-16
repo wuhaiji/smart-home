@@ -2,7 +2,6 @@ package com.ecoeler.feign;
 
 import com.ecoeler.config.Oauth2FeignExceptionConfiguration;
 import com.ecoeler.model.response.Oauth2Token;
-import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
