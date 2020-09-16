@@ -27,6 +27,17 @@ public class WebUser implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+
+    /**
+     * 手机号
+     */
+    private String phoneNumber;
+
+    /**
+     * 邮箱
+     */
+    private String email;
+
     /**
      * 姓名
      */
@@ -37,19 +48,12 @@ public class WebUser implements Serializable {
      */
     private String password;
 
-    /**
-     * 邮箱
-     */
-    private String email;
 
     /**
      * 头像
      */
     private String headImage;
-    /**
-     * 手机号
-     */
-    private String phoneNumber;
+
 
     private LocalDateTime updateTime;
 

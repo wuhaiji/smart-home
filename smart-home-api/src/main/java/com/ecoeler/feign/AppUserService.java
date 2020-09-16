@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author tang
  * @since 2020/9/10
  */
-@FeignClient(value = "smart-home-service", path = "/app_user")
+@FeignClient(value = "smart-home-service", path = "/app-user")
 public interface AppUserService {
 
     /**

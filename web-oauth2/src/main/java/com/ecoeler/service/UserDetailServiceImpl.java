@@ -1,7 +1,7 @@
 package com.ecoeler.service;
 
-import com.ecoeler.app.entity.AppUser;
-import com.ecoeler.feign.AppUserService;
+import com.ecoeler.app.entity.WebUser;
+import com.ecoeler.feign.WebUserService;
 import com.ecoeler.model.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,17 +18,17 @@ import org.springframework.stereotype.Service;
 public class UserDetailServiceImpl implements UserDetailsService {
 
     @Autowired
-    private AppUserService appUserService;
+    private WebUserService webUserService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Result<AppUser> result = appUserService.getUser(username);
-        AppUser user = result.getData();
+        Result<WebUser> result = webUserService.getUser(username);
+        WebUser user = result.getData();
         if(user==null){
             throw new UsernameNotFoundException("----user can't be found!");
         }
 
-        return UserDetailsImpl.getUserDetail(user);
+        return UserDetailsImpl.getUserDetail(user,webUserService);
     }
 }

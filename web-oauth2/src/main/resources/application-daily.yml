@@ -22,4 +22,4 @@ management:
       exposure:
         include: "*"
 server:
-  port: 11111
+  port: 11112
