@@ -14,7 +14,7 @@ spring:
   jackson:
     default-property-inclusion: non_null
   application:
-    name: app-oauth2
+    name: web-oauth2
 
 management:
   endpoints:

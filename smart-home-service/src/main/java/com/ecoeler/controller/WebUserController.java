@@ -1,18 +1,24 @@
 package com.ecoeler.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.dto.v1.WebUserDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.app.service.IWebUserService;
+import com.ecoeler.model.code.TangCode;
 import com.ecoeler.model.response.Result;
+import com.ecoeler.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
 
 /**
  * <p>
@@ -26,8 +32,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/web-user")
 public class WebUserController {
+
     @Autowired
     private IWebUserService iWebUserService;
+
+    @RequestMapping("/user")
+    public Result user(@RequestParam String account){
+        QueryWrapper<WebUser> q=new QueryWrapper<>();
+        q.eq("email",account).or().eq("phone_number",account);
+        return Result.ok(iWebUserService.getOne(q));
+    }
+
+    @RequestMapping("/perm")
+    public Result user(@RequestParam Long userId){
+        return Result.ok(iWebUserService.getPerByUserId(userId));
+    }
 
     /**
      * 新增用户
@@ -95,6 +114,5 @@ public class WebUserController {
         iWebUserService.allocationWebUserRole(userId, webRole);
         return Result.ok();
     }
-
 
 }

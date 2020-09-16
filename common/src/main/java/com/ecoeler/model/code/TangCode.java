@@ -14,6 +14,7 @@ public enum  TangCode implements ResultCode {
     CODE_CODE_EMPTY_ERROR("40003","验证码不能为空!"),
     CODE_USERNAME_EMPTY_ERROR("40004","用户名不能为空!"),
     CODE_REFRESH_TOKEN_EMPTY_ERROR("40005","刷新token不能为空!"),
+    CODE_ACCOUNT_EMPTY_ERROR("40006","账号不能为空!"),
 
     //错误码
     CODE_LOGIN_ERROR("20000", "登录失败，账号或密码错误!"),
