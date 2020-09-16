@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 时间工具
+ * @author tangcx
+ */
 public class TimeUtil {
     public static  final  String START="start";
     public static  final  String END="end";
@@ -22,8 +26,13 @@ public class TimeUtil {
         return  LocalDateTime.parse(formatTime,dateTimeFormatter);
     }
 
+    /**
+     * 封装查询的时间段 并验证查询时间段
+     * @param queryTimeDto 查询时间段
+     * @return 查询时间段
+     */
     public static Map<String, LocalDateTime> verifyQueryTime(QueryTimeDto queryTimeDto) {
-        Map<String, LocalDateTime> result=new HashMap<>();
+        Map<String, LocalDateTime> result=new HashMap<>(4);
         String start = Optional.ofNullable(queryTimeDto.getStartTime()).orElse("");
         String end = Optional.ofNullable(queryTimeDto.getEndTime()).orElse("");
         LocalDateTime startTime = null;

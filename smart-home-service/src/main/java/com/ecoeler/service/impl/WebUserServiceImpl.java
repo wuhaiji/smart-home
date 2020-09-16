@@ -10,11 +10,13 @@ import com.ecoeler.app.dto.v1.WebUserDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.app.mapper.WebUserMapper;
+import com.ecoeler.app.service.IWebPermissionService;
 import com.ecoeler.app.service.IWebUserService;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.WebUserCode;
 import com.ecoeler.util.ExceptionUtil;
 import com.ecoeler.util.TimeUtil;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * <p>
@@ -38,6 +41,8 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
     private WebUserMapper webUserMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private IWebPermissionService iWebPermissionService;
 
     /**
      * 查询角色对应用户的个数
@@ -169,5 +174,15 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
             throw new ServiceException(WebUserCode.ALLOCATION);
         }
 
+    }
+
+    /**
+     * 根据用户id查询权限
+     * @param userId  指定用户id
+     * @return 权限
+     */
+    @Override
+    public Set<String> getPerByUserId(Long userId) {
+        return iWebPermissionService.selectBackPermissionByRoleId(baseMapper.selectById(userId).getRoleId());
     }
 }

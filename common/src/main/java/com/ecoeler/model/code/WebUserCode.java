@@ -5,7 +5,7 @@ package com.ecoeler.model.code;
  *
  * </p>
  *
- * @author whj
+ * @author tangCX
  * @since 2020/9/8
  */
 public enum WebUserCode implements ResultCode {

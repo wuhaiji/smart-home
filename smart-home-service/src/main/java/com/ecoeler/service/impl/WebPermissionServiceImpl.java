@@ -113,7 +113,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
             for (WebPermission webPermission : webPermissions) {
                 Long parentId = webPermission.getParentId();
                 List<MenuWebPermissionBean> children = null;
-                //有父节点
+                //子节点
                 if (parentId != null) {
                     if (menuWebPermissionBeanMap.get(parentId) != null) {
                         children = menuWebPermissionBeanMap.get(parentId);

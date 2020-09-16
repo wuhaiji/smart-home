@@ -2,6 +2,9 @@ package com.ecoeler.app.bean.v1;
 
 import lombok.Data;
 
+/**
+ * @author tangcx
+ */
 @Data
 public class WebCustomerFamilyRoomBean {
     /**
