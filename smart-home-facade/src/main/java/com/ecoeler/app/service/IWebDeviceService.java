@@ -13,25 +13,63 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author tangCX
  * @since 2020-09-15
  */
 public interface IWebDeviceService extends IService<Device> {
-
+    /**
+     * 查询所有用户家庭的Map
+     *
+     * @return
+     */
     List<Family> selectMap();
 
+    /**
+     * 分页按条件查询设备列表
+     *
+     * @param webDeviceDto 查询条件
+     * @param page         分页
+     * @return 设备列表
+     */
     PageBean<Device> selectDevice(WebDeviceDto webDeviceDto, Page<Device> page);
 
+    /**
+     * 查询设备类型
+     *
+     * @return 设备类型列表
+     */
     List<DeviceType> selectDeviceType();
 
+    /**
+     * 新增设备
+     *
+     * @param device 设备数据
+     * @return 新增id
+     */
     Long addDevice(Device device);
 
+    /**
+     * 修改设备
+     *
+     * @param device 设备数据
+     */
     void updateDevice(Device device);
 
+    /**
+     * 删除设备
+     *
+     * @param id 设备id
+     */
     void deleteDevice(Long id);
 
+    /**
+     * 查询当前设备对应的设备参数
+     *
+     * @param deviceId 设备id
+     * @return 当前设备设备参数列表
+     */
     List<WebDeviceDataBean> queryDeviceData(Long deviceId);
 }

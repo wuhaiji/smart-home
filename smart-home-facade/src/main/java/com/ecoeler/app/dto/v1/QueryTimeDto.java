@@ -3,6 +3,9 @@ package com.ecoeler.app.dto.v1;
 
 import lombok.Data;
 
+/**
+ * @author tangcx
+ */
 @Data
 public class QueryTimeDto {
     /**

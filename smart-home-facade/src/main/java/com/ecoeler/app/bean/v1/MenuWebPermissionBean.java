@@ -5,6 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * @author tangcx
  * 菜单权限
  */
 @Data

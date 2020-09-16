@@ -33,7 +33,7 @@ public class WebRoleController {
     /**
      * 新增角色
      *
-     * @param webRole
+     * @param webRole 角色信息
      * @return
      */
     @RequestMapping("save")

@@ -2,6 +2,7 @@ package com.ecoeler.service;
 
 import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.feign.WebUserService;
+import com.ecoeler.util.SpringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,13 +15,10 @@ import java.util.Collection;
  */
 public class UserDetailsImpl implements UserDetails {
 
-    private WebUserService webUserService;
-
     private WebUser user;
 
-    private UserDetailsImpl(WebUser user,WebUserService webUserService){
+    private UserDetailsImpl(WebUser user){
         this.user=user;
-        this.webUserService=webUserService;
     }
 
     /**
@@ -28,13 +26,16 @@ public class UserDetailsImpl implements UserDetails {
      * @param user
      * @return
      */
-    public static UserDetails getUserDetail(WebUser user,WebUserService webUserService){
-        return new UserDetailsImpl(user,webUserService);
+    public static UserDetails getUserDetail(WebUser user){
+        return new UserDetailsImpl(user);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return GrantedAuthorityImpl.getPerm(webUserService.getPerm(user.getId()).getData());
+        return GrantedAuthorityImpl.getPerm(
+                SpringUtils.getBean(WebUserService.class).getPerm(user.getId())
+                        .getData()
+        );
     }
 
     @Override

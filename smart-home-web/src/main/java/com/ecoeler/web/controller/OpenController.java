@@ -28,10 +28,9 @@ public class OpenController {
     @Autowired
     private Oauth2ClientService oauth2ClientService;
 
-
     @RequestMapping("/login")
     public Result login(String account, String password){
-        ExceptionUtil.notBlank(account, TangCode.CODE_EMAIL_EMPTY_ERROR);
+        ExceptionUtil.notBlank(account, TangCode.CODE_ACCOUNT_EMPTY_ERROR);
         ExceptionUtil.notBlank(password,TangCode.CODE_PASSWORD_EMPTY_ERROR);
         return Result.ok(oauth2ClientService.getToken(clientId,clientSecret,account,password));
     }
@@ -41,7 +40,5 @@ public class OpenController {
         ExceptionUtil.notBlank(refreshToken,TangCode.CODE_REFRESH_TOKEN_EMPTY_ERROR);
         return Result.ok(oauth2ClientService.refreshToken(clientId,clientSecret,refreshToken));
     }
-
-
 
 }
