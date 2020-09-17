@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.nio.file.AccessDeniedException;
+
 import java.util.HashMap;
 
 
@@ -43,11 +43,7 @@ public class ExceptionCatch {
         return Result.error(e.getCode(), e.getMsg());
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseBody
-    public Result accessDeniedException(AccessDeniedException e){
-        return Result.error(TangCode.CODE_NO_AUTH_ERROR);
-    }
+
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
