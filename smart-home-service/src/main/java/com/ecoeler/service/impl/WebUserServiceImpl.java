@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebRoleBean;
+import com.ecoeler.app.dto.v1.AllocationRoleDto;
 import com.ecoeler.app.dto.v1.WebUserDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebUser;
@@ -61,12 +62,15 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
     public Long addWebUser(WebUser webUser) {
         ExceptionUtil.notBlank(webUser.getUserName(), TangCode.CODE_USERNAME_EMPTY_ERROR);
         ExceptionUtil.notBlank(webUser.getPassword(), TangCode.CODE_PASSWORD_EMPTY_ERROR);
-        ExceptionUtil.notBlank(webUser.getEmail(), TangCode.CODE_EMAIL_EMPTY_ERROR);
+        if (webUser.getEmail() != null) {
+            ExceptionUtil.notMatch(webUser.getEmail(), "^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$", TangCode.EMAIL_NOT_MATCH_ERROR);
+        }
         ExceptionUtil.notBlank(webUser.getPhoneNumber(), TangCode.BLANK_PHONE_NUMBER_EMPTY_ERROR);
         ExceptionUtil.notInRange(webUser.getPassword(), 6, 16, TangCode.PASSWORD_NOT_IN_RANGE_ERROR);
-        ExceptionUtil.notMatch(webUser.getEmail(), "^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$", TangCode.EMAIL_NOT_MATCH_ERROR);
         String password = passwordEncoder.encode(webUser.getPassword());
         webUser.setPassword(password);
+        webUser.setCreateTime(LocalDateTime.now());
+        webUser.setUpdateTime(LocalDateTime.now());
         baseMapper.insert(webUser);
         return webUser.getId();
     }
@@ -78,6 +82,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      */
     @Override
     public void updateWebUser(WebUser webUser) {
+        webUser.setUpdateTime(LocalDateTime.now());
         baseMapper.updateById(webUser);
     }
 
@@ -89,15 +94,17 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
     /***
      *根据条件分页查询
      * @param webUserDto
-     * @param page
      * @return
      */
     @Override
-    public PageBean<WebUser> queryWebUserList(WebUserDto webUserDto, Page<WebUser> page) {
+    public PageBean<WebUser> queryWebUserList(WebUserDto webUserDto) {
         String userName = Optional.ofNullable(webUserDto.getUserName()).orElse("");
         String email = Optional.ofNullable(webUserDto.getEmail()).orElse("");
         String phoneNo = Optional.ofNullable(webUserDto.getPhoneNumber()).orElse("");
         Integer timeType = Optional.ofNullable(webUserDto.getTimeType()).orElse(-1);
+        Page<WebUser> page=new Page<>();
+        page.setSize(webUserDto.getSize());
+        page.setCurrent(webUserDto.getCurrent());
         //0-->create_time  1-->update_time
         String timeLine;
         switch (timeType) {
@@ -133,17 +140,17 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
     /**
      * 给指定用户分配角色
      *
-     * @param userId  用户
-     * @param webRole 角色
+     * @param allocationRoleDto  用户 角色信息
      */
     @Override
-    public void allocationWebUserRole(Long userId, WebRole webRole) {
-        ExceptionUtil.notNull(webRole.getId(), TangCode.NULL_ROLE_ID_EMPTY_ERROR);
-        ExceptionUtil.notNull(webRole.getRole(), TangCode.NULL_ROLE_EMPTY_ERROR);
+    public void allocationWebUserRole(AllocationRoleDto allocationRoleDto) {
+        ExceptionUtil.notNull(allocationRoleDto.getId(), TangCode.NULL_ROLE_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(allocationRoleDto.getRole(), TangCode.NULL_ROLE_EMPTY_ERROR);
         WebUser webUser = new WebUser();
-        webUser.setId(userId);
-        webUser.setRoleId(webRole.getId());
-        webUser.setRole(webRole.getRole());
+        webUser.setId(allocationRoleDto.getUserId());
+        webUser.setRoleId(allocationRoleDto.getId());
+        webUser.setRole(allocationRoleDto.getRole());
+        webUser.setUpdateTime(LocalDateTime.now());
         baseMapper.updateById(webUser);
     }
 

@@ -55,7 +55,6 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
         baseMapper.delete(queryWrapper);
         //菜单权限Ids
         List<Long> permissionIds = customizationPermissionDto.getMenuIds();
-        log.error("p" + permissionIds);
         List<WebRolePermission> list = new ArrayList<>();
         //找到概览的权限id
         WebPermission webPermission = webPermissionMapper.selectOne(new LambdaQueryWrapper<WebPermission>()
@@ -68,10 +67,8 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
             webRolePermission.setPermissionId(webPermission.getId());
             list.add(webRolePermission);
         }
-
         //按钮权限
         List<String> buttons = customizationPermissionDto.getButtons();
-        log.error("p" + buttons);
         if (buttons != null && buttons.size() != 0) {
             QueryWrapper<WebPermission> webPermissionQueryWrapper = new QueryWrapper<>();
             webPermissionQueryWrapper.lambda().in(WebPermission::getPermissionName, buttons).select(WebPermission::getId);
@@ -81,10 +78,10 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
                     .collect(Collectors.toList());
             //按钮权限不为空
             if (permissionButtonIds.size() != 0) {
-                if (permissionIds != null){
+                if (permissionIds != null) {
                     permissionIds.addAll(permissionButtonIds);
-                }else {
-                    permissionIds=permissionButtonIds;
+                } else {
+                    permissionIds = permissionButtonIds;
                 }
             }
             if (permissionIds != null) {

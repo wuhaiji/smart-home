@@ -19,6 +19,10 @@ public class MenuWebPermissionBean {
      */
     private String menu;
     /**
+     * 菜单英语名称
+     */
+    private String english;
+    /**
      * 子菜单
      */
     private List<MenuWebPermissionBean> children;
@@ -29,5 +33,11 @@ public class MenuWebPermissionBean {
     public MenuWebPermissionBean(Long id, String menu) {
         this.id = id;
         this.menu = menu;
+    }
+
+    public MenuWebPermissionBean(Long id, String menu, String english) {
+        this.id = id;
+        this.menu = menu;
+        this.english = english;
     }
 }

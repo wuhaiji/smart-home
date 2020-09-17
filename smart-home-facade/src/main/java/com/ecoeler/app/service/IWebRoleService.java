@@ -53,5 +53,5 @@ public interface IWebRoleService extends IService<WebRole> {
      * @param roleId 当前角色
      * @return 角色列表
      */
-    List<WebRole> queryRoleListExceptById(Long roleId);
+    List<WebRole> selectRoleListExceptById(Long roleId);
 }

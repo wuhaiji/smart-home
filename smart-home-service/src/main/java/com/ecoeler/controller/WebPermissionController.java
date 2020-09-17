@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.time.format.ResolverStyle;
 import java.util.List;
 
@@ -42,21 +44,22 @@ public class WebPermissionController {
     }
 
     /***
-     * 根据roleId获取权限
+     * 根据用户信息获取权限
      * @return
      */
-    @RequestMapping("/query/by/roleId")
-    public Result queryPermissionByRoleId(Long roleId) {
-        log.info("开始根据角色Id 获取用户权限");
-        return Result.ok(iWebPermissionService.selectPermissionByRoleId(roleId));
+    @RequestMapping("/query/web/permission")
+    public Result queryWebPermission(@RequestParam Long userId) {
+        //userId 根据oauth2 中 Principal  principal 对象拿取  principal.getName() 转成Long
+        log.info("开始根据用户信息 获取用户权限");
+        return Result.ok(iWebPermissionService.selectWebPermissionByUserId(userId));
     }
 
     /***
-     * 根据userId权限拦截
+     * 根据userId权限拦截 后台控制权限
      * @return
      */
-    @RequestMapping("/query/user/id")
-    public Result queryPermissionByUserId(Long userId) {
+    @RequestMapping("/query/by/user/id")
+    public Result queryPermissionByUserId(@RequestParam Long userId) {
         log.info("开始根据用户Id 获取用户权限");
         return Result.ok(iWebPermissionService.getPerByUserId(userId));
     }
@@ -65,8 +68,8 @@ public class WebPermissionController {
      * 根据roleId获取回显权限
      * @return
      */
-    @RequestMapping("/query/echo/by/roleId")
-    public Result queryEchoPermissionByRoleId(Long roleId) {
+    @RequestMapping("/query/echo/by/role/id")
+    public Result queryEchoPermissionByRoleId(@RequestParam Long roleId) {
         log.info("开始根据角色Id 获取用户回显权限");
         return Result.ok(iWebPermissionService.selectEchoPermissionByRoleId(roleId));
     }

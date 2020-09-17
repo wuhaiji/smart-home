@@ -4,6 +4,7 @@ package com.ecoeler.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ecoeler.app.bean.v1.PageBean;
+import com.ecoeler.app.dto.v1.AllocationRoleDto;
 import com.ecoeler.app.dto.v1.WebUserDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebUser;
@@ -13,6 +14,7 @@ import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +45,7 @@ public class WebUserController {
         return Result.ok(iWebUserService.getOne(q));
     }
 
+
     /**
      * 新增用户
      *
@@ -50,7 +53,7 @@ public class WebUserController {
      * @return
      */
     @RequestMapping("save")
-    public Result saveWebUser(WebUser webUser) {
+    public Result saveWebUser(@RequestBody WebUser webUser) {
         log.info("开始新增用户");
         Long id = iWebUserService.addWebUser(webUser);
         return Result.ok(id);
@@ -63,7 +66,7 @@ public class WebUserController {
      * @return
      */
     @RequestMapping("update")
-    public Result updateWebUser(WebUser webUser) {
+    public Result updateWebUser(@RequestBody WebUser webUser) {
         log.info("开始修改用户");
         iWebUserService.updateWebUser(webUser);
         return Result.ok();
@@ -76,7 +79,7 @@ public class WebUserController {
      * @return
      */
     @RequestMapping("delete")
-    public Result deleteWebUser(Long id) {
+    public Result deleteWebUser(@RequestParam Long id) {
         log.info("开始删除用户");
         iWebUserService.deleteWebUser(id);
         return Result.ok();
@@ -86,27 +89,25 @@ public class WebUserController {
      * 查询用户列表
      *
      * @param webUserDto 查询条件
-     * @param page       分页
      * @return
      */
     @RequestMapping("query/list")
-    public Result queryWebUserList(WebUserDto webUserDto, Page<WebUser> page) {
+    public Result queryWebUserList(@RequestBody WebUserDto webUserDto) {
         log.info("开始分页查询用户列表");
-        PageBean<WebUser> result = iWebUserService.queryWebUserList(webUserDto, page);
+        PageBean<WebUser> result = iWebUserService.queryWebUserList(webUserDto);
         return Result.ok(result);
     }
 
     /**
      * 分配角色
      *
-     * @param userId  用户id
-     * @param webRole 角色
+     * @param allocationRoleDto  用户id 角色信息
      * @return
      */
     @RequestMapping("allocation/role")
-    public Result allocationWebUserRole(Long userId, WebRole webRole) {
+    public Result allocationWebUserRole(@RequestBody AllocationRoleDto allocationRoleDto) {
         log.info("开始给用户分配角色");
-        iWebUserService.allocationWebUserRole(userId, webRole);
+        iWebUserService.allocationWebUserRole(allocationRoleDto);
         return Result.ok();
     }
 

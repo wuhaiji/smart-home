@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +47,8 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public Long addRole(WebRole webRole) {
+        webRole.setCreateTime(LocalDateTime.now());
+        webRole.setUpdateTime(LocalDateTime.now());
         baseMapper.insert(webRole);
         return webRole.getId();
     }
@@ -57,6 +60,7 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public void updateRole(WebRole webRole) {
+        webRole.setUpdateTime(LocalDateTime.now());
         baseMapper.updateById(webRole);
     }
 
@@ -87,13 +91,14 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
         List<WebRole> webRoles = baseMapper.selectList(queryWrapper);
         if (webRoles != null && webRoles.size() != 0) {
             List<WebRoleBean> webRoleBeans = webUserMapper.selectUserCountByRoleId();
+            log.error(webRoleBeans.toString());
             for (WebRole webRole : webRoles) {
                 Long roleId = webRole.getId();
                 WebRoleBean webRoleBean = new WebRoleBean();
                 BeanUtils.copyProperties(webRole, webRoleBean);
                 //封装角色对应的客户数量
                 for (WebRoleBean roleBean : webRoleBeans) {
-                    if (roleBean.getId().equals(roleId)) {
+                    if (roleBean.getId() != null && roleBean.getId().equals(roleId)) {
                         webRoleBean.setCount(roleBean.getCount());
                     }
                 }
@@ -110,7 +115,7 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      * @return
      */
     @Override
-    public List<WebRole> queryRoleListExceptById(Long roleId) {
+    public List<WebRole> selectRoleListExceptById(Long roleId) {
         QueryWrapper<WebRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("id", "role");
         queryWrapper.ne(roleId != null, "id", roleId);

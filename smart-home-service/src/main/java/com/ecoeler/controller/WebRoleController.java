@@ -7,9 +7,11 @@ import com.ecoeler.model.response.Result;
 import com.ecoeler.app.service.IWebRoleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class WebRoleController {
      * @return
      */
     @RequestMapping("save")
-    public Result addRole(WebRole webRole) {
+    public Result addRole(@RequestBody WebRole webRole) {
         Long roleId = iWebRoleService.addRole(webRole);
         return Result.ok(roleId);
     }
@@ -49,7 +51,7 @@ public class WebRoleController {
      * @return
      */
     @RequestMapping("update")
-    public Result updateRole(WebRole webRole) {
+    public Result updateRole(@RequestBody WebRole webRole) {
         iWebRoleService.updateRole(webRole);
         return Result.ok();
     }
@@ -61,7 +63,7 @@ public class WebRoleController {
      * @return
      */
     @RequestMapping("delete")
-    public Result deleteRole(Long id) {
+    public Result deleteRole(@RequestBody Long id) {
         iWebRoleService.deleteRole(id);
         return Result.ok();
     }
@@ -83,8 +85,8 @@ public class WebRoleController {
      * @return
      */
     @RequestMapping("query/list/except/by/id")
-    public Result queryRoleListExceptById(Long roleId) {
-        List<WebRole> result = iWebRoleService.queryRoleListExceptById(roleId);
+    public Result queryRoleListExceptById(@RequestParam Long roleId) {
+        List<WebRole> result = iWebRoleService.selectRoleListExceptById(roleId);
         return Result.ok(result);
     }
 

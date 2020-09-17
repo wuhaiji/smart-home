@@ -29,12 +29,20 @@ public interface IWebPermissionService extends IService<WebPermission> {
     List<MenuWebPermissionBean> selectAllMenuPermission();
 
     /**
-     * 根据角色id查询菜单权限列表
+     * 根据用户id查询菜单权限列表
      *
-     * @param roleId 角色id
+     * @param userId 用户id
      * @return 菜单权限列表
      */
-    WebUserPermissionBean selectPermissionByRoleId(Long roleId);
+    WebUserPermissionBean selectWebPermissionByUserId(Long userId);
+
+    /**
+     * 根据用户id查询菜单权限列表
+     *
+     * @param roleId 用户id
+     * @return 菜单权限列表
+     */
+    WebUserPermissionBean selectWebPermissionByRoleId(Long roleId);
 
     /**
      * 查询后端权限控制的当前用户权限 用字符串表示只返回 数据库permission字段
@@ -55,12 +63,16 @@ public interface IWebPermissionService extends IService<WebPermission> {
     List<WebRolePermission> selectPermissionList(Long roleId);
 
     /**
-     * 根据用户ID查询权限
+     * 根据用户ID查询后台控制权限
      * @param userId
      * @return
      */
     Set<String> getPerByUserId(Long userId);
 
-
+    /**
+     * 角色回显权限
+     * @param roleId 角色id
+     * @return
+     */
     WebEchoUserPermissionBean selectEchoPermissionByRoleId(Long roleId);
 }
