@@ -29,6 +29,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("----user can't be found!");
         }
 
-        return UserDetailsImpl.getUserDetail(user,webUserService);
+        return UserDetailsImpl.getUserDetail(user);
     }
 }

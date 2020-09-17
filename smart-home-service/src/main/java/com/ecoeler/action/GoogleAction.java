@@ -2,8 +2,10 @@ package com.ecoeler.action;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.app.service.IAppUserService;
+import com.ecoeler.model.response.Result;
 import com.google.actions.api.smarthome.*;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.home.graph.v1.HomeGraphApiServiceProto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,8 +21,6 @@ public class GoogleAction {
 
     @Autowired
     private GoogleSmartHomeApp googleSmartHomeApp;
-    @Autowired
-    private IAppUserService appUserService;
 
     /**
      * SmartHomeApp注入googleApi密匙
@@ -35,6 +35,20 @@ public class GoogleAction {
         } catch (Exception e) {
             log.error("couldn't load credentials");
         }
+    }
+
+
+    /**
+     * 主动向google申请同步
+     *
+     * @param userId 同步新增或删除设备所属的用户ID
+     * @return
+     */
+    public Result requestSync(Integer userId) {
+        log.info("begin request sync!!!");
+        HomeGraphApiServiceProto.RequestSyncDevicesResponse response = googleSmartHomeApp.requestSync(String.valueOf(userId));
+        log.info("RSYNC-Response:" + response.toString());
+        return Result.ok();
     }
 
     public String action(JSONObject data) {
@@ -98,4 +112,6 @@ public class GoogleAction {
 
         return responseJson.toJSONString();
     }
+
+
 }

@@ -1,13 +1,11 @@
 package com.ecoeler.feign;
 
-import com.ecoeler.app.entity.WebPermission;
 import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,7 +13,7 @@ import java.util.Set;
  * @author tang
  * @since 2020/9/16
  */
-@FeignClient(value = "smart-home-service", path = "/web_user",contextId = "web")
+@FeignClient(value = "smart-home-service", path = "/web-user",contextId = "web")
 public interface WebUserService {
 
     /**

@@ -44,7 +44,6 @@ public class ApiRegister implements ImportBeanDefinitionRegistrar, ResourceLoade
         scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
         scanner.addIncludeFilter(new AnnotationTypeFilter(Service.class));
         scanner.addIncludeFilter(new AnnotationTypeFilter(Repository.class));
-        //scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
         scanner.setResourceLoader(this.resourceLoader);
 
         List<Class<?>> annotationList = this.getAnnotations(annotationMetadata);

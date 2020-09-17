@@ -78,18 +78,13 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
     @SetCache("PER_BACK#${roleId}")
     @Override
     public Set<String> selectBackPermissionByRoleId(Long roleId) {
-        try {
-            List<WebRolePermission> permissions = iWebRolePermissionService.selectPermissionList(roleId);
-            QueryWrapper<WebPermission> queryWrapper = new QueryWrapper<>();
-            queryWrapper.select("id", "permission", "source_type");
-            queryWrapper.in("id", permissions.stream()
-                    .map(WebRolePermission::getPermissionId)
-                    .collect(Collectors.toSet()));
-            return baseMapper.selectList(queryWrapper).stream().map(WebPermission::getPermission).collect(Collectors.toSet());
-        } catch (Exception e) {
-            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw new ServiceException(PermissionCode.SELECT_PERMISSION_BY_ROLE_ID);
-        }
+        List<WebRolePermission> permissions = iWebRolePermissionService.selectPermissionList(roleId);
+        QueryWrapper<WebPermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id", "permission", "source_type");
+        queryWrapper.in("id", permissions.stream()
+                .map(WebRolePermission::getPermissionId)
+                .collect(Collectors.toSet()));
+        return baseMapper.selectList(queryWrapper).stream().map(WebPermission::getPermission).collect(Collectors.toSet());
     }
 
 

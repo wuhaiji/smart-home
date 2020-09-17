@@ -10,8 +10,8 @@ security:
     client:
       client-id: c2
       client-secret: secret
-      access-token-uri: http://127.0.0.1:11111/oauth/token
-      user-authorization-uri: http://127.0.0.1:11111/oauth/authorize
+      access-token-uri: http://127.0.0.1:11112/oauth/token
+      user-authorization-uri: http://127.0.0.1:11112/oauth/authorize
       scope: all
       authorized-grant-types:
         - password
@@ -21,7 +21,7 @@ security:
       resource-ids:
         - rs1
     resource:
-      token-info-uri: http://127.0.0.1:11111/oauth/check_token
+      token-info-uri: http://127.0.0.1:11112/oauth/check_token
 
 
 management:

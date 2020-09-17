@@ -24,6 +24,10 @@ public enum CommonCode implements ResultCode {
 
     NULL_TOKEN("10006","token 为空"),
 
+    LOGOUT_FAILED("10007","登出失败"),
+
+
+
 
 
     SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！");
