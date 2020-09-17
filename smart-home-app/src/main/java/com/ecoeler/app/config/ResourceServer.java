@@ -88,16 +88,6 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
                         response.getWriter().write(JSONObject.toJSONString(Result.error(TangCode.CODE_TOKEN_ERROR)));
                     }
                 })
-                //用来解决认证过的用户 访问无权限资源时的异常
-                .accessDeniedHandler(new AccessDeniedHandler() {
-                    @Override
-                    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                        response.setStatus(HttpStatus.OK.value());
-                        response.setHeader("Content-Type", "application/json;charset=UTF-8");
-                        response.getWriter().write(JSONObject.toJSONString(Result.error(TangCode.CODE_NO_AUTH_ERROR)));
-
-                    }
-                })
                 .tokenServices(service);
     }
 

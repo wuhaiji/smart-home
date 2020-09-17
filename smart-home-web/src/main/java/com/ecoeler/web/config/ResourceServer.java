@@ -11,20 +11,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.client.http.AccessTokenRequiredException;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.csrf.InvalidCsrfTokenException;
-import org.springframework.security.web.csrf.MissingCsrfTokenException;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
@@ -52,7 +46,6 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
 
     @Autowired
     private RestTemplate restTemplate;
-
 
     /**
      * 用于请求oauth 权限的工具，负载均衡
@@ -92,16 +85,15 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
                         response.getWriter().write(JSONObject.toJSONString(Result.error(TangCode.CODE_TOKEN_ERROR)));
                     }
                 })
-                //用来解决认证过的用户 访问无权限资源时的异常
-                .accessDeniedHandler(new AccessDeniedHandler() {
-                    @Override
-                    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                        response.setStatus(HttpStatus.OK.value());
-                        response.setHeader("Content-Type", "application/json;charset=UTF-8");
-                        response.getWriter().write(JSONObject.toJSONString(Result.error(TangCode.CODE_NO_AUTH_ERROR)));
-
-                    }
-                })
+                //用来解决认证过的用户 访问无权限资源时的异常，会被 ControllerAdvice 全局异常处理 所捕获
+//                .accessDeniedHandler(new AccessDeniedHandler() {
+//                    @Override
+//                    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+//                        response.setStatus(HttpStatus.OK.value());
+//                        response.setHeader("Content-Type", "application/json;charset=UTF-8");
+//                        response.getWriter().write(JSONObject.toJSONString(Result.error(TangCode.CODE_NO_AUTH_ERROR)));
+//                    }
+//                })
                 .tokenServices(service);
     }
 
