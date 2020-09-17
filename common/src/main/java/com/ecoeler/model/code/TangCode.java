@@ -29,7 +29,11 @@ public enum  TangCode implements ResultCode {
     CODE_CAPTCHA_ERROR("20001","图片验证码错误!"),
     CODE_LIMIT_EMAIL_ERROR("20002","两分钟内勿重复请求邮箱验证码!"),
     CODE_EMAIL_CODE_ERROR("20003","邮箱验证码错误!"),
-    CODE_USER_EXIST("20004","用户已存在!");
+    CODE_USER_EXIST("20004","用户已存在!"),
+
+    //TOKEN
+    CODE_TOKEN_ERROR("30005","TOKEN超时或异常!"),
+    CODE_NO_AUTH_ERROR("30006","权限不足!")
     ;
 
 

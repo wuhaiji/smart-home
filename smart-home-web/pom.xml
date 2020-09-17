@@ -12,6 +12,7 @@
     <artifactId>smart-home-web</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>com.ecoeler</groupId>
             <artifactId>smart-home-api</artifactId>

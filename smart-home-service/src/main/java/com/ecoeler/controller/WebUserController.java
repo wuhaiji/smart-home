@@ -43,11 +43,6 @@ public class WebUserController {
         return Result.ok(iWebUserService.getOne(q));
     }
 
-    @RequestMapping("/perm")
-    public Result user(@RequestParam Long userId){
-        return Result.ok(iWebUserService.getPerByUserId(userId));
-    }
-
     /**
      * 新增用户
      *

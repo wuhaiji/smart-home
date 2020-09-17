@@ -13,7 +13,7 @@ import java.util.Set;
  * @author tang
  * @since 2020/9/16
  */
-@FeignClient(value = "smart-home-service", path = "/web-user",contextId = "web")
+@FeignClient(value = "smart-home-service" ,contextId = "web")
 public interface WebUserService {
 
     /**
@@ -21,7 +21,7 @@ public interface WebUserService {
      * @param account 可能为邮箱、可能为手机号
      * @return
      */
-    @PostMapping("/user")
+    @PostMapping("/web-user/user")
     Result<WebUser> getUser(@RequestParam String account);
 
     /**
@@ -29,7 +29,7 @@ public interface WebUserService {
      * @param userId 用户ID
      * @return
      */
-    @PostMapping("/perm")
+    @PostMapping("/web-permission/query/user/id")
     Result<Set<String>> getPerm(@RequestParam Long userId);
 
 //    /**

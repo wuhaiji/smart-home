@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OpenController {
 
-    @Value("${security.oauth2.client.client-id}")
+    @Value("${spring.oauth2.client-id}")
     private String clientId;
 
-    @Value("${security.oauth2.client.client-secret}")
+    @Value("${spring.oauth2.client-secret}")
     private String clientSecret;
 
     @Autowired
