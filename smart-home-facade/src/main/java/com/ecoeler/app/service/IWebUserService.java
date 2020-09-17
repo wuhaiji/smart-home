@@ -69,12 +69,7 @@ public interface IWebUserService extends IService<WebUser> {
      */
     void allocationWebUserRole(Long userId, WebRole webRole);
 
-    /**
-     * 根据userId获取权限
-     *
-     * @param userId  指定用户id
-     */
-    Set<String> getPerByUserId(Long userId);
+
 
 
 }

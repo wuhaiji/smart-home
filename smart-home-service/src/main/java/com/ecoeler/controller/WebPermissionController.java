@@ -2,6 +2,7 @@ package com.ecoeler.controller;
 
 
 import com.ecoeler.app.bean.v1.MenuWebPermissionBean;
+import com.ecoeler.app.bean.v1.WebEchoUserPermissionBean;
 import com.ecoeler.app.service.IWebPermissionService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +48,27 @@ public class WebPermissionController {
     @RequestMapping("/query/by/roleId")
     public Result queryPermissionByRoleId(Long roleId) {
         log.info("开始根据角色Id 获取用户权限");
-        List<MenuWebPermissionBean> result = iWebPermissionService.selectPermissionByRoleId(roleId);
-        return Result.ok(result);
+        return Result.ok(iWebPermissionService.selectPermissionByRoleId(roleId));
+    }
+
+    /***
+     * 根据userId权限拦截
+     * @return
+     */
+    @RequestMapping("/query/user/id")
+    public Result queryPermissionByUserId(Long userId) {
+        log.info("开始根据用户Id 获取用户权限");
+        return Result.ok(iWebPermissionService.getPerByUserId(userId));
+    }
+
+    /***
+     * 根据roleId获取回显权限
+     * @return
+     */
+    @RequestMapping("/query/echo/by/roleId")
+    public Result queryEchoPermissionByRoleId(Long roleId) {
+        log.info("开始根据角色Id 获取用户回显权限");
+        return Result.ok(iWebPermissionService.selectEchoPermissionByRoleId(roleId));
     }
 
 }

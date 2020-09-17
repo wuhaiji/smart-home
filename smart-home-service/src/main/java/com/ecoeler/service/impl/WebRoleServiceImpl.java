@@ -7,12 +7,13 @@ import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebRolePermission;
 import com.ecoeler.app.mapper.WebRoleMapper;
+import com.ecoeler.app.mapper.WebRolePermissionMapper;
+import com.ecoeler.app.mapper.WebUserMapper;
 import com.ecoeler.app.service.IWebRolePermissionService;
 import com.ecoeler.app.service.IWebRoleService;
 import com.ecoeler.app.service.IWebUserService;
 import com.ecoeler.cache.ClearCache;
 import com.ecoeler.exception.ServiceException;
-import com.ecoeler.model.code.WebRoleCode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,9 +34,9 @@ import java.util.Optional;
 @Service
 public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> implements IWebRoleService {
     @Autowired
-    private IWebRolePermissionService iWebRolePermissionService;
+    private WebRolePermissionMapper webRolePermissionMapper;
     @Autowired
-    private IWebUserService iWebUserService;
+    private WebUserMapper webUserMapper;
 
     /**
      * 新增用户角色
@@ -45,13 +46,8 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public Long addRole(WebRole webRole) {
-        try {
-            baseMapper.insert(webRole);
-            return webRole.getId();
-        } catch (Exception e) {
-            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw new ServiceException(WebRoleCode.ADD);
-        }
+        baseMapper.insert(webRole);
+        return webRole.getId();
     }
 
     /**
@@ -61,12 +57,7 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public void updateRole(WebRole webRole) {
-        try {
-            baseMapper.updateById(webRole);
-        } catch (Exception e) {
-            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw new ServiceException(WebRoleCode.UPDATE);
-        }
+        baseMapper.updateById(webRole);
     }
 
     /**
@@ -77,16 +68,11 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
     @ClearCache("PER#${id},PER_BACK#${id}")
     @Override
     public void deleteRole(Long id) {
-        try {
-            QueryWrapper<WebRolePermission> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("role_id", id);
-            //删除角色权限表中的
-            iWebRolePermissionService.remove(queryWrapper);
-            baseMapper.deleteById(id);
-        } catch (Exception e) {
-            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw new ServiceException(WebRoleCode.DELETE);
-        }
+        QueryWrapper<WebRolePermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", id);
+        //删除角色权限表中的
+        webRolePermissionMapper.delete(queryWrapper);
+        baseMapper.deleteById(id);
     }
 
     /**
@@ -96,31 +82,25 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public List<WebRoleBean> selectRoleList() {
-        try {
-            List<WebRoleBean> result = new ArrayList<>();
-            QueryWrapper<WebRole> queryWrapper = new QueryWrapper<>();
-            List<WebRole> webRoles = baseMapper.selectList(queryWrapper);
-            if (webRoles != null && webRoles.size() != 0) {
-                List<WebRoleBean> webRoleBeans = iWebUserService.selectUserCountByRoleId();
-                for (WebRole webRole : webRoles) {
-                    Long roleId = webRole.getId();
-                    WebRoleBean webRoleBean = new WebRoleBean();
-                    BeanUtils.copyProperties(webRole, webRoleBean);
-                    //封装角色对应的客户数量
-                    for (WebRoleBean roleBean : webRoleBeans) {
-                        if (roleBean.getId().equals(roleId)) {
-                            webRoleBean.setCount(roleBean.getCount());
-                        }
+        List<WebRoleBean> result = new ArrayList<>();
+        QueryWrapper<WebRole> queryWrapper = new QueryWrapper<>();
+        List<WebRole> webRoles = baseMapper.selectList(queryWrapper);
+        if (webRoles != null && webRoles.size() != 0) {
+            List<WebRoleBean> webRoleBeans = webUserMapper.selectUserCountByRoleId();
+            for (WebRole webRole : webRoles) {
+                Long roleId = webRole.getId();
+                WebRoleBean webRoleBean = new WebRoleBean();
+                BeanUtils.copyProperties(webRole, webRoleBean);
+                //封装角色对应的客户数量
+                for (WebRoleBean roleBean : webRoleBeans) {
+                    if (roleBean.getId().equals(roleId)) {
+                        webRoleBean.setCount(roleBean.getCount());
                     }
-                    result.add(webRoleBean);
                 }
+                result.add(webRoleBean);
             }
-            return result;
-        } catch (Exception e) {
-            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw new ServiceException(WebRoleCode.SELECT);
         }
-
+        return result;
     }
 
     /**
@@ -131,15 +111,10 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public List<WebRole> queryRoleListExceptById(Long roleId) {
-        try {
-            QueryWrapper<WebRole> queryWrapper = new QueryWrapper<>();
-            queryWrapper.select("id", "role");
-            queryWrapper.ne(roleId != null, "id", roleId);
-            return baseMapper.selectList(queryWrapper);
-        } catch (Exception e) {
-            log.error(Optional.ofNullable(e.getMessage()).orElse(""), Optional.ofNullable(e.getCause()).orElse(e));
-            throw new ServiceException(WebRoleCode.SELECT_EXCEPT_BY_ROLE_ID);
-        }
+        QueryWrapper<WebRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id", "role");
+        queryWrapper.ne(roleId != null, "id", roleId);
+        return baseMapper.selectList(queryWrapper);
     }
 
 }

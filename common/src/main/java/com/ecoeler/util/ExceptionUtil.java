@@ -27,6 +27,19 @@ public class ExceptionUtil {
     }
 
     /**
+     * 验证字符串格式是否匹配
+     *
+     * @param obj   目标字符串
+     * @param code  异常
+     */
+    public static void notEmail(String obj,  ResultCode code) {
+        String regex="^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
+        if (!obj.matches(regex)) {
+            throw new ServiceException(code.getCode(), code.getMsg());
+        }
+    }
+
+    /**
      * 验证字符串是否在一定长度范围
      *
      * @param obj  目标字符串

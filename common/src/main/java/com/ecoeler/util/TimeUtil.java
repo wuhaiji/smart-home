@@ -1,8 +1,7 @@
 package com.ecoeler.util;
 
 import com.ecoeler.app.dto.v1.QueryTimeDto;
-import com.ecoeler.app.dto.v1.WebCustomerDto;
-import com.ecoeler.model.code.WebUserCode;
+import com.ecoeler.model.code.TangCode;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -44,7 +43,7 @@ public class TimeUtil {
             endTime = TimeUtil.timeFormat(end);
         }
         if (startTime != null && endTime != null) {
-            ExceptionUtil.startIsAfterEnd(startTime, endTime, WebUserCode.START_TIME_AFTER_END_TIME);
+            ExceptionUtil.startIsAfterEnd(startTime, endTime, TangCode.START_TIME_AFTER_END_TIME);
         }
         result.put(START,startTime);
         result.put(END,endTime);
