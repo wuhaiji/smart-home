@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @since 2020-09-08
  **/
 @ControllerAdvice
-public class ExceptionCatch {
+public class ExceptionAdvice {
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
