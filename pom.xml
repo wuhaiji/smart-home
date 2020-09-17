@@ -42,7 +42,7 @@
         <ali.fastjson.version>1.2.62</ali.fastjson.version>
 
         <spring-boot.version>2.1.9.RELEASE</spring-boot.version>
-        <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
+        <spring-cloud.version>Greenwich.SR6</spring-cloud.version>
         <spring-cloud-openfeign.version>2.1.4.RELEASE</spring-cloud-openfeign.version>
         <spring-cloud-alibaba.version>2.1.0.RELEASE</spring-cloud-alibaba.version>
 

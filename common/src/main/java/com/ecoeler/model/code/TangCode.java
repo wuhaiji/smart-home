@@ -32,7 +32,7 @@ public enum  TangCode implements ResultCode {
     CODE_USER_EXIST("20004","用户已存在!"),
 
     //TOKEN
-    CODE_TOKEN_ERROR("30005","TOKEN超时或异常!"),
+    CODE_TOKEN_ERROR("30005","无效TOKEN,TOKEN超时或异常!"),
     CODE_NO_AUTH_ERROR("30006","权限不足!")
     ;
 

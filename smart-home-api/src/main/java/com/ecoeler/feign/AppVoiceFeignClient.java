@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * app voice feign
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @author whj
  * @since 2020/9/11
  */
-@FeignClient(name = "smart-home-service", path = "/app-voice",contextId="voice")
+@FeignClient(name = "smart-home-service", path = "/app/voice", contextId = "voice")
 public interface AppVoiceFeignClient {
 
     /**
@@ -21,6 +22,6 @@ public interface AppVoiceFeignClient {
      * @return
      */
     @PostMapping("/action")
-    Result<String> action(JSONObject data);
+    Result<String> action(@RequestBody JSONObject data);
 
 }

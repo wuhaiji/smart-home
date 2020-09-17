@@ -20,5 +20,5 @@ public interface AppVoiceConstant {
     /**
      *  client id
      */
-    String DTO_KEY_AUTHORIZATION = "Authorization";
+    String DTO_KEY_AUTHORIZATION = "accessToken";
 }

@@ -1,22 +1,24 @@
+server:
+  port: 11031
+
 spring:
   application:
     name: smart-home-app
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.0.108:8848
+#        server-addr: 192.168.0.108:8848
+        server-addr: 127.0.0.1:8848
+security:
   oauth2:
-    resource-id: rs1
-    client-id: c1
-    client-secret: secret
-    check-token-url: http://web-oauth2/oauth/check_token
-    token-url: http://web-oauth2/oauth/token
-
+    resourceId: rs1
+    clientId: c1
+    clientSecret: secret
+    checkTokenUrl: http://app-oauth2/oauth/check_token
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-server:
-  port: 11031
+

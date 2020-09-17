@@ -22,7 +22,7 @@ import java.util.HashMap;
  * @author whj
  * @since 2020-09-08
  **/
-@ControllerAdvice
+// @ControllerAdvice
 public class ExceptionCatch {
 
     private static final Logger log = LoggerFactory.getLogger(ExceptionCatch.class);

@@ -62,7 +62,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
             //查询出用户拥有的家庭ids
             QueryWrapper<UserFamily> userFamilyQuery = new QueryWrapper<>();
-            userFamilyQuery.eq("user_id", userVoiceDto.getUserId());
+            userFamilyQuery.eq("app_user_id", userVoiceDto.getUserId());
             List<UserFamily> families = iUserFamilyService.list(userFamilyQuery);
             if (CollUtil.isEmpty(families)) return new ArrayList<>();
             List<Long> familyIds = families.parallelStream().map(UserFamily::getId).collect(Collectors.toList());
