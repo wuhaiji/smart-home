@@ -1,11 +1,8 @@
 package com.ecoeler.feign;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ecoeler.app.dto.v1.AllocationRoleDto;
 import com.ecoeler.app.dto.v1.WebUserDto;
-import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebUser;
-import com.ecoeler.config.FeignConfig;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +15,7 @@ import java.util.Set;
  * @author tang
  * @since 2020/9/16
  */
-@FeignClient(value = "smart-home-service", contextId = "web",configuration = FeignConfig.class)
+@FeignClient(value = "smart-home-service", contextId = "web")
 public interface WebUserService {
 
     /**

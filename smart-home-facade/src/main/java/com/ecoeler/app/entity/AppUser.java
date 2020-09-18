@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @TableName("sh_app_user")
 public class AppUser implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 123456789L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
