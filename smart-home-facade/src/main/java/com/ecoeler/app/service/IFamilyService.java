@@ -14,7 +14,20 @@ import java.util.List;
  * @since 2020-09-10
  */
 public interface IFamilyService extends IService<Family> {
-
+    /**
+     * 列出用户家庭
+     * @param userId
+     * @return
+     */
     List<Family> listUserFamily(Long userId);
+
+    /**
+     * 添加家庭
+     * @param family
+     * @param userId
+     * @param nickname
+     * @return
+     */
+    Long addFamily(Family family,Long userId,String nickname);
 
 }

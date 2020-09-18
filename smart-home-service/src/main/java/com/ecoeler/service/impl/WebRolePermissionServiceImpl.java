@@ -10,21 +10,16 @@ import com.ecoeler.app.entity.WebPermission;
 import com.ecoeler.app.entity.WebRolePermission;
 import com.ecoeler.app.mapper.WebPermissionMapper;
 import com.ecoeler.app.mapper.WebRolePermissionMapper;
-import com.ecoeler.app.service.IWebPermissionService;
 import com.ecoeler.app.service.IWebRolePermissionService;
 import com.ecoeler.cache.ClearCache;
-import com.ecoeler.exception.ServiceException;
-import com.ecoeler.model.code.PermissionCode;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.apache.bcel.generic.LineNumberGen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -88,7 +83,6 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
                     permissionIds = permissionButtonIds;
                 }
             }
-
         }
         if (permissionIds != null) {
             for (Long permissionId : permissionIds) {

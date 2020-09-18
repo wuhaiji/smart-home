@@ -4,6 +4,7 @@ package com.ecoeler.controller;
 import com.ecoeler.app.service.IFloorService;
 import com.ecoeler.model.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,7 @@ public class FloorController {
     @Autowired
     private IFloorService floorService;
 
-    @RequestMapping("/list/family/floor")
+    @PostMapping("/list/family/floor")
     public Result listFamilyFloor(Long familyId){
         return Result.ok(floorService.listFamilyFloor(familyId));
     }

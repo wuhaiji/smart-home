@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author tang
  * @since 2020/9/10
  */
-@FeignClient(value = "smart-home-service", path = "/app-user" )
+@FeignClient(value = "smart-home-service", path = "/app-user",contextId = "app-user")
 public interface AppUserService {
 
     /**
@@ -58,12 +58,5 @@ public interface AppUserService {
     @PostMapping("/register")
     Result register(@RequestBody AppUser appUser, @RequestParam String emailCode);
 
-    /**
-     * 用户首页初始化
-     * @param userId
-     * @return
-     */
-    @PostMapping("/init")
-    Result init(@RequestParam Long userId);
 
 }

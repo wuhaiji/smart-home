@@ -7,6 +7,7 @@ import com.ecoeler.app.entity.UserFamily;
 import com.ecoeler.app.mapper.FamilyMapper;
 import com.ecoeler.app.mapper.UserFamilyMapper;
 import com.ecoeler.app.service.IFamilyService;
+import com.ecoeler.constant.FamilyRoleConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +41,17 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, Family> impleme
         q2.in("id", familyIds);
         return baseMapper.selectList(q2);
 
+    }
+
+    @Override
+    public Long addFamily(Family family, Long userId ,String nickname) {
+        baseMapper.insert(family);
+        UserFamily userFamily=new UserFamily();
+        userFamily.setRole(FamilyRoleConst.OWNER);
+        userFamily.setAppUserId(userId);
+        userFamily.setNickName(nickname);
+        userFamily.setFamilyId(family.getId());
+        userFamilyMapper.insert(userFamily);
+        return family.getId();
     }
 }

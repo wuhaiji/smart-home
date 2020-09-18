@@ -1,12 +1,11 @@
 package com.ecoeler.controller;
 
 
+import com.ecoeler.app.entity.Family;
 import com.ecoeler.app.service.IFamilyService;
 import com.ecoeler.model.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -26,10 +25,16 @@ public class FamilyController {
      * @param userId
      * @return
      */
-    @RequestMapping("/list/user/family")
+    @PostMapping("/list/user/family")
     public Result listUserFamily(@RequestParam Long userId){
         return Result.ok(familyService.listUserFamily(userId));
     }
+
+    @PostMapping("/add/family")
+    public Result addFamily(@RequestBody Family family,@RequestParam Long userId,@RequestParam String nickname){
+        return Result.ok(familyService.addFamily(family,userId,nickname));
+    }
+
 
 
 }
