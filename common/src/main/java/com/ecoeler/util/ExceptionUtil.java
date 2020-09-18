@@ -20,6 +20,12 @@ public class ExceptionUtil {
         }
     }
 
+    public static <T> void notEqual(T obj, T target, ResultCode code) {
+        if (obj == null || obj.equals(target)) {
+            throw new ServiceException(code.getCode(), code.getMsg());
+        }
+    }
+
     public static void notBlank(String obj, ResultCode code) {
         if (StringUtils.isBlank(obj)) {
             throw new ServiceException(code.getCode(), code.getMsg());

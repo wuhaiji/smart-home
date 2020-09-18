@@ -23,7 +23,8 @@ import lombok.experimental.Accessors;
 @TableName("sh_web_user")
 public class WebUser implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 123456789L;
+
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 

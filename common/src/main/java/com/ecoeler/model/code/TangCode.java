@@ -15,6 +15,12 @@ public enum  TangCode implements ResultCode {
     CODE_USERNAME_EMPTY_ERROR("40004","用户名不能为空!"),
     CODE_REFRESH_TOKEN_EMPTY_ERROR("40005","刷新token不能为空!"),
     CODE_ACCOUNT_EMPTY_ERROR("40006","账号不能为空!"),
+    CODE_FAMILY_NAME_EMPTY_ERROR("40007","家庭名称不能为空!"),
+    CODE_FAMILY_TYPE_NULL_ERROR("40008","家庭类型必选!"),
+    CODE_FLOOR_ID_NULL_ERROR("40009","楼层ID不能为空且不能为0!"),
+    CODE_FAMILY_ID_NULL_ERROR("40010","家庭ID不能为空!"),
+    CODE_ROOM_NAME_EMPTY_ERROR("40011","房间名称不能为空!"),
+    CODE_ROOM_TYPE_EMPTY_ERROR("40012","房间类型不能为空!"),
 
     //业务错误
     BLANK_PHONE_NUMBER_EMPTY_ERROR("20001","手机号不能为空"),

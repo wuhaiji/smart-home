@@ -2,10 +2,15 @@ package com.ecoeler.app.controller;
 
 
 import com.ecoeler.app.entity.Family;
+import com.ecoeler.app.utils.PrincipalUtil;
 import com.ecoeler.feign.FamilyService;
+import com.ecoeler.model.code.TangCode;
 import com.ecoeler.model.response.Result;
+import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 /**
  * 家庭
@@ -20,13 +25,15 @@ public class FamilyController {
     private FamilyService familyService;
 
     @PostMapping("/list/user/family")
-    public Result listUserFamily( Long userId){
-        return familyService.listUserFamily(userId);
+    public Result listUserFamily(Principal principal){
+        return familyService.listUserFamily(PrincipalUtil.getUserId(principal));
     }
 
     @PostMapping("/add/family")
-    public Result addFamily( Family family, Long userId, String nickname){
-        return familyService.addFamily(family,userId,nickname);
+    public Result addFamily( Family family, String nickname ,Principal principal){
+        ExceptionUtil.notBlank(family.getFamilyName(), TangCode.CODE_FAMILY_NAME_EMPTY_ERROR);
+        ExceptionUtil.notNull(family.getFamilyType(), TangCode.CODE_FAMILY_TYPE_NULL_ERROR);
+        return familyService.addFamily(family, PrincipalUtil.getUserId(principal),nickname);
     }
 
 }

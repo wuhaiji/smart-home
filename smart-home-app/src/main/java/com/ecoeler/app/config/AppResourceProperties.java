@@ -3,7 +3,7 @@ package com.ecoeler.app.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@ConfigurationProperties(prefix = "security.oauth2")
+@ConfigurationProperties(prefix = "spring.oauth2")
 @Component
 public class AppResourceProperties {
 

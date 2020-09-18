@@ -6,9 +6,7 @@ import com.ecoeler.app.entity.Room;
 import com.ecoeler.app.service.IRoomService;
 import com.ecoeler.model.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -24,18 +22,23 @@ public class RoomController {
     private IRoomService roomService;
 
     @PostMapping("/list/floor/room")
-    public Result listFloorRoom(Long floorId){
+    public Result listFloorRoom(@RequestParam Long floorId){
         QueryWrapper<Room> q=new QueryWrapper<>();
         q.eq("floor_id",floorId);
         return Result.ok(roomService.list(q));
     }
 
     @PostMapping("/list/family/room")
-    public Result listFamilyRoom(Long familyId){
+    public Result listFamilyRoom(@RequestParam Long familyId){
         QueryWrapper<Room> q=new QueryWrapper<>();
         q.eq("family_id",familyId);
         return Result.ok(roomService.list(q));
     }
 
+    @PostMapping("/add/room")
+    public Result addRoom(@RequestBody Room room){
+        roomService.save(room);
+        return Result.ok(room.getId());
+    }
 
 }
