@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/app/voice")
 public class AppVoiceController {
 
-
     @Autowired
     GoogleAction googleAction;
 
@@ -24,8 +23,21 @@ public class AppVoiceController {
     AlexaAction alexaAction;
 
     @PostMapping("/action")
-    public Result action(@RequestBody JSONObject data) {
-        String response = googleAction.action(data);
+    public Result<String> action(@RequestBody JSONObject data) {
+
+        String clientName = data.getString(AppVoiceConstant.CLIENT_NAME);
+
+        String response;
+        switch (clientName) {
+            case AppVoiceConstant.GOOGLE_CLIENT:
+                response = googleAction.action(data);
+                break;
+            case AppVoiceConstant.ALEXA_CLIENT:
+                response = alexaAction.action(data);
+                break;
+            default:
+                response = "{\"error\":\"invalid client\"}";
+        }
         return Result.ok(response);
     }
 

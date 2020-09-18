@@ -45,8 +45,8 @@ public class Result<T> {
     /**
      * 返回成功
      */
-    public static Result ok() {
-        return new Result(CommonCode.SUCCESS.getCode(), CommonCode.SUCCESS.getMsg());
+    public static Result<String> ok() {
+        return new Result<>(CommonCode.SUCCESS.getCode(), CommonCode.SUCCESS.getMsg());
     }
 
     /**
@@ -59,15 +59,15 @@ public class Result<T> {
     /**
      * 失败
      */
-    public static Result error(ResultCode resultCode) {
-        return new Result(resultCode.getCode(), resultCode.getMsg());
+    public static Result<String> error(ResultCode resultCode) {
+        return new Result<>(resultCode.getCode(), resultCode.getMsg());
     }
 
     /**
      * 失败
      */
-    public static Result error(String code, String message) {
-        return new Result(code, message);
+    public static Result<String> error(String code, String message) {
+        return new Result<>(code, message);
     }
 
 

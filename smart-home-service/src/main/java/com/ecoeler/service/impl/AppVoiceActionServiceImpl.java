@@ -10,6 +10,7 @@ import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.app.entity.*;
 import com.ecoeler.app.service.*;
+import com.ecoeler.constant.DeviceStatusConst;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.AppVoiceCode;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
 
+    public static final int action_type_1 = 1;
     @Autowired
     IUserFamilyService iUserFamilyService;
 
@@ -137,24 +139,35 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
     public DeviceInfo getDeviceStates(DeviceVoiceDto dto) {
 
         DeviceInfo deviceInfo;
-        try {
-            if (dto == null || dto.getDeviceId() == null)
-                throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
-            //查询设备在线离线
-            Device device = iDeviceService.getById(dto.getDeviceId());
+        if (dto == null || dto.getDeviceId() == null)
+            throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
 
+        //查询设备在线离线
+        Device device;
+        try {
+            device = iDeviceService.getById(dto.getDeviceId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_STATES_ERROR);
+        }
+        if (device == null)
+            throw new ServiceException(AppVoiceCode.ACTION_DEVICE_NOT_EXIST);
+
+        //生成返回对象，并设置网络状态
+        deviceInfo = DeviceInfo.of().setOnline(device.getNetState() == DeviceStatusConst.ONLINE);
+
+        try {
             //查询设备data
             QueryWrapper<DeviceData> deviceDataQuery = new QueryWrapper<>();
             deviceDataQuery.eq("device_id", dto.getDeviceId());
             List<DeviceData> deviceDatas = iDeviceDataService.list(deviceDataQuery);
+            if (CollUtil.isEmpty(deviceDatas)) return DeviceInfo.of().setDeviceStateBeans(CollUtil.list(false));
             List<String> deviceKeyList = deviceDatas.parallelStream().map(DeviceData::getDataKey).collect(Collectors.toList());
-            Map<String, DeviceData> deviceDataMap = deviceDatas.parallelStream().collect(Collectors.toMap(DeviceData::getDataKey, i -> i));
-
 
             //查询设备可控可上传key
             QueryWrapper<DeviceKey> deviceKeyQuery = new QueryWrapper<>();
-            deviceKeyQuery.in("device_key", deviceKeyList);
-            deviceKeyQuery.eq("action_type", 1);
+            deviceKeyQuery.in(deviceKeyList.size() > 0, "device_key", deviceKeyList);
+            deviceKeyQuery.eq("action_type", action_type_1);
             List<DeviceKey> deviceKeys = iDeviceKeyService.list(deviceKeyQuery);
             Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
 
@@ -178,7 +191,6 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
-            deviceInfo = DeviceInfo.of().setOnline(device.getNetState() == 1);
 
             deviceInfo.setDeviceStateBeans(deviceStateBeans);
 

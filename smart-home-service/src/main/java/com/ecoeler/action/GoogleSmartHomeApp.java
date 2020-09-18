@@ -21,7 +21,7 @@ import com.ecoeler.core.DeviceEvent;
 import com.ecoeler.core.msg.OrderInfo;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.feign.Oauth2ClientService;
-import com.ecoeler.model.response.Oauth2Token;
+import com.ecoeler.model.response.Result;
 import com.ecoeler.util.SpringUtils;
 import com.google.actions.api.smarthome.*;
 import com.google.home.graph.v1.DeviceProto;
@@ -39,14 +39,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GoogleSmartHomeApp extends SmartHomeApp {
 
-    public static final String GOOGLE_NET_STATE_KEY = "online";
-    public static final String GOOGLE_ON_OFF_KEY = "on";
-    public static final String GOOGLE_COMMAND_BRIGHTNESS = "action.devices.commands.BrightnessAbsolute";
-    public static final String GOOGLE_COMMAND_ONOFF = "action.devices.commands.OnOff";
-    public static final String GOOGLE_BRIGHTNESS_KEY = "brightness";
-    public static final String YUNTUN_BRIGHTNESS_DATA_KEY = "light";
-    public static final String GOOGLE_SUCCESS_COMMANDS_RESPONSE = "SUCCESS";
-    public static final String GOOGLE_FAILED_COMMANDS_RESPONSE = "ERROR";
 
     @Autowired
     AppVoiceActionService appVoiceActionService;
@@ -64,8 +56,8 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
     public void onDisconnect(@NotNull DisconnectRequest disconnectRequest, @Nullable Map<?, ?> map) {
         assert map != null;
         String access_token = (String) map.get(AppVoiceConstant.DTO_KEY_AUTHORIZATION);
-        Oauth2Token logout = oauth2ClientService.logout(access_token);
-        log.info("退出登录返回数据：{}", JSON.toJSON(logout));
+        Result result = oauth2ClientService.logout(access_token);
+        log.info("退出登录返回数据：{}", JSON.toJSON(result));
     }
 
     @NotNull
@@ -102,7 +94,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
                     e.printStackTrace();
                     ExecuteResponse.Payload.Commands failedDevice = new ExecuteResponse.Payload.Commands();
                     failedDevice.ids = new String[]{device.id};
-                    failedDevice.status = GOOGLE_FAILED_COMMANDS_RESPONSE;
+                    failedDevice.status = AppVoiceConstant.GOOGLE_FAILED_COMMANDS_RESPONSE;
                     failedDevice.setErrorCode(e.getMessage());
                     commandsResponse.add(failedDevice);
                     continue;
@@ -111,7 +103,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         }
 
         ExecuteResponse.Payload.Commands successfulCommands = new ExecuteResponse.Payload.Commands();
-        successfulCommands.status = GOOGLE_SUCCESS_COMMANDS_RESPONSE;
+        successfulCommands.status = AppVoiceConstant.GOOGLE_SUCCESS_COMMANDS_RESPONSE;
         successfulCommands.setStates(states);
         successfulCommands.ids = successfulDevices.toArray(new String[]{});
         commandsResponse.add(successfulCommands);
@@ -129,7 +121,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
         Map<String, Object> states = this.getDeviceStatesMap(DeviceVoiceDto.of().setDeviceId(deviceId));
 
-        if (!(Boolean) states.get(GOOGLE_NET_STATE_KEY))
+        if (!(Boolean) states.get(AppVoiceConstant.GOOGLE_NET_STATE_KEY))
             throw new ServiceException();
 
         //下发命令的json内容
@@ -137,16 +129,16 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
         switch (execution.command) {
 
-            case GOOGLE_COMMAND_BRIGHTNESS:
+            case AppVoiceConstant.GOOGLE_COMMAND_BRIGHTNESS:
 
-                Object brightness = Objects.requireNonNull(execution.getParams()).get(GOOGLE_BRIGHTNESS_KEY);
-                jobJson.put(YUNTUN_BRIGHTNESS_DATA_KEY, brightness);
-                states.put(GOOGLE_BRIGHTNESS_KEY, brightness);
+                Object brightness = Objects.requireNonNull(execution.getParams()).get(AppVoiceConstant.GOOGLE_BRIGHTNESS_KEY);
+                jobJson.put(AppVoiceConstant.YUNTUN_BRIGHTNESS_DATA_KEY, brightness);
+                states.put(AppVoiceConstant.GOOGLE_BRIGHTNESS_KEY, brightness);
                 break;
 
-            case GOOGLE_COMMAND_ONOFF:
+            case AppVoiceConstant.GOOGLE_COMMAND_ONOFF:
 
-                boolean onOffValue = (boolean) Objects.requireNonNull(execution.getParams()).get(GOOGLE_ON_OFF_KEY);
+                boolean onOffValue = (boolean) Objects.requireNonNull(execution.getParams()).get(AppVoiceConstant.GOOGLE_ON_OFF_KEY);
 
                 DeviceInfo deviceStates = appVoiceActionService.getDeviceStates(DeviceVoiceDto.of().setDeviceId(deviceId));
 
@@ -156,7 +148,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
                 //这里因为google "on" 的key对应的指令device key有多个(多路开关)，我只能查出所有on对应的data key执行统一命令
                 deviceStateBeans.parallelStream()
 
-                        .filter(i -> i.getGoogleStateName().equals(GOOGLE_ON_OFF_KEY))
+                        .filter(i -> i.getGoogleStateName().equals(AppVoiceConstant.GOOGLE_ON_OFF_KEY))
 
                         .map(DeviceStateBean::getDataKey)
 
@@ -164,7 +156,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
                         .forEach(i -> jobJson.put(i, onOffValue ? DeviceStatusConst.ONLINE : DeviceStatusConst.OFFLINE));
 
-                states.put(GOOGLE_ON_OFF_KEY, onOffValue);
+                states.put(AppVoiceConstant.GOOGLE_ON_OFF_KEY, onOffValue);
                 break;
         }
 
@@ -209,11 +201,17 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
                 deviceStates.put(device.id, states);
                 GoogleReportState.makeRequest(this, String.valueOf(userId), device.id, states);
+            } catch (ServiceException e) {
+                e.printStackTrace();
+                log.error("QUERY FAILED");
+                Map<String, Object> failedDevice = new HashMap<>();
+                failedDevice.put("errorCode", e.getMsg());
+                deviceStates.put(device.id, failedDevice);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("QUERY FAILED");
                 Map<String, Object> failedDevice = new HashMap<>();
-                failedDevice.put("errorCode", e.getMessage());
+                failedDevice.put("errorCode", "service exception");
                 deviceStates.put(device.id, failedDevice);
             }
         }
@@ -239,7 +237,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
                         )
                 );
 
-        states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
+        states.put(AppVoiceConstant.GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
         return states;
     }
 

@@ -22,6 +22,7 @@ public class AppVoiceServiceImpl implements AppVoiceService {
         try {
             result = appVoiceFeignClient.action(data);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
             result = null;
         }

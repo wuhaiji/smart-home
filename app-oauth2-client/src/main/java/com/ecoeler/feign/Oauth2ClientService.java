@@ -2,6 +2,7 @@ package com.ecoeler.feign;
 
 import com.ecoeler.config.Oauth2FeignExceptionConfiguration;
 import com.ecoeler.model.response.Oauth2Token;
+import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,8 +53,8 @@ public interface Oauth2ClientService {
      *
      * @return
      */
-    @PostMapping(value = "/logout")
-    Oauth2Token logout(String accessToken);
+    @PostMapping(value = "/customize/logout")
+    Result logout(String accessToken);
 
 
 }

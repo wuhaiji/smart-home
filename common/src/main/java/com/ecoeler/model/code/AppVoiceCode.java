@@ -12,6 +12,8 @@ public enum AppVoiceCode implements ResultCode {
     ACTION_SELECT_DEVICE_STATES_ERROR("30003", " error occurred in query  device states "),
 
     ACTION_SELECT_DEVICE_TYPE_ERROR("30004", " error occurred in query  device states "),
+
+    ACTION_DEVICE_NOT_EXIST("30005", " device does not exist "),
     ;
 
 

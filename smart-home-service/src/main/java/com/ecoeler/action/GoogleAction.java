@@ -1,7 +1,7 @@
 package com.ecoeler.action;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ecoeler.app.service.IAppUserService;
+import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.response.Result;
 import com.google.actions.api.smarthome.*;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -100,9 +100,12 @@ public class GoogleAction {
             //google请求Id
             responseJson.put("requestId", requestId);
 
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            responseJson.put("errorCode", e.getMsg());
         } catch (Exception e) {
             e.printStackTrace();
-            String errorCode = "sorry we can't controller your device.";
+            String errorCode = "service error";
             responseJson.put("errorCode", errorCode);
         }
 

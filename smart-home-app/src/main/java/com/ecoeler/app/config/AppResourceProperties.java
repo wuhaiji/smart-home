@@ -46,5 +46,4 @@ public class AppResourceProperties {
     public void setCheckTokenUrl(String checkTokenUrl) {
         this.checkTokenUrl = checkTokenUrl;
     }
-
 }
