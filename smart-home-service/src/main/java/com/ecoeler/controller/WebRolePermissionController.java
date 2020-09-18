@@ -39,7 +39,7 @@ public class WebRolePermissionController {
      */
     @RequestMapping("customization")
     public Result customizationPermission(@RequestBody CustomizationPermissionDto customizationPermissionDto) {
-        log.info("开始制定权限");
+        log.info("smart-home-service->WebRolePermissionController->begin customization permission for role");
         System.out.println(customizationPermissionDto);
         iWebRolePermissionService.customizationPermission(customizationPermissionDto);
         return Result.ok();

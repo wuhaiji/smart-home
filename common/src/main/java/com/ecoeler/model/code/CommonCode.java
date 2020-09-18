@@ -8,7 +8,7 @@ package com.ecoeler.model.code;
 public enum CommonCode implements ResultCode {
 
     //
-    SUCCESS("10000", "成功!"),
+    SUCCESS("30005", "成功!"),
     NETWORK_ANOMALY("10004", "网络异常!"),
     LOGOUT_FAILED("10007","登出失败"),
     SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！");

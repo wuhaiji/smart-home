@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @TableName("sh_web_role_permission")
 public class WebRolePermission implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 125151515L;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -30,7 +30,6 @@ public class WebRolePermission implements Serializable {
 
     private Long permissionId;
 
-    private String permission;
 
 
 }

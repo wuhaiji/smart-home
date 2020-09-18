@@ -16,12 +16,9 @@ public class CustomizationPermissionDto {
      * 角色ID
      */
     private Long roleId;
-    /**
-     * 按钮权限
-     */
-    private List<String> buttons;
+
     /**
      * 菜单权限
      */
-    private List<Long> menuIds;
+    private List<Long> permissions;
 }

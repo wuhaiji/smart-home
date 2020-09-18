@@ -1,21 +1,14 @@
 package com.ecoeler.feign;
 
 
-import com.ecoeler.app.bean.v1.MenuWebPermissionBean;
-import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
 import com.ecoeler.app.dto.v1.PermDto;
 import com.ecoeler.app.entity.WebRole;
-import com.ecoeler.app.service.IWebRoleService;
 import com.ecoeler.model.response.Result;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 
 /**
@@ -36,7 +29,7 @@ public interface WebRoleService {
      * @return
      */
     @RequestMapping("/web-role/save")
-    Result addRole(@RequestBody WebRole webRole);
+    Result saveRole(@RequestBody WebRole webRole);
 
     /**
      * 修改角色
@@ -78,15 +71,15 @@ public interface WebRoleService {
      * 查询所有菜单权限
      * @return
      */
-    @RequestMapping("/web-permission/query/all/menu/permission")
-    Result queryAllMenuPermission();
+    @RequestMapping("/web-permission/query/all")
+    Result queryAllPermission();
 
     /***
      * 根据用户信息获取权限
      * @param userId 用户Id
      * @return
      */
-    @RequestMapping("/web-permission//query/web/permission")
+    @RequestMapping("/web-permission/query/web/permission")
     Result queryWebPermission(@RequestParam Long userId);
 
     /***
@@ -115,8 +108,6 @@ public interface WebRoleService {
     Result customizationPermission(@RequestBody CustomizationPermissionDto customizationPermissionDto);
 
 
-    @RequestMapping("/web-role-permission/change/role/permission")
-    Result changeRolePermission(@RequestBody PermDto dto);
 
 
 }

@@ -10,6 +10,7 @@ import java.util.Collection;
 
 /**
  * 用户细节
+ *
  * @author tang
  * @since 2020/9/10
  */
@@ -17,16 +18,17 @@ public class UserDetailsImpl implements UserDetails {
 
     private WebUser user;
 
-    private UserDetailsImpl(WebUser user){
-        this.user=user;
+    private UserDetailsImpl(WebUser user) {
+        this.user = user;
     }
 
     /**
      * 生成UserDetail
+     *
      * @param user
      * @return
      */
-    public static UserDetails getUserDetail(WebUser user){
+    public static UserDetails getUserDetail(WebUser user) {
         return new UserDetailsImpl(user);
     }
 
@@ -34,7 +36,7 @@ public class UserDetailsImpl implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return GrantedAuthorityImpl.getPerm(
                 SpringUtils.getBean(WebUserService.class).getPerm(user.getId())
-                        .getData()
+                .getData()
         );
     }
 

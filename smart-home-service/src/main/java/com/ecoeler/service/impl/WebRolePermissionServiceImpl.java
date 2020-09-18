@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionMapper, WebRolePermission> implements IWebRolePermissionService {
     @Autowired
-    private WebPermissionMapper webPermissionMapper;
+    private WebRolePermissionMapper webRolePermissionMapper;
 
     /**
      * 定制权限
@@ -51,23 +52,24 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
         QueryWrapper<WebRolePermission> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("role_id", roleId);
         baseMapper.delete(queryWrapper);
-
         //菜单权限Ids
-        List<Long> permissionIds = customizationPermissionDto.getMenuIds();
+        List<Long> permissionIds = customizationPermissionDto.getPermissions();
         List<WebRolePermission> list = new ArrayList<>();
         //找到概览的权限id
-        WebPermission webPermission = webPermissionMapper.selectOne(new LambdaQueryWrapper<WebPermission>()
+       /* WebPermission webPermission = webPermissionMapper.selectOne(new LambdaQueryWrapper<WebPermission>()
                 .eq(WebPermission::getSourceType, 0)
-                .eq(WebPermission::getPermissionName, "概览"));
-        if (permissionIds != null && !permissionIds.contains(webPermission.getId())) {
+                .eq(WebPermission::getPermissionName, "Overview"));*/
+
+        if (permissionIds != null && !permissionIds.contains(1L)) {
             //增加默认的权限
             WebRolePermission webRolePermission = new WebRolePermission();
             webRolePermission.setRoleId(roleId);
-            webRolePermission.setPermissionId(webPermission.getId());
+            webRolePermission.setPermissionId(1L);
             list.add(webRolePermission);
         }
+
         //按钮权限
-        List<String> buttons = customizationPermissionDto.getButtons();
+        /*List<String> buttons = customizationPermissionDto.getButtons();
         if (buttons != null && buttons.size() != 0) {
             QueryWrapper<WebPermission> webPermissionQueryWrapper = new QueryWrapper<>();
             webPermissionQueryWrapper.lambda().in(WebPermission::getPermissionName, buttons).select(WebPermission::getId);
@@ -83,7 +85,7 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
                     permissionIds = permissionButtonIds;
                 }
             }
-        }
+        }*/
         if (permissionIds != null) {
             for (Long permissionId : permissionIds) {
                 WebRolePermission webRolePermission = new WebRolePermission();
@@ -92,30 +94,11 @@ public class WebRolePermissionServiceImpl extends ServiceImpl<WebRolePermissionM
                 list.add(webRolePermission);
             }
         }
-        saveBatch(list);
-        log.info("----end");
+        webRolePermissionMapper.batchInsert(list);
+        //saveBatch(list);
     }
 
-    @ClearCache("PER_WEB#${dto.roleId},PER_BACK#${dto.roleId}")
-    @Override
-    public void changeRolePermission(PermDto dto) {
-        Long roleId = dto.getRoleId();
-        //先将之前的权限删除
-        QueryWrapper<WebRolePermission> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("role_id", roleId);
-        baseMapper.delete(queryWrapper);
 
-        //
-        List<String> permissions = dto.getPermissions();
-        List<WebRolePermission> list=new ArrayList<>();
-        for (String permission:permissions){
-            WebRolePermission webRolePermission=new WebRolePermission();
-            webRolePermission.setPermission(permission);
-            webRolePermission.setRoleId(roleId);
-            list.add(webRolePermission);
-        }
-        saveBatch(list);
-    }
 
 
 }

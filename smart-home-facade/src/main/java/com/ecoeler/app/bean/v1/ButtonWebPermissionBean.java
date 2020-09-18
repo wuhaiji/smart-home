@@ -5,19 +5,21 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 查询当前用户页面权限的封装
+ * 按钮权限 按钮全部权限的封装
+ * 渲染前端 全部按钮权限
  * @author tangcx
  */
 @Data
-public class MenuWebPermissionBean {
-
+public class ButtonWebPermissionBean {
     /**
      * 父菜单名字
      */
     private String parentMenuName;
+
     /**
-     *按钮
+     * 按钮
      */
-    private List<String> childrenNames;
+    private List<ButtonPermissionBean> buttons;
+
 
 }

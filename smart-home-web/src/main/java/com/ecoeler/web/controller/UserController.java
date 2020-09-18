@@ -27,7 +27,7 @@ public class UserController {
     private WebUserService webUserService;
     @RequestMapping("/user")
     public Result user(@RequestParam String account){
-        log.info("开始查询用户");
+        log.info("smart-home-web->UserController->begin query webUser by account");
         return webUserService.getUser(account);
     }
     /**
@@ -38,7 +38,7 @@ public class UserController {
      */
     @RequestMapping("/save")
     public Result saveWebUser(WebUser webUser) {
-        log.info("开始新增用户");
+        log.info("smart-home-web->UserController->begin save webUser");
         return webUserService.saveWebUser(webUser);
     }
     /**
@@ -49,7 +49,7 @@ public class UserController {
      */
     @RequestMapping("/update")
     public Result updateWebUser(WebUser webUser) {
-        log.info("开始修改用户");
+        log.info("smart-home-web->UserController->begin update webUser");
         return webUserService.updateWebUser(webUser);
     }
     /**
@@ -60,7 +60,7 @@ public class UserController {
      */
     @RequestMapping("/delete")
     public Result deleteWebUser(Long id) {
-        log.info("开始删除用户");
+        log.info("smart-home-web->UserController->begin delete webUser");
         return webUserService.deleteWebUser(id);
     }
 
@@ -72,7 +72,7 @@ public class UserController {
      */
     @RequestMapping("/query/list")
     public Result queryWebUserList(WebUserDto webUserDto) {
-        log.info("开始分页查询用户列表");
+        log.info("smart-home-web->UserController->begin query webUser list");
         return webUserService.queryWebUserList(webUserDto);
     }
 
@@ -84,7 +84,7 @@ public class UserController {
      */
     @RequestMapping("/allocation/role")
     public Result allocationWebUserRole(AllocationRoleDto allocationRoleDto) {
-        log.info("开始给用户分配角色");
+        log.info("smart-home-web->UserController->begin allocation role for webUser");
         return  webUserService.allocationWebUserRole(allocationRoleDto);
     }
 
@@ -94,7 +94,7 @@ public class UserController {
      */
     @RequestMapping("/query/by/user/id")
     public Result queryPermissionByUserId(Long userId) {
-        log.info("开始根据用户Id 获取用户权限");
+        log.info("smart-home-web->UserController->begin query back permission for webUser");
         return webUserService.getPerm(userId);
     }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecoeler.app.mapper.WebRolePermissionMapper">
+
+    <insert id="batchInsert" parameterType="com.ecoeler.app.entity.WebRolePermission">
+        insert into sh_web_role_permission (role_id,permission_id) values
+        <foreach collection="list" item="item" separator="," close=";">
+            (#{item.roleId},#{item.permissionId})
+        </foreach>
+    </insert>
+</mapper>
