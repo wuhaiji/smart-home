@@ -1,6 +1,7 @@
 package com.ecoeler.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,6 +14,7 @@ import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.app.mapper.WebPermissionMapper;
 import com.ecoeler.app.mapper.WebUserMapper;
 import com.ecoeler.app.service.IWebUserService;
+import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.util.ExceptionUtil;
 import com.ecoeler.util.TimeUtil;
@@ -67,6 +69,17 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         }
         ExceptionUtil.notBlank(webUser.getPhoneNumber(), TangCode.BLANK_PHONE_NUMBER_EMPTY_ERROR);
         ExceptionUtil.notInRange(webUser.getPassword(), 6, 16, TangCode.PASSWORD_NOT_IN_RANGE_ERROR);
+        LambdaQueryWrapper<WebUser> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.eq(webUser.getEmail() != null,WebUser::getEmail,webUser.getEmail())
+                .or()
+                .eq(WebUser::getUserName,webUser.getUserName())
+                .or()
+                .eq(WebUser::getPhoneNumber,webUser.getPhoneNumber());
+        List<WebUser> webUsers = baseMapper.selectList(queryWrapper);
+        if (webUsers.size()!=0){
+            throw new ServiceException(TangCode.CODE_USER_EXIST);
+        }
+
         String password = passwordEncoder.encode(webUser.getPassword());
         webUser.setPassword(password);
         webUser.setCreateTime(LocalDateTime.now());
@@ -82,6 +95,11 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      */
     @Override
     public void updateWebUser(WebUser webUser) {
+        if (webUser.getPassword() != null) {
+            String password = passwordEncoder.encode(webUser.getPassword());
+            webUser.setPassword(password);
+        }
+
         webUser.setUpdateTime(LocalDateTime.now());
         baseMapper.updateById(webUser);
     }

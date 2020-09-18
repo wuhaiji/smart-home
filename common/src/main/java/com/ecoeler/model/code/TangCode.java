@@ -26,7 +26,7 @@ public enum  TangCode implements ResultCode {
     BLANK_PHONE_NUMBER_EMPTY_ERROR("20001","手机号不能为空"),
     PASSWORD_NOT_IN_RANGE_ERROR("20002","密码长度不在6~16之间"),
     EMAIL_NOT_MATCH_ERROR("20003","邮箱格式不匹配"),
-    NULL_ROLE_ID_EMPTY_ERROR("20004","角色id不能为空"),
+    NULL_ROLE_ID_EMPTY_ERROR("20004","未选中角色"),
     NULL_ROLE_EMPTY_ERROR("20005","角色不能为空"),
     START_TIME_AFTER_END_TIME("20006","选择的开始时间比结束时间晚"),
     CODE_LOGIN_ERROR("20007", "登录失败，账号或密码错误!"),

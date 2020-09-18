@@ -8,7 +8,6 @@ import com.ecoeler.feign.WebRoleService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,8 +35,9 @@ public class RoleController {
      * @return
      */
     @RequestMapping("save")
-    public Result addRole(WebRole webRole) {
-        return webRoleService.addRole(webRole);
+    public Result saveRole(WebRole webRole) {
+        log.info("smart-home-web->RoleController->begin save role");
+        return webRoleService.saveRole(webRole);
     }
 
     /**
@@ -48,6 +48,7 @@ public class RoleController {
      */
     @RequestMapping("update")
     public Result updateRole(WebRole webRole) {
+        log.info("smart-home-web->RoleController->begin update role");
         return webRoleService.updateRole(webRole);
     }
 
@@ -59,6 +60,7 @@ public class RoleController {
      */
     @RequestMapping("delete")
     public Result deleteRole(Long id) {
+        log.info("smart-home-web->RoleController->begin delete role");
         return webRoleService.deleteRole(id);
     }
 
@@ -69,6 +71,7 @@ public class RoleController {
      */
     @RequestMapping("query/list")
     public Result queryRoleList() {
+        log.info("smart-home-web->RoleController->begin query all roles");
         return webRoleService.queryRoleList();
     }
 
@@ -79,17 +82,18 @@ public class RoleController {
      */
     @RequestMapping("query/list/except/by/id")
     public Result queryRoleListExceptById(Long roleId) {
+        log.info("smart-home-web->RoleController->begin query other roles except this role");
         return webRoleService.queryRoleListExceptById(roleId);
     }
 
     /***
-     * 查询所有菜单权限
+     * 查询所有权限
      * @return
      */
-    @RequestMapping("/query/all/menu/permission")
+    @RequestMapping("/query/all/permission")
     public Result queryAllMenuPermission() {
-        log.info("开始查询所有菜单权限");
-        return webRoleService.queryAllMenuPermission();
+        log.info("smart-home-web->RoleController->begin query all permissions");
+        return webRoleService.queryAllPermission();
     }
 
     /***
@@ -98,7 +102,7 @@ public class RoleController {
      */
     @RequestMapping("/query/web/permission")
     public Result queryWebPermission(Principal principal) {
-        log.info("开始根据用户信息 获取用户权限");
+        log.info("smart-home-web->RoleController->begin query permissions for login webUser");
         return webRoleService.queryWebPermission(Long.parseLong(principal.getName()));
     }
 
@@ -108,7 +112,7 @@ public class RoleController {
      */
     @RequestMapping("/query/echo/by/role/id")
     public Result queryEchoPermissionByRoleId(Long roleId) {
-        log.info("开始根据角色Id 获取用户回显权限");
+        log.info("smart-home-web->RoleController->begin query echo permissions for role");
         return webRoleService.queryEchoPermissionByRoleId(roleId);
     }
 
@@ -120,15 +124,10 @@ public class RoleController {
      */
     @RequestMapping("customization")
     public Result customizationPermission(CustomizationPermissionDto customizationPermissionDto) {
-        log.info("开始制定权限");
-        log.error(LocalDateTime.now().toString());
+        log.info("smart-home-web->RoleController->begin customization permissions for role");
         return webRoleService.customizationPermission(customizationPermissionDto);
     }
 
 
-    @RequestMapping("/change/role/permission")
-    public Result changeRolePermission(PermDto dto){
-        return webRoleService.changeRolePermission(dto);
-    }
 
 }

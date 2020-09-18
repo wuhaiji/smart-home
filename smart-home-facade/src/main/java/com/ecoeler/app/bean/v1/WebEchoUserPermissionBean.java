@@ -12,7 +12,7 @@ public class WebEchoUserPermissionBean {
     /**
      * 按钮权限
      */
-    private List<String> buttons;
+    private List<Long> buttons;
 
     /**
      * 菜单权限

@@ -6,6 +6,7 @@ import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.app.service.IWebRoleService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ import java.util.ListResourceBundle;
  * @author tang
  * @since 2020-09-10
  */
+@Slf4j
 @RestController
 @RequestMapping("/web-role")
 public class WebRoleController {
@@ -39,7 +41,8 @@ public class WebRoleController {
      * @return
      */
     @RequestMapping("save")
-    public Result addRole(@RequestBody WebRole webRole) {
+    public Result saveRole(@RequestBody WebRole webRole) {
+        log.info("smart-home-service->WebRoleController->begin save role");
         Long roleId = iWebRoleService.addRole(webRole);
         return Result.ok(roleId);
     }
@@ -52,6 +55,7 @@ public class WebRoleController {
      */
     @RequestMapping("update")
     public Result updateRole(@RequestBody WebRole webRole) {
+        log.info("smart-home-service->WebRoleController->begin update role");
         iWebRoleService.updateRole(webRole);
         return Result.ok();
     }
@@ -64,6 +68,7 @@ public class WebRoleController {
      */
     @RequestMapping("delete")
     public Result deleteRole(@RequestBody Long id) {
+        log.info("smart-home-service->WebRoleController->begin delete role");
         iWebRoleService.deleteRole(id);
         return Result.ok();
     }
@@ -75,6 +80,7 @@ public class WebRoleController {
      */
     @RequestMapping("query/list")
     public Result queryRoleList() {
+        log.info("smart-home-service->WebRoleController->begin query role list");
         List<WebRoleBean> result = iWebRoleService.selectRoleList();
         return Result.ok(result);
     }
@@ -86,6 +92,7 @@ public class WebRoleController {
      */
     @RequestMapping("query/list/except/by/id")
     public Result queryRoleListExceptById(@RequestParam Long roleId) {
+        log.info("smart-home-service->WebRoleController->begin query other role list");
         List<WebRole> result = iWebRoleService.selectRoleListExceptById(roleId);
         return Result.ok(result);
     }

@@ -2,7 +2,7 @@ package com.ecoeler.app.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ecoeler.app.bean.v1.MenuWebPermissionBean;
+import com.ecoeler.app.bean.v1.PermissionBean;
 import com.ecoeler.app.bean.v1.WebEchoUserPermissionBean;
 import com.ecoeler.app.bean.v1.WebUserPermissionBean;
 import com.ecoeler.app.entity.WebPermission;
@@ -26,7 +26,7 @@ public interface IWebPermissionService extends IService<WebPermission> {
      *
      * @return 菜单权限列表
      */
-    List<MenuWebPermissionBean> selectAllMenuPermission();
+    PermissionBean selectAllPermission();
 
     /**
      * 根据用户id查询菜单权限列表

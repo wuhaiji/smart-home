@@ -54,7 +54,7 @@ public class WebUserController {
      */
     @RequestMapping("save")
     public Result saveWebUser(@RequestBody WebUser webUser) {
-        log.info("开始新增用户");
+        log.info("smart-home-service->WebUserController->begin save webUser");
         Long id = iWebUserService.addWebUser(webUser);
         return Result.ok(id);
     }
@@ -66,8 +66,8 @@ public class WebUserController {
      * @return
      */
     @RequestMapping("update")
-    public Result updateWebUser(@RequestBody WebUser webUser) {
-        log.info("开始修改用户");
+    public Result updateWebUser( WebUser webUser) {
+        log.info("smart-home-service->WebUserController->begin update webUser");
         iWebUserService.updateWebUser(webUser);
         return Result.ok();
     }
@@ -80,7 +80,7 @@ public class WebUserController {
      */
     @RequestMapping("delete")
     public Result deleteWebUser(@RequestParam Long id) {
-        log.info("开始删除用户");
+        log.info("smart-home-service->WebUserController->begin delete webUser");
         iWebUserService.deleteWebUser(id);
         return Result.ok();
     }
@@ -93,7 +93,7 @@ public class WebUserController {
      */
     @RequestMapping("query/list")
     public Result queryWebUserList(@RequestBody WebUserDto webUserDto) {
-        log.info("开始分页查询用户列表");
+        log.info("smart-home-service->WebUserController->begin query webUser list");
         PageBean<WebUser> result = iWebUserService.queryWebUserList(webUserDto);
         return Result.ok(result);
     }
@@ -106,7 +106,7 @@ public class WebUserController {
      */
     @RequestMapping("allocation/role")
     public Result allocationWebUserRole(@RequestBody AllocationRoleDto allocationRoleDto) {
-        log.info("开始给用户分配角色");
+        log.info("smart-home-service->WebUserController->begin allocation role for webUser");
         iWebUserService.allocationWebUserRole(allocationRoleDto);
         return Result.ok();
     }

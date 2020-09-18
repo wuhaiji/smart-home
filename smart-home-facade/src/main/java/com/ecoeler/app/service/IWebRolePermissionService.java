@@ -26,6 +26,6 @@ public interface IWebRolePermissionService extends IService<WebRolePermission> {
     void customizationPermission(CustomizationPermissionDto customizationPermissionDto);
 
 
-    void changeRolePermission(PermDto dto);
+
 
 }
