@@ -3,6 +3,7 @@ package com.ecoeler.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -43,7 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()//防止跨站请求伪造，限制除了get以外的大多数方法
                 //配置路径拦截，表明路径访问所对应的权限，角色，认证信息（具体的规则放在最前排声明）
                 .authorizeRequests()
-                .antMatchers("/oauth/**").permitAll()
+                .antMatchers("/oauth/token").permitAll()
+                .antMatchers("/oauth/refresh_token").permitAll()
                 //.antMatchers("/admin/**").hasAuthority("show")//访问 /admin/** 必须要有ADMIN角色
                 //.antMatchers("/test/**").hasAuthority("p1")//访问 /test/** 必须要有p1权限
                 //.antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")

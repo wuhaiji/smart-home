@@ -15,7 +15,7 @@ public class FilterConfig {
     @Bean
     public FilterRegistrationBean<Filter> filterRegistrationBean() {
         FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setOrder(-1);
+        registrationBean.setOrder(1);
         registrationBean.setName("request-info-filter");
         registrationBean.addUrlPatterns("/*");
         registrationBean.setFilter(
