@@ -27,10 +27,9 @@ public enum CommonCode implements ResultCode {
     LOGOUT_FAILED("10007","登出失败"),
 
 
+    SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！"),
 
-
-
-    SERVER_ERROR("99999", "抱歉，系统繁忙，请稍后重试！");
+    FEIGN_ERROR("88888","FEIGN层异常!");
 
     CommonCode(String resultCode, String resultMsg) {
         this.resultCode = resultCode;

@@ -3,6 +3,7 @@ package com.ecoeler.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
+import com.ecoeler.app.dto.v1.PermDto;
 import com.ecoeler.app.entity.WebRolePermission;
 
 
@@ -23,4 +24,8 @@ public interface IWebRolePermissionService extends IService<WebRolePermission> {
      * @param customizationPermissionDto 权限集合 及角色Id
      */
     void customizationPermission(CustomizationPermissionDto customizationPermissionDto);
+
+
+    void changeRolePermission(PermDto dto);
+
 }

@@ -4,6 +4,7 @@ package com.ecoeler.feign;
 import com.ecoeler.app.bean.v1.MenuWebPermissionBean;
 import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
+import com.ecoeler.app.dto.v1.PermDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.service.IWebRoleService;
 import com.ecoeler.model.response.Result;
@@ -112,6 +113,10 @@ public interface WebRoleService {
      */
     @RequestMapping("/web-role-permission/customization")
     Result customizationPermission(@RequestBody CustomizationPermissionDto customizationPermissionDto);
+
+
+    @RequestMapping("/web-role-permission/change/role/permission")
+    Result changeRolePermission(@RequestBody PermDto dto);
 
 
 }

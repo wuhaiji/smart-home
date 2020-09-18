@@ -2,6 +2,7 @@ package com.ecoeler.controller;
 
 
 import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
+import com.ecoeler.app.dto.v1.PermDto;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.app.service.IWebRolePermissionService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,4 +44,11 @@ public class WebRolePermissionController {
         iWebRolePermissionService.customizationPermission(customizationPermissionDto);
         return Result.ok();
     }
+
+    @RequestMapping("/change/role/permission")
+    public Result changeRolePermission(@RequestBody PermDto dto){
+        iWebRolePermissionService.changeRolePermission(dto);
+        return Result.ok();
+    }
+
 }

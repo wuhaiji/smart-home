@@ -28,7 +28,7 @@ public interface WebUserService {
      * @return
      */
     @PostMapping("/web-user/user")
-    Result getUser(@RequestParam String account);
+    Result<WebUser> getUser(@RequestParam String account);
 
     /**
      * 获得用户的权限列表
@@ -37,7 +37,7 @@ public interface WebUserService {
      * @return
      */
     @PostMapping("/web-permission/query/by/user/id")
-    Result getPerm(@RequestParam Long userId);
+    Result<Set<String>> getPerm(@RequestParam Long userId);
 
     /**
      * 新增用户

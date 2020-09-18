@@ -1,7 +1,10 @@
 package com.ecoeler.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ecoeler.app.entity.Floor;
 import com.ecoeler.app.entity.Room;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,6 @@ import com.ecoeler.app.entity.Room;
  * @since 2020-09-10
  */
 public interface IRoomService extends IService<Room> {
+
 
 }

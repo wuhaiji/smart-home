@@ -30,5 +30,7 @@ public class WebRolePermission implements Serializable {
 
     private Long permissionId;
 
+    private String permission;
+
 
 }

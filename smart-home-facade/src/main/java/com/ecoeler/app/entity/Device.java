@@ -1,5 +1,7 @@
 package com.ecoeler.app.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,15 +26,33 @@ public class Device implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 设备ID
+     */
     private String deviceId;
 
+    /**
+     * 产品ID
+     */
     private String productId;
 
+    /**
+     * 设备名称
+     */
     private String deviceName;
 
+    /**
+     * 设备类型名
+     */
     private String deviceTypeName;
+
+    /**
+     * 设备图标
+     */
+    private String deviceIcon;
 
     private LocalDateTime onlineTime;
 

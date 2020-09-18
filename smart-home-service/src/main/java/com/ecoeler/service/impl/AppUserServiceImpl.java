@@ -3,11 +3,16 @@ package com.ecoeler.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.entity.AppUser;
+import com.ecoeler.app.entity.Family;
 import com.ecoeler.app.mapper.AppUserMapper;
+import com.ecoeler.app.mapper.FamilyMapper;
 import com.ecoeler.app.service.IAppUserService;
+import com.ecoeler.constant.FamilyTypeConst;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> implements IAppUserService {
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private FamilyMapper familyMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -34,10 +43,18 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
             throw new ServiceException(TangCode.CODE_USER_EXIST);
         }
 
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         //新增用户
         baseMapper.insert(user);
+
+
+//        Family family=new Family();
+//        family.setFamilyType(FamilyTypeConst.HOUSE);
+//        family.setFamilyName(user.getEmail());
+//        family.set
+//        familyMapper.insert()
+
         return user.getId();
     }
 }

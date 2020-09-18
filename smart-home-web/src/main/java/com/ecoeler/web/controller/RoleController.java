@@ -2,11 +2,13 @@ package com.ecoeler.web.controller;
 
 
 import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
+import com.ecoeler.app.dto.v1.PermDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.feign.WebRoleService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -121,6 +123,12 @@ public class RoleController {
         log.info("开始制定权限");
         log.error(LocalDateTime.now().toString());
         return webRoleService.customizationPermission(customizationPermissionDto);
+    }
+
+
+    @RequestMapping("/change/role/permission")
+    public Result changeRolePermission(PermDto dto){
+        return webRoleService.changeRolePermission(dto);
     }
 
 }

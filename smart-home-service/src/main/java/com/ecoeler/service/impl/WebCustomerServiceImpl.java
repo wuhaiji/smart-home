@@ -119,7 +119,6 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
             for (Room room : list) {
                 WebCustomerFamilyRoomBean bean = new WebCustomerFamilyRoomBean();
                 bean.setRoomName(room.getRoomName());
-                bean.setFamilyType(room.getFamilyType());
                 if (room.getFloorId() != null) {
                     Floor byId = floorMapper.selectById(room.getFloorId());
                     if (byId != null) {

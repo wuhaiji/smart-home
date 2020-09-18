@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Import(ApiRegister.class)
+@Import({ApiRegister.class})
 @EnableApi("com.ecoeler")
 @EnableFeignClients("com.ecoeler.feign")
 public @interface EnableSmartHomeApi {

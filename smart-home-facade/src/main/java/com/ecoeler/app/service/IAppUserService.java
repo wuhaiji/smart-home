@@ -18,7 +18,7 @@ import java.util.List;
 public interface IAppUserService extends IService<AppUser> {
 
     /**
-     * 新增用户
+     * 新增用户，需要给用户新增家庭
      * @param user
      * @return
      */

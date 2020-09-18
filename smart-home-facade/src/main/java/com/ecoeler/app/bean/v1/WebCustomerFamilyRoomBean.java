@@ -18,11 +18,6 @@ public class WebCustomerFamilyRoomBean {
     private Long floorId;
 
     /**
-     * 家庭类型：0别墅，1住宅
-     */
-    private Integer familyType;
-
-    /**
      * 楼层名称
      */
     private String floorName;
