@@ -66,7 +66,7 @@ public class WebUserController {
      * @return
      */
     @RequestMapping("update")
-    public Result updateWebUser( WebUser webUser) {
+    public Result updateWebUser( @RequestBody WebUser webUser) {
         log.info("smart-home-service->WebUserController->begin update webUser");
         iWebUserService.updateWebUser(webUser);
         return Result.ok();
@@ -104,11 +104,11 @@ public class WebUserController {
      * @param allocationRoleDto  用户id 角色信息
      * @return
      */
-    @RequestMapping("allocation/role")
+   /* @RequestMapping("allocation/role")
     public Result allocationWebUserRole(@RequestBody AllocationRoleDto allocationRoleDto) {
         log.info("smart-home-service->WebUserController->begin allocation role for webUser");
         iWebUserService.allocationWebUserRole(allocationRoleDto);
         return Result.ok();
-    }
+    }*/
 
 }

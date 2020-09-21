@@ -2,6 +2,8 @@ package com.ecoeler.app.bean.v1;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * @author tangcx
  */
@@ -17,4 +19,8 @@ public class WebRoleBean {
     private String role;
 
     private Integer count;
+
+    private LocalDateTime updateTime;
+
+    private LocalDateTime createTime;
 }

@@ -24,10 +24,9 @@ public interface IWebCustomerService extends IService<Family> {
      * 分页按条件查询家庭列表
      *
      * @param webCustomerDto 查询条件
-     * @param page           分页
      * @return 家庭列表
      */
-    PageBean<Family> selectFamily(WebCustomerDto webCustomerDto, Page<Family> page);
+    PageBean<Family> selectFamilyList(WebCustomerDto webCustomerDto);
 
     /**
      * 查询当前家庭的家庭成员信息
@@ -52,4 +51,7 @@ public interface IWebCustomerService extends IService<Family> {
      * @return 设备列表
      */
     List<WebCustomerFamilyDeviceBean> selectFamilyDevice(Long id);
+
+
+
 }

@@ -6,7 +6,7 @@ import lombok.Data;
  * @author tangcx
  */
 @Data
-public class WebCustomerDto extends QueryTimeDto {
+public class WebCustomerDto extends BasePageQueryTimeDto {
     /**
      * 家庭名称
      */

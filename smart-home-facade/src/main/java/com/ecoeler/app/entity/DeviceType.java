@@ -62,5 +62,10 @@ public class DeviceType implements Serializable {
      */
     private String eventClass;
 
+    /**
+     * 图片地址
+     */
+    private String image;
+
 
 }

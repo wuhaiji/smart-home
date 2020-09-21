@@ -1,6 +1,7 @@
 package com.ecoeler.web.controller;
 
 
+import com.ecoeler.app.dto.v1.BasePageDto;
 import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
 import com.ecoeler.app.dto.v1.PermDto;
 import com.ecoeler.app.entity.WebRole;
@@ -70,22 +71,10 @@ public class RoleController {
      * @return
      */
     @RequestMapping("query/list")
-    public Result queryRoleList() {
+    public Result queryRoleList(BasePageDto basePageDto) {
         log.info("smart-home-web->RoleController->begin query all roles");
-        return webRoleService.queryRoleList();
+        return webRoleService.queryRoleList(basePageDto);
     }
-
-    /**
-     * 查询不是当前用户角色列表
-     *
-     * @return
-     */
-    @RequestMapping("query/list/except/by/id")
-    public Result queryRoleListExceptById(Long roleId) {
-        log.info("smart-home-web->RoleController->begin query other roles except this role");
-        return webRoleService.queryRoleListExceptById(roleId);
-    }
-
     /***
      * 查询所有权限
      * @return
@@ -127,6 +116,18 @@ public class RoleController {
         log.info("smart-home-web->RoleController->begin customization permissions for role");
         return webRoleService.customizationPermission(customizationPermissionDto);
     }
+
+    /**
+     * 查询所有角色列表选择框
+     *
+     * @return
+     */
+    @RequestMapping("query/combo/box/role/list")
+    public Result queryRoleListExceptById() {
+        log.info("smart-home-web->RoleController->begin query all combo box role list");
+        return webRoleService.queryComboBoxRoleList();
+    }
+
 
 
 

@@ -48,11 +48,10 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
      * 分页查询家庭
      *
      * @param webCustomerDto
-     * @param page
      * @return
      */
     @Override
-    public PageBean<Family> selectFamily(WebCustomerDto webCustomerDto, Page<Family> page) {
+    public PageBean<Family> selectFamilyList(WebCustomerDto webCustomerDto){
         QueryWrapper<Family> queryWrapper = new QueryWrapper<>();
         String familyName = Optional.ofNullable(webCustomerDto.getFamilyName()).orElse("");
         String positionName = Optional.ofNullable(webCustomerDto.getPositionName()).orElse("");
@@ -65,6 +64,9 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
         queryWrapper.eq(!"".equals(positionName.trim()), "position_name", positionName);
         queryWrapper.ge(startTime != null, "create_time", startTime);
         queryWrapper.le(endTime != null, "create_time", endTime);
+        Page<Family> page=new Page<>();
+        page.setSize(webCustomerDto.getSize());
+        page.setCurrent(webCustomerDto.getCurrent());
         Page<Family> familyPage = baseMapper.selectPage(page, queryWrapper);
         PageBean<Family> result = new PageBean<>();
         result.setTotal(familyPage.getTotal());

@@ -6,10 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebDeviceDataBean;
 import com.ecoeler.app.dto.v1.WebDeviceDto;
+import com.ecoeler.app.dto.v1.WebDeviceTypeDto;
 import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.service.*;
-import com.ecoeler.exception.ServiceException;
 
 import com.ecoeler.util.TimeUtil;
 import org.springframework.beans.BeanUtils;
@@ -60,45 +60,48 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
      * 分页查询设备
      *
      * @param webDeviceDto 查询条件
-     * @param page         分页
      * @return
      */
     @Override
-    public PageBean<Device> selectDevice(WebDeviceDto webDeviceDto, Page<Device> page) {
+    public PageBean<Device> selectDeviceList(WebDeviceDto webDeviceDto) {
         String deviceId = Optional.ofNullable(webDeviceDto.getDeviceId()).orElse("");
         String deviceName = Optional.ofNullable(webDeviceDto.getDeviceName()).orElse("");
         String deviceTypeName = Optional.ofNullable(webDeviceDto.getDeviceTypeName()).orElse("");
         Integer netState = Optional.ofNullable(webDeviceDto.getNetState()).orElse(-1);
-        //时间段字段  0-online_time 1-offline_time 2-create_time 3-update_time
-        Integer timeType = Optional.ofNullable(webDeviceDto.getTimeType()).orElse(-1);
+        //时间段字段  3-online_time 2-offline_time 0-create_time 1-update_time
+        Integer timeType = Optional.ofNullable(webDeviceDto.getTimeType()).orElse(0);
+        //获取查询时间
+        Map<String, LocalDateTime> stringLocalDateTimeMap = TimeUtil.verifyQueryTime(webDeviceDto);
+        LocalDateTime startTime = stringLocalDateTimeMap.get(TimeUtil.START);
+        LocalDateTime endTime = stringLocalDateTimeMap.get(TimeUtil.END);
         String timeLine;
         switch (timeType) {
-            case 0:
+            case 3:
                 timeLine = "online_time";
                 break;
-            case 1:
+            case 2:
                 timeLine = "offline_time";
                 break;
-            case 2:
+            case 0:
                 timeLine = "create_time";
                 break;
-            case 3:
+            case 1:
                 timeLine = "update_time";
                 break;
             default:
                 timeLine = "";
                 break;
         }
-        //获取查询时间
-        Map<String, LocalDateTime> stringLocalDateTimeMap = TimeUtil.verifyQueryTime(webDeviceDto);
-        LocalDateTime startTime = stringLocalDateTimeMap.get(TimeUtil.START);
-        LocalDateTime endTime = stringLocalDateTimeMap.get(TimeUtil.END);
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(!"".equals(deviceId.trim()), "device_id", deviceId);
         queryWrapper.eq(!"".equals(deviceName.trim()), "device_name", deviceName);
         queryWrapper.eq(!"".equals(deviceTypeName.trim()), "device_type_name", deviceTypeName);
+        queryWrapper.eq(netState!=-1,"net_state",netState);
         queryWrapper.ge(timeType != -1 && startTime != null, timeLine, startTime);
         queryWrapper.le(timeType != -1 && endTime != null, timeLine, endTime);
+        Page<Device> page=new Page<>();
+        page.setCurrent(webDeviceDto.getCurrent());
+        page.setSize(webDeviceDto.getSize());
         Page<Device> webUserPage = baseMapper.selectPage(page, queryWrapper);
         PageBean<Device> result = new PageBean<>();
         result.setTotal(webUserPage.getTotal());
@@ -107,11 +110,28 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         return result;
     }
 
+    /**
+     * 分页按条件查询设备类型
+     * @param webDeviceTypeDto
+     * @return
+     */
     @Override
-    public List<DeviceType> selectDeviceType() {
+    public PageBean<DeviceType> selectDeviceType(WebDeviceTypeDto webDeviceTypeDto) {
         QueryWrapper<DeviceType> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("distinct type_name", "id");
-        return deviceTypeMapper.selectList(queryWrapper);
+        queryWrapper.select("distinct type_name", "id","product_id","image");
+        String typeName=Optional.ofNullable(webDeviceTypeDto.getTypeName()).orElse("");
+        String productId=Optional.ofNullable(webDeviceTypeDto.getProductId()).orElse("");
+        queryWrapper.eq(!"".equals(typeName.trim()),"type_name",typeName);
+        queryWrapper.eq(!"".equals(productId.trim()),"product_id",productId);
+        Page<DeviceType> page=new Page<>();
+        page.setCurrent(webDeviceTypeDto.getCurrent());
+        page.setSize(webDeviceTypeDto.getSize());
+        Page<DeviceType> deviceTypePage = deviceTypeMapper.selectPage(page, queryWrapper);
+        PageBean<DeviceType> result=new PageBean<>();
+        result.setList(deviceTypePage.getRecords());
+        result.setTotal(deviceTypePage.getTotal());
+        result.setPages(deviceTypePage.getPages());
+        return result;
     }
 
     /**

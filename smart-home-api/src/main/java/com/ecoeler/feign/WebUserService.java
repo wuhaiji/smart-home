@@ -78,7 +78,7 @@ public interface WebUserService {
      * @param allocationRoleDto 用户id 角色信息
      * @return
      */
-    @RequestMapping("/web-user/allocation/role")
-    Result allocationWebUserRole(@RequestBody AllocationRoleDto allocationRoleDto);
+   /* @RequestMapping("/web-user/allocation/role")
+    Result allocationWebUserRole(@RequestBody AllocationRoleDto allocationRoleDto);*/
 
 }

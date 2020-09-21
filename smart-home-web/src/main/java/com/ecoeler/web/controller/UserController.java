@@ -1,10 +1,8 @@
 package com.ecoeler.web.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import com.ecoeler.app.dto.v1.AllocationRoleDto;
 import com.ecoeler.app.dto.v1.WebUserDto;
-import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.feign.WebUserService;
 import com.ecoeler.model.response.Result;
@@ -76,18 +74,6 @@ public class UserController {
         return webUserService.queryWebUserList(webUserDto);
     }
 
-    /**
-     * 分配角色
-     *
-     * @param allocationRoleDto 用户角色信息
-     * @return
-     */
-    @RequestMapping("/allocation/role")
-    public Result allocationWebUserRole(AllocationRoleDto allocationRoleDto) {
-        log.info("smart-home-web->UserController->begin allocation role for webUser");
-        return  webUserService.allocationWebUserRole(allocationRoleDto);
-    }
-
     /***
      * 根据userId权限拦截 后台控制权限
      * @return
@@ -97,5 +83,17 @@ public class UserController {
         log.info("smart-home-web->UserController->begin query back permission for webUser");
         return webUserService.getPerm(userId);
     }
+
+    /**
+     * 分配角色
+     *
+     * @param allocationRoleDto 用户角色信息
+     * @return
+     */
+//    @RequestMapping("/allocation/role")
+//    public Result allocationWebUserRole(AllocationRoleDto allocationRoleDto) {
+//        log.info("smart-home-web->UserController->begin allocation role for webUser");
+//        return  webUserService.allocationWebUserRole(allocationRoleDto);
+//    }
 
 }

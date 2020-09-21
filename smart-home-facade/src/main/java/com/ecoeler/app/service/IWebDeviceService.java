@@ -3,8 +3,8 @@ package com.ecoeler.app.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ecoeler.app.bean.v1.*;
-import com.ecoeler.app.dto.v1.WebCustomerDto;
 import com.ecoeler.app.dto.v1.WebDeviceDto;
+import com.ecoeler.app.dto.v1.WebDeviceTypeDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceType;
 import com.ecoeler.app.entity.Family;
@@ -31,17 +31,17 @@ public interface IWebDeviceService extends IService<Device> {
      * 分页按条件查询设备列表
      *
      * @param webDeviceDto 查询条件
-     * @param page         分页
      * @return 设备列表
      */
-    PageBean<Device> selectDevice(WebDeviceDto webDeviceDto, Page<Device> page);
+    PageBean<Device> selectDeviceList(WebDeviceDto webDeviceDto);
 
     /**
      * 查询设备类型
      *
      * @return 设备类型列表
+     * @param webDeviceTypeDto
      */
-    List<DeviceType> selectDeviceType();
+    PageBean<DeviceType> selectDeviceType(WebDeviceTypeDto webDeviceTypeDto);
 
     /**
      * 新增设备
@@ -72,4 +72,7 @@ public interface IWebDeviceService extends IService<Device> {
      * @return 当前设备设备参数列表
      */
     List<WebDeviceDataBean> queryDeviceData(Long deviceId);
+
+
+
 }
