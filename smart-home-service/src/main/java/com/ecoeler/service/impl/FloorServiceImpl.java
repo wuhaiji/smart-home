@@ -29,18 +29,28 @@ public class FloorServiceImpl extends ServiceImpl<FloorMapper, Floor> implements
     @Autowired
     private FamilyMapper familyMapper;
 
-    @Override
-    public List<Floor> listFamilyFloor(Long familyId) {
-
+    private void familyCheck(Long familyId){
         Family family = familyMapper.selectById(familyId);
-
         if(FamilyTypeConst.VILLA !=family.getFamilyType()){
             throw new ServiceException(TangCode.CODE_FAMILY_NOT_VILLA);
         }
+    }
 
+    @Override
+    public List<Floor> listFamilyFloor(Long familyId) {
+        familyCheck(familyId);
         QueryWrapper<Floor> q=new QueryWrapper<>();
-        q.eq("family_id",family.getId());
+        q.eq("family_id",familyId);
         return baseMapper.selectList(q);
 
     }
+
+    @Override
+    public Long addFloor(Floor floor) {
+        familyCheck(floor.getFamilyId());
+        baseMapper.insert(floor);
+        return floor.getId();
+    }
+
+
 }
