@@ -3,7 +3,6 @@ package com.ecoeler.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,10 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.codec.Base64;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -46,23 +42,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/oauth/token").permitAll()
                 .antMatchers("/oauth/refresh_token").permitAll()
+                .antMatchers("/oauth/customize/logout").permitAll()
+                //页面请求
+                .antMatchers("/static/**").permitAll()
                 //.antMatchers("/admin/**").hasAuthority("show")//访问 /admin/** 必须要有ADMIN角色
                 //.antMatchers("/test/**").hasAuthority("p1")//访问 /test/** 必须要有p1权限
                 //.antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
                 .anyRequest().authenticated() //除此之外的请求，都需要认证
+
                 .and()
                 .formLogin()
                 //如果不指定loginPage，会使用security自带的登录页面，且地址为/login
-                //.loginPage("/login")//指定登录的地址为login，没有认证的用户会跳转到这个页面
-                //.loginProcessingUrl("/login-handler")//处理登录请求的URL，不需要自行实现，spring security已经实现了
-                // .successForwardUrl("/login-success")//处理登录成功跳转的URL，不需要自行实现，spring security已经实现了
-        ;
-    }
+                .loginPage("/page/login")//指定登录的地址为login，没有认证的用户会跳转到这个页面
+                .loginProcessingUrl("/login")//处理登录请求的URL，不需要自行实现，spring security已经实现了
+                .permitAll()
 
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        String creds = String.format("%s:%s", "c1", "secret");
-        String s = "Basic " + new String(Base64.encode(creds.getBytes("UTF-8")));
-        System.out.println(s);
+                .and()
+                .logout()
+                .permitAll()
+        ;
     }
 
     /**

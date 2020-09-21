@@ -2,14 +2,13 @@ package com.ecoeler.exception;
 
 import com.ecoeler.model.code.CommonCode;
 import com.ecoeler.model.code.ResultCode;
-import com.ecoeler.model.code.TangCode;
 import com.ecoeler.model.response.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 
 import java.util.HashMap;
 
@@ -43,7 +42,13 @@ public class ExceptionCatch {
         return Result.error(e.getCode(), e.getMsg());
     }
 
-
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseBody
+    public Result HttpRequestMethodNotSupportedException(ServiceException e) {
+        log.error("catch exception:{}", e.getMsg());
+        e.printStackTrace();
+        return Result.error(e.getCode(), e.getMsg());
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody

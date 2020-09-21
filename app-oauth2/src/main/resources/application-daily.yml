@@ -5,7 +5,15 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.0.108:8848
+        server-addr: localhost:8848
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+  #热部署配置
+  devtools:
+    restart:
+      additional-paths: classpath:/resources/templates/**,classpath:/resources/static/**,
   datasource:
     username: root
     password: 123456
@@ -15,6 +23,9 @@ spring:
     default-property-inclusion: non_null
   application:
     name: app-oauth2
+    # 国际化
+  messages:
+    basename: i18n.language
 
 management:
   endpoints:
@@ -23,3 +34,12 @@ management:
         include: "*"
 server:
   port: 11111
+
+
+logging:
+  level:
+    spring:
+      framework: debug
+
+
+

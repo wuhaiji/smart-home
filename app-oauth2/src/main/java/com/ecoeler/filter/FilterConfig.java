@@ -6,7 +6,10 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 @Configuration
@@ -20,11 +23,14 @@ public class FilterConfig {
         registrationBean.addUrlPatterns("/*");
         registrationBean.setFilter(
                 (ServletRequest request, ServletResponse response, FilterChain chain) -> {
-                    log.info("请求进来了");
                     HttpServletRequest res = (HttpServletRequest) request;
-                    log.info("请求url:{}", res.getRequestURL());
-                    log.info("请求uri:{}", res.getRequestURI());
-                    log.info("请求参数：{}", JSON.toJSONString(res.getParameterMap()));
+                    if (!res.getRequestURI().contains("/static/")) {
+                        log.info("请求进来了");
+                        log.info("请求url:{}", res.getRequestURL());
+                        log.info("请求uri:{}", res.getRequestURI());
+                        log.info("请求参数：{}", JSON.toJSONString(res.getParameterMap()));
+                    }
+
                     //继续调用Filter链
                     chain.doFilter(request, response);
                 });
