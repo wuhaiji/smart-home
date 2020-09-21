@@ -2,18 +2,18 @@ package com.ecoeler.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebRoleBean;
+import com.ecoeler.app.dto.v1.BasePageDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebRolePermission;
 import com.ecoeler.app.mapper.WebRoleMapper;
 import com.ecoeler.app.mapper.WebRolePermissionMapper;
 import com.ecoeler.app.mapper.WebUserMapper;
-import com.ecoeler.app.service.IWebRolePermissionService;
 import com.ecoeler.app.service.IWebRoleService;
-import com.ecoeler.app.service.IWebUserService;
 import com.ecoeler.cache.ClearCache;
-import com.ecoeler.exception.ServiceException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -83,15 +82,22 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      * 查询所有角色
      *
      * @return
+     * @param basePageDto 分页
      */
     @Override
-    public List<WebRoleBean> selectRoleList() {
-        List<WebRoleBean> result = new ArrayList<>();
+    public PageBean<WebRoleBean> selectRoleList(BasePageDto basePageDto) {
+        List<WebRoleBean> beanResult = new ArrayList<>();
         QueryWrapper<WebRole> queryWrapper = new QueryWrapper<>();
-        List<WebRole> webRoles = baseMapper.selectList(queryWrapper);
+        Page<WebRole> page=new Page<>();
+        page.setCurrent(basePageDto.getCurrent());
+        page.setSize(basePageDto.getSize());
+        Page<WebRole> webRolePage = baseMapper.selectPage(page, queryWrapper);
+        List<WebRole> webRoles = webRolePage.getRecords();
+        PageBean<WebRoleBean> result=new PageBean<>();
+        result.setPages(webRolePage.getPages());
+        result.setTotal(webRolePage.getTotal());
         if (webRoles != null && webRoles.size() != 0) {
             List<WebRoleBean> webRoleBeans = webUserMapper.selectUserCountByRoleId();
-            log.error(webRoleBeans.toString());
             for (WebRole webRole : webRoles) {
                 Long roleId = webRole.getId();
                 WebRoleBean webRoleBean = new WebRoleBean();
@@ -101,25 +107,24 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
                     if (roleBean.getId() != null && roleBean.getId().equals(roleId)) {
                         webRoleBean.setCount(roleBean.getCount());
                     }
-                }
-                result.add(webRoleBean);
+                }beanResult.add(webRoleBean);
             }
+
         }
+        result.setList(beanResult);
         return result;
     }
-
     /**
-     * 获取不是当前用户角色的列表
+     * 查询所有角色下拉选择框
      *
-     * @param roleId 角色Id
      * @return
      */
     @Override
-    public List<WebRole> selectRoleListExceptById(Long roleId) {
+    public List<WebRole> selectRoleComboBoxRoleList() {
         QueryWrapper<WebRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "role");
-        queryWrapper.ne(roleId != null, "id", roleId);
+        queryWrapper.select("id", "role_name");
         return baseMapper.selectList(queryWrapper);
     }
+
 
 }

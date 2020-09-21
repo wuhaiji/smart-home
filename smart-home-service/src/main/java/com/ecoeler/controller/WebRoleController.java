@@ -1,7 +1,9 @@
 package com.ecoeler.controller;
 
 
+import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebRoleBean;
+import com.ecoeler.app.dto.v1.BasePageDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.app.service.IWebRoleService;
@@ -76,24 +78,25 @@ public class WebRoleController {
     /**
      * 角色列表
      *
+     * @param basePageDto 分页
      * @return
      */
     @RequestMapping("query/list")
-    public Result queryRoleList() {
+    public Result queryRoleList(@RequestBody BasePageDto basePageDto) {
         log.info("smart-home-service->WebRoleController->begin query role list");
-        List<WebRoleBean> result = iWebRoleService.selectRoleList();
+        PageBean<WebRoleBean> result = iWebRoleService.selectRoleList(basePageDto);
         return Result.ok(result);
     }
 
     /**
-     * 查询不是当前用户角色列表
+     * 查询角色列表下拉选择框
      *
      * @return
      */
-    @RequestMapping("query/list/except/by/id")
-    public Result queryRoleListExceptById(@RequestParam Long roleId) {
-        log.info("smart-home-service->WebRoleController->begin query other role list");
-        List<WebRole> result = iWebRoleService.selectRoleListExceptById(roleId);
+    @RequestMapping("query/combo/box")
+    public Result queryComboBoxRoleList() {
+        log.info("smart-home-service->WebRoleController->begin query combo box role list");
+        List<WebRole> result = iWebRoleService.selectRoleComboBoxRoleList();
         return Result.ok(result);
     }
 

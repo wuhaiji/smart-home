@@ -10,10 +10,7 @@ public class WebUserDto extends BasePageQueryTimeDto{
     private String userName;
     private String email;
     private String phoneNumber;
-    /**
-     * 查询时间段类型
-     */
-    private Integer timeType;
+
 
 
 }

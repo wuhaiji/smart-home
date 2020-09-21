@@ -13,6 +13,10 @@ spring:
     clientId: c1
     clientSecret: secret
     checkTokenUrl: http://app-oauth2/oauth/check_token
+  jackson:
+    default-property-inclusion: non_null
+    generator:
+      write_numbers_as_strings: true
 
 management:
   endpoints:

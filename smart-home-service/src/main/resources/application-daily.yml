@@ -53,3 +53,8 @@ mqtt:
   host: tcp://106.52.74.193:1883
   username: tang
   password: 321456
+
+mybatis-plus:
+  configuration:
+    # 是否将sql打印到控制面板(该配置会将sql语句和查询的结果都打印到控制台)
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

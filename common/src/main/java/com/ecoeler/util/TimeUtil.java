@@ -1,5 +1,6 @@
 package com.ecoeler.util;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.dto.v1.QueryTimeDto;
 import com.ecoeler.model.code.TangCode;
 
@@ -45,9 +46,11 @@ public class TimeUtil {
         if (startTime != null && endTime != null) {
             ExceptionUtil.startIsAfterEnd(startTime, endTime, TangCode.START_TIME_AFTER_END_TIME);
         }
-        result.put(START,startTime);
-        result.put(END,endTime);
+        result.put("start",startTime);
+        result.put("end",endTime);
         return result;
     }
+
+
 
 }

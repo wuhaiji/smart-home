@@ -66,5 +66,5 @@ public interface IWebUserService extends IService<WebUser> {
      *
      * @param allocationRoleDto 指定用户 角色 信息
      */
-    void allocationWebUserRole(AllocationRoleDto allocationRoleDto);
+    //void allocationWebUserRole(AllocationRoleDto allocationRoleDto);
 }

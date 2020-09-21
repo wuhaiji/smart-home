@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ecoeler.app.bean.v1.*;
 import com.ecoeler.app.dto.v1.WebCustomerDto;
 import com.ecoeler.app.dto.v1.WebDeviceDto;
+import com.ecoeler.app.dto.v1.WebDeviceTypeDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceType;
 import com.ecoeler.app.entity.Family;
@@ -13,6 +14,7 @@ import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,11 +35,12 @@ public class WebDeviceController {
 
     /**
      * 查询设备地图
+     *
      * @return
      */
     @RequestMapping("/query/map")
     public Result queryMap() {
-        log.info("开始设备地图列表");
+        log.info("smart-home-service->WebDeviceController->begin query map");
         List<Family> result = iWebDeviceService.selectMap();
         return Result.ok(result);
     }
@@ -45,25 +48,25 @@ public class WebDeviceController {
     /***
      * 分页按条件查询设备
      * @param webDeviceDto 查询条件
-     * @param page 分页
      * @return 设备列表
      */
-    @RequestMapping("/query/device")
-    public Result queryDevice(WebDeviceDto webDeviceDto,Page<Device> page) {
-        log.info("开始查询设备列表");
-        PageBean<Device> result = iWebDeviceService.selectDevice(webDeviceDto,page);
+    @RequestMapping("/query/device/list")
+    public Result queryDevice(@RequestBody WebDeviceDto webDeviceDto) {
+        log.info("smart-home-service->WebDeviceController->begin query device list");
+        PageBean<Device> result = iWebDeviceService.selectDeviceList(webDeviceDto);
         return Result.ok(result);
     }
+
     /***
      * 查询所有设备类型
      * @return 设备类型列表
      */
     @RequestMapping("/query/device/type")
-    public Result queryDeviceType() {
-        log.info("开始查询设备列表");
-        List<DeviceType> result = iWebDeviceService.selectDeviceType();
-        return Result.ok(result);
+    public Result queryDeviceTypeList(@RequestBody WebDeviceTypeDto webDeviceTypeDto) {
+        log.info("smart-home-service->WebDeviceController->begin query device type list");
+        return Result.ok(iWebDeviceService.selectDeviceType(webDeviceTypeDto));
     }
+
     /***
      * 新增设备
      * @return 新增设备id
@@ -74,6 +77,7 @@ public class WebDeviceController {
         Long result = iWebDeviceService.addDevice(device);
         return Result.ok(result);
     }
+
     /***
      * 修改设备
      * @return 修改设备id
@@ -84,6 +88,7 @@ public class WebDeviceController {
         iWebDeviceService.updateDevice(device);
         return Result.ok();
     }
+
     /***
      * 删除设备
      * @return 删除设备id
@@ -94,14 +99,15 @@ public class WebDeviceController {
         iWebDeviceService.deleteDevice(id);
         return Result.ok();
     }
+
     /***
      * 查询设备参数
-     * @return 删除设备id
+     * @return 查询设备参数
      */
     @RequestMapping("/query/data")
     public Result queryDeviceData(Long deviceId) {
         log.info("开始删除设备");
-        List<WebDeviceDataBean> result=iWebDeviceService.queryDeviceData(deviceId);
+        List<WebDeviceDataBean> result = iWebDeviceService.queryDeviceData(deviceId);
         return Result.ok(result);
     }
 

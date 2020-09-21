@@ -1,6 +1,7 @@
 package com.ecoeler.feign;
 
 
+import com.ecoeler.app.dto.v1.BasePageDto;
 import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
 import com.ecoeler.app.dto.v1.PermDto;
 import com.ecoeler.app.entity.WebRole;
@@ -50,21 +51,14 @@ public interface WebRoleService {
     Result deleteRole(@RequestBody Long id);
 
     /**
-     * 角色列表
-     *
+     * 分页角色列表
+     *@param basePageDto 分页
      * @return
      */
     @RequestMapping("/web-role/query/list")
-    Result queryRoleList();
+    Result queryRoleList(@RequestBody BasePageDto basePageDto);
 
-    /**
-     * 查询不是当前用户角色列表
-     *
-     * @param roleId
-     * @return
-     */
-    @RequestMapping("/web-role/query/list/except/by/id")
-    Result queryRoleListExceptById(@RequestParam Long roleId);
+
 
 
     /***
@@ -106,6 +100,13 @@ public interface WebRoleService {
      */
     @RequestMapping("/web-role-permission/customization")
     Result customizationPermission(@RequestBody CustomizationPermissionDto customizationPermissionDto);
+
+    /**
+     * 查询所有角色选择下拉框
+     * @return
+     */
+    @RequestMapping("/web-role/query/combo/box")
+    Result queryComboBoxRoleList();
 
 
 

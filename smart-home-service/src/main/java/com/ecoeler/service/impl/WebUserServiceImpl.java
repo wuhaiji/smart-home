@@ -62,6 +62,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      */
     @Override
     public Long addWebUser(WebUser webUser) {
+        log.error(webUser.toString());
         ExceptionUtil.notBlank(webUser.getUserName(), TangCode.CODE_USERNAME_EMPTY_ERROR);
         ExceptionUtil.notBlank(webUser.getPassword(), TangCode.CODE_PASSWORD_EMPTY_ERROR);
         if (webUser.getEmail() != null) {
@@ -69,23 +70,43 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         }
         ExceptionUtil.notBlank(webUser.getPhoneNumber(), TangCode.BLANK_PHONE_NUMBER_EMPTY_ERROR);
         ExceptionUtil.notInRange(webUser.getPassword(), 6, 16, TangCode.PASSWORD_NOT_IN_RANGE_ERROR);
-        LambdaQueryWrapper<WebUser> queryWrapper=new LambdaQueryWrapper<>();
-        queryWrapper.eq(webUser.getEmail() != null,WebUser::getEmail,webUser.getEmail())
-                .or()
-                .eq(WebUser::getUserName,webUser.getUserName())
-                .or()
-                .eq(WebUser::getPhoneNumber,webUser.getPhoneNumber());
-        List<WebUser> webUsers = baseMapper.selectList(queryWrapper);
-        if (webUsers.size()!=0){
-            throw new ServiceException(TangCode.CODE_USER_EXIST);
-        }
-
-        String password = passwordEncoder.encode(webUser.getPassword());
-        webUser.setPassword(password);
+        //校验用户是否存在
+        verifyWebUserExit(webUser);
         webUser.setCreateTime(LocalDateTime.now());
         webUser.setUpdateTime(LocalDateTime.now());
         baseMapper.insert(webUser);
         return webUser.getId();
+    }
+
+    /**
+     * 校验用户是否存在以及给密码加密
+     *
+     * @param webUser
+     */
+    private void verifyWebUserExit(WebUser webUser) {
+        String userName = Optional.ofNullable(webUser.getUserName()).orElse("");
+        String email = Optional.ofNullable(webUser.getEmail()).orElse("");
+        String phoneNumber = Optional.ofNullable(webUser.getPhoneNumber()).orElse("");
+        String password = Optional.ofNullable(webUser.getPassword()).orElse("");
+        if (!"".equals(password.trim())) {
+            password = passwordEncoder.encode(webUser.getPassword());
+            webUser.setPassword(password);
+        }
+        QueryWrapper<WebUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id");
+        queryWrapper
+                .ne(webUser.getId() != null && !"".equals(email.trim()), "id", webUser.getId())
+                .eq(!"".equals(email.trim()), "email", webUser.getEmail())
+                .or()
+                .ne(webUser.getId() != null && !"".equals(userName.trim()), "id", webUser.getId())
+                .eq(!"".equals(userName.trim()), "user_name", webUser.getUserName())
+                .or()
+                .ne(webUser.getId() != null && !"".equals(phoneNumber.trim()), "id", webUser.getId())
+                .eq(!"".equals(phoneNumber.trim()), "phone_number", webUser.getPhoneNumber());
+        List<WebUser> webUsers = baseMapper.selectList(queryWrapper);
+        if (webUsers.size() != 0) {
+            throw new ServiceException(TangCode.CODE_USER_EXIST);
+        }
     }
 
     /**
@@ -95,12 +116,8 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      */
     @Override
     public void updateWebUser(WebUser webUser) {
-        if (webUser.getPassword() != null) {
-            String password = passwordEncoder.encode(webUser.getPassword());
-            webUser.setPassword(password);
-        }
-
         webUser.setUpdateTime(LocalDateTime.now());
+        verifyWebUserExit(webUser);
         baseMapper.updateById(webUser);
     }
 
@@ -119,10 +136,15 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         String userName = Optional.ofNullable(webUserDto.getUserName()).orElse("");
         String email = Optional.ofNullable(webUserDto.getEmail()).orElse("");
         String phoneNo = Optional.ofNullable(webUserDto.getPhoneNumber()).orElse("");
-        Integer timeType = Optional.ofNullable(webUserDto.getTimeType()).orElse(-1);
-        Page<WebUser> page=new Page<>();
+        //默认是创建时间
+        Integer timeType = Optional.ofNullable(webUserDto.getTimeType()).orElse(0);
+        Page<WebUser> page = new Page<>();
         page.setSize(webUserDto.getSize());
         page.setCurrent(webUserDto.getCurrent());
+        //获取查询时间
+        Map<String, LocalDateTime> stringLocalDateTimeMap = TimeUtil.verifyQueryTime(webUserDto);
+        LocalDateTime startTime = stringLocalDateTimeMap.get(TimeUtil.START);
+        LocalDateTime endTime = stringLocalDateTimeMap.get(TimeUtil.END);
         //0-->create_time  1-->update_time
         String timeLine;
         switch (timeType) {
@@ -136,17 +158,14 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
                 timeLine = "";
                 break;
         }
-        //获取查询时间
-        Map<String, LocalDateTime> stringLocalDateTimeMap = TimeUtil.verifyQueryTime(webUserDto);
-        LocalDateTime startTime = stringLocalDateTimeMap.get(TimeUtil.START);
-        LocalDateTime endTime = stringLocalDateTimeMap.get(TimeUtil.END);
         QueryWrapper<WebUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "user_name", "email", "update_time", "create_time", "phone_number", "role_id", "role");
+        queryWrapper.select("id", "user_name", "email", "update_time", "create_time", "phone_number", "role_id", "description");
         queryWrapper.eq(!"".equals(userName.trim()), "user_name", userName);
         queryWrapper.eq(!"".equals(email.trim()), "email", email);
         queryWrapper.eq(!"".equals(phoneNo.trim()), "phone_number", phoneNo);
         queryWrapper.ge(timeType != -1 && startTime != null, timeLine, startTime);
         queryWrapper.le(timeType != -1 && endTime != null, timeLine, endTime);
+        //  queryWrapper.orderByDesc("id");
         Page<WebUser> webUserPage = baseMapper.selectPage(page, queryWrapper);
         PageBean<WebUser> result = new PageBean<>();
         result.setTotal(webUserPage.getTotal());
@@ -160,17 +179,16 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      *
      * @param allocationRoleDto  用户 角色信息
      */
-    @Override
+  /*  @Override
     public void allocationWebUserRole(AllocationRoleDto allocationRoleDto) {
         ExceptionUtil.notNull(allocationRoleDto.getId(), TangCode.NULL_ROLE_ID_EMPTY_ERROR);
         ExceptionUtil.notNull(allocationRoleDto.getRole(), TangCode.NULL_ROLE_EMPTY_ERROR);
         WebUser webUser = new WebUser();
         webUser.setId(allocationRoleDto.getUserId());
         webUser.setRoleId(allocationRoleDto.getId());
-        webUser.setRole(allocationRoleDto.getRole());
         webUser.setUpdateTime(LocalDateTime.now());
         baseMapper.updateById(webUser);
-    }
+    }*/
 
 
 }

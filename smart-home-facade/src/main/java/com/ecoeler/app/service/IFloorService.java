@@ -17,4 +17,6 @@ public interface IFloorService extends IService<Floor> {
 
     List<Floor> listFamilyFloor(Long familyId);
 
+    Long addFloor(Floor floor);
+
 }

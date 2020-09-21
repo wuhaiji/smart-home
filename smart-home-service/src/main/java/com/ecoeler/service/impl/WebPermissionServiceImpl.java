@@ -72,6 +72,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
             LambdaQueryWrapper<WebPermission> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.in(WebPermission::getId,ids)
                     .select(WebPermission::getPermission,
+                            WebPermission::getPermissionName,
                             WebPermission::getId,
                             WebPermission::getSourceType,
                             WebPermission::getParentId);
@@ -81,23 +82,21 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
                 List<WebPermission> webMenuPermissions = webAllPermissions.stream().filter(item -> 0 == item.getSourceType()).collect(Collectors.toList());
                 if (webMenuPermissions.size() != 0) {
                     List<MenuPermissionBean> menusS = getTree(webMenuPermissions).getMenus();
-                    log.error(menusS.toString());
                     List<MenuWebPermissionBean>  menus=new ArrayList<>();
                     for (MenuPermissionBean menuPermissionBean : menusS) {
                         MenuWebPermissionBean permissionBean=new MenuWebPermissionBean();
-                        permissionBean.setParentMenuName(menuPermissionBean.getMenuPermission());
+                        permissionBean.setParentMenuName(menuPermissionBean.getMenuPermissionName());
                         List<String> cString=new ArrayList<>();
                         List<MenuPermissionBean> children = menuPermissionBean.getChildren();
                         if (children!=null){
                             for (MenuPermissionBean child : children) {
-                                cString.add(child.getMenuPermission());
+                                cString.add(child.getMenuPermissionName());
                             }
                             permissionBean.setChildrenNames(cString);
                         }
                         menus.add(permissionBean);
                     }
                     bean.setMenus(menus);
-
                     //按钮权限
                     List<WebPermission> webButtonPermissions = webAllPermissions.stream().filter(item -> 1 == item.getSourceType()).collect(Collectors.toList());
                     if (webButtonPermissions.size() != 0) {
@@ -199,6 +198,9 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
         if (webMenuPermissions != null && webMenuPermissions.size() != 0) {
             ids = webMenuPermissions.stream().map(WebPermission::getId).collect(Collectors.toList());
         }
+        if (ids==null){
+            return new ArrayList<>();
+        }
         return ids;
     }
 
@@ -265,7 +267,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
                     ButtonWebPermissionBean buttonWebPermissionBean = new ButtonWebPermissionBean();
                     buttonWebPermissionBean.setParentMenuName(menuWebIdToPermissionMap
                             .get(entry.getKey())
-                            .getMenuPermissionName());
+                            .getMenuPermission());
                     buttonWebPermissionBean.setButtons(entry.getValue());
                     buttons.add(buttonWebPermissionBean);
                 }

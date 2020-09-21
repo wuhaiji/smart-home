@@ -2,11 +2,12 @@ package com.ecoeler.app.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebRoleBean;
+import com.ecoeler.app.dto.v1.BasePageDto;
 import com.ecoeler.app.entity.WebRole;
 
 
-import javax.management.relation.Role;
 import java.util.List;
 
 /**
@@ -44,14 +45,14 @@ public interface IWebRoleService extends IService<WebRole> {
      * 查询所有角色
      *
      * @return 所有角色Bean列表
+     * @param basePageDto
      */
-    List<WebRoleBean> selectRoleList();
+    PageBean<WebRoleBean> selectRoleList(BasePageDto basePageDto);
 
     /**
-     * 查询除了当前角色的其它角色列表
+     * 查询下拉选择框所有角色
      *
-     * @param roleId 当前角色
      * @return 角色列表
      */
-    List<WebRole> selectRoleListExceptById(Long roleId);
+    List<WebRole> selectRoleComboBoxRoleList();
 }

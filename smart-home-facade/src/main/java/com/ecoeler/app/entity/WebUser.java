@@ -61,8 +61,11 @@ public class WebUser implements Serializable {
     private LocalDateTime createTime;
 
     private Long roleId;
+    /**
+     * 说明
+     */
+    private String description;
 
-    private String role;
 
 
 }

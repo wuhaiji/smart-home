@@ -6,7 +6,7 @@ import lombok.Data;
  * @author tangcx
  */
 @Data
-public class WebDeviceDto extends QueryTimeDto {
+public class WebDeviceDto extends BasePageQueryTimeDto {
     /**
      * 设备ID
      */
@@ -23,10 +23,7 @@ public class WebDeviceDto extends QueryTimeDto {
      * 在线离线 ，1在线 ，0离线
      */
     private Integer netState;
-    /**
-     * 查询时间段类型 0-online_time 1-offline_time 2-create_time 3-update_time
-     */
-    private Integer timeType;
+
 
 
 }

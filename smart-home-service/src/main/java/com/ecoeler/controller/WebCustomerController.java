@@ -33,13 +33,12 @@ public class WebCustomerController {
     /**
      * 分页按条件查询家庭列表
      * @param webCustomerDto 条件
-     * @param page 分页
      * @return
      */
-    @RequestMapping("/query/family")
-    public Result queryFamily(WebCustomerDto webCustomerDto, Page<Family> page) {
+    @RequestMapping("/query/family/list")
+    public Result queryFamily(WebCustomerDto webCustomerDto) {
         log.info("开始查询客户列表");
-        PageBean<Family> result = iWebCustomerService.selectFamily(webCustomerDto,page);
+        PageBean<Family> result = iWebCustomerService.selectFamilyList(webCustomerDto);
         return Result.ok(result);
     }
 

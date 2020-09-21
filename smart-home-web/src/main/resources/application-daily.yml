@@ -13,6 +13,11 @@ spring:
     check-token-url: http://web-oauth2/oauth/check_token
     token-url: http://web-oauth2/oauth/token
 
+  jackson:
+    default-property-inclusion: non_null
+    generator:
+      write_numbers_as_strings: true
+
 management:
   endpoints:
     web:
