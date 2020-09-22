@@ -2,7 +2,7 @@ package com.ecoeler.core.msg;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  * @since 2020/7/20
  */
 @Data
-@RequiredArgsConstructor(staticName = "of")
+@NoArgsConstructor
 @Accessors(chain = true)
 public class OrderInfo {
 
@@ -20,5 +20,9 @@ public class OrderInfo {
     private String productId;
 
     private JSONObject msg;
+
+    public static OrderInfo of(){
+        return new OrderInfo();
+    }
 
 }

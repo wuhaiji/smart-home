@@ -22,6 +22,10 @@ public enum  TangCode implements ResultCode {
     CODE_ROOM_NAME_EMPTY_ERROR("40011","房间名称不能为空!"),
     CODE_ROOM_TYPE_EMPTY_ERROR("40012","房间类型不能为空!"),
     CODE_FLOOR_NAME_EMPTY_ERROR("40013","楼层名称不能为空!"),
+    CODE_ROOM_ID_NULL_ERROR("40014","房间ID不能为空!"),
+    CODE_PRODUCT_ID_EMPTY_ERROR("40015","产品ID不能为空!"),
+    CODE_SCENE_NAME_EMPTY_ERROR("40016","场景名称不能为空!"),
+    CODE_SCENE_ID_NULL_ERROR("40017","场景ID不能为空!"),
 
     //业务错误
     BLANK_PHONE_NUMBER_EMPTY_ERROR("20001","手机号不能为空"),

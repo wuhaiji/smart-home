@@ -1,6 +1,5 @@
 package com.ecoeler.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebCustomerFamilyDeviceBean;
 import com.ecoeler.app.bean.v1.WebCustomerFamilyMemberBean;
@@ -10,7 +9,6 @@ import com.ecoeler.app.entity.Family;
 import com.ecoeler.app.service.IWebCustomerService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
