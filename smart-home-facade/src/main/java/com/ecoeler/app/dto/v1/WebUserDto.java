@@ -7,9 +7,12 @@ import lombok.Data;
  */
 @Data
 public class WebUserDto extends BasePageQueryTimeDto{
+
     private String userName;
     private String email;
     private String phoneNumber;
+    private String timeLine;
+    private  Integer limitStart;
 
 
 

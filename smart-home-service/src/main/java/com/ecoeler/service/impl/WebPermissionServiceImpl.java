@@ -5,13 +5,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.bean.v1.*;
+import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
 import com.ecoeler.app.entity.WebPermission;
 import com.ecoeler.app.entity.WebRolePermission;
 import com.ecoeler.app.mapper.WebPermissionMapper;
 import com.ecoeler.app.mapper.WebRolePermissionMapper;
 import com.ecoeler.app.mapper.WebUserMapper;
 import com.ecoeler.app.service.IWebPermissionService;
+import com.ecoeler.cache.ClearCache;
 import com.ecoeler.cache.SetCache;
+import com.ecoeler.model.code.TangCode;
+import com.ecoeler.util.ExceptionUtil;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +33,14 @@ import java.util.stream.Collectors;
  */
 @Service
 public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, WebPermission> implements IWebPermissionService {
+
     @Autowired
     private WebUserMapper webUserMapper;
     @Autowired
     private WebRolePermissionMapper webRolePermissionMapper;
+    @Autowired
+    private IWebPermissionService iWebPermissionService;
+
 
     /**
      * 查询所菜单权限
@@ -45,6 +54,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
         return getTree(baseMapper.selectList(queryWrapper));
     }
 
+
     /**
      * 根据用id限查询前端用户权限
      *
@@ -53,7 +63,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
      */
     @Override
     public WebUserPermissionBean selectWebPermissionByUserId(Long userId) {
-        return selectWebPermissionByRoleId(webUserMapper.selectById(userId).getRoleId());
+        return iWebPermissionService.selectWebPermissionByRoleId(webUserMapper.selectById(userId).getRoleId());
     }
 
     /**
@@ -66,11 +76,11 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
     @Override
     public WebUserPermissionBean selectWebPermissionByRoleId(Long roleId) {
         WebUserPermissionBean bean = new WebUserPermissionBean();
-        List<WebRolePermission> permissions = selectPermissionList(roleId);
+        List<WebRolePermission> permissions = iWebPermissionService.selectRolePermissionIds(roleId);
         if (permissions != null && permissions.size() != 0) {
             List<Long> ids = permissions.stream().map(WebRolePermission::getPermissionId).collect(Collectors.toList());
             LambdaQueryWrapper<WebPermission> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.in(WebPermission::getId,ids)
+            queryWrapper.in(WebPermission::getId, ids)
                     .select(WebPermission::getPermission,
                             WebPermission::getPermissionName,
                             WebPermission::getId,
@@ -82,13 +92,13 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
                 List<WebPermission> webMenuPermissions = webAllPermissions.stream().filter(item -> 0 == item.getSourceType()).collect(Collectors.toList());
                 if (webMenuPermissions.size() != 0) {
                     List<MenuPermissionBean> menusS = getTree(webMenuPermissions).getMenus();
-                    List<MenuWebPermissionBean>  menus=new ArrayList<>();
+                    List<MenuWebPermissionBean> menus = new ArrayList<>();
                     for (MenuPermissionBean menuPermissionBean : menusS) {
-                        MenuWebPermissionBean permissionBean=new MenuWebPermissionBean();
+                        MenuWebPermissionBean permissionBean = new MenuWebPermissionBean();
                         permissionBean.setParentMenuName(menuPermissionBean.getMenuPermissionName());
-                        List<String> cString=new ArrayList<>();
+                        List<String> cString = new ArrayList<>();
                         List<MenuPermissionBean> children = menuPermissionBean.getChildren();
-                        if (children!=null){
+                        if (children != null) {
                             for (MenuPermissionBean child : children) {
                                 cString.add(child.getMenuPermissionName());
                             }
@@ -105,16 +115,18 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
                                 .map(WebPermission::getPermission)
                                 .collect(Collectors.toList());
                         bean.setButtons(buttons);
+                    } else {
+                        bean.setButtons(new ArrayList<>());
                     }
                 }
+            } else {
+                bean.setButtons(new ArrayList<>());
+                bean.setMenus(new ArrayList<>());
             }
         }
         //封装菜单权限
         return bean;
     }
-
-
-
 
     /**
      * 根据角色id查询权限 用户后台权限控制
@@ -125,7 +137,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
     @SetCache("PER_BACK#${roleId}")
     @Override
     public Set<String> selectBackPermissionByRoleId(Long roleId) {
-        List<WebRolePermission> permissions = selectPermissionList(roleId);
+        List<WebRolePermission> permissions = iWebPermissionService.selectRolePermissionIds(roleId);
         QueryWrapper<WebPermission> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("id", "permission", "source_type");
         queryWrapper.in("id", permissions.stream()
@@ -140,10 +152,11 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
      * @param roleId
      * @return
      */
+    @SetCache("ROLE_PER_IDS#${roleId}")
     @Override
-    public List<WebRolePermission> selectPermissionList(Long roleId) {
+    public List<WebRolePermission> selectRolePermissionIds(Long roleId) {
         QueryWrapper<WebRolePermission> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("role_id", "permission_id");
+        queryWrapper.select("id", "role_id", "permission_id");
         queryWrapper.eq("role_id", roleId);
         return webRolePermissionMapper.selectList(queryWrapper);
     }
@@ -156,53 +169,76 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
      */
     @Override
     public Set<String> getPerByUserId(Long userId) {
-        return selectBackPermissionByRoleId(webUserMapper.selectById(userId).getRoleId());
+        return iWebPermissionService.selectBackPermissionByRoleId(webUserMapper.selectById(userId).getRoleId());
     }
+
+    /**
+     * 定制权限
+     *
+     * @param customizationPermissionDto 权限
+     */
+    @ClearCache(value = {"PER_WEB#${customizationPermissionDto.roleId}", "PER_BACK#${customizationPermissionDto.roleId}", "ROLE_PER_IDS#${customizationPermissionDto.roleId}"})
+    @Override
+    public void customizationPermission(CustomizationPermissionDto customizationPermissionDto) {
+        ExceptionUtil.notNull(customizationPermissionDto.getRoleId(), TangCode.NULL_ROLE_ID_EMPTY_ERROR);
+        Long roleId = customizationPermissionDto.getRoleId();
+        //先将之前的权限删除
+        List<WebRolePermission> rolePermissions = iWebPermissionService.selectRolePermissionIds(roleId);
+        if (rolePermissions != null && rolePermissions.size() != 0) {
+            List<Long> ids = rolePermissions.stream().map(WebRolePermission::getId).collect(Collectors.toList());
+            webRolePermissionMapper.deleteBatchIds(ids);
+        }
+        //菜单权限Ids
+        List<Long> permissionIds = customizationPermissionDto.getPermissions();
+        List<WebRolePermission> list = new ArrayList<>();
+        if (permissionIds != null) {
+            for (Long permissionId : permissionIds) {
+                WebRolePermission webRolePermission = new WebRolePermission();
+                webRolePermission.setPermissionId(permissionId);
+                webRolePermission.setRoleId(roleId);
+                list.add(webRolePermission);
+            }
+        }
+        webRolePermissionMapper.batchInsert(list);
+        //saveBatch(list);
+    }
+
     /**
      * 查询回显权限
+     *
      * @param roleId 角色id
      * @return
      */
     @Override
     public WebEchoUserPermissionBean selectEchoPermissionByRoleId(Long roleId) {
         WebEchoUserPermissionBean webEchoUserPermissionBean = new WebEchoUserPermissionBean();
-        List<WebRolePermission> permissions = webRolePermissionMapper.selectList(
-                new QueryWrapper<WebRolePermission>()
-                        .lambda()
-                        .select(WebRolePermission::getPermissionId)
-                        .eq(WebRolePermission::getRoleId, roleId));
+        List<WebRolePermission> permissions = iWebPermissionService.selectRolePermissionIds(roleId);
         if (permissions != null && permissions.size() != 0) {
+            //所有权限
             List<Long> permissionIds = permissions.stream()
                     .map(WebRolePermission::getPermissionId)
                     .collect(Collectors.toList());
             //菜单权限
-            List<Long> menuIds=getPerIds(permissionIds,0);
+            LambdaQueryWrapper<WebPermission> webPermissionQueryWrapper = new LambdaQueryWrapper<>();
+            webPermissionQueryWrapper.select(WebPermission::getId)
+                    .in(WebPermission::getId, permissionIds)
+                    .eq(WebPermission::getSourceType, 0);
+            List<WebPermission> webPermissions = baseMapper.selectList(webPermissionQueryWrapper);
+            List<Long> menuIds = new ArrayList<>();
+            if (webPermissions != null && webPermissions.size() != 0) {
+                menuIds = webPermissions.stream().map(WebPermission::getId).collect(Collectors.toList());
+            }
             //按钮权限
-            List<Long> buttons=getPerIds(permissionIds,1);
+            permissionIds.removeAll(menuIds);
             webEchoUserPermissionBean.setMenus(menuIds);
-            webEchoUserPermissionBean.setButtons(buttons);
+            webEchoUserPermissionBean.setButtons(permissionIds);
             return webEchoUserPermissionBean;
         }
+        webEchoUserPermissionBean.setMenus(new ArrayList<>());
+        webEchoUserPermissionBean.setButtons(new ArrayList<>());
         return webEchoUserPermissionBean;
     }
 
-    private List<Long> getPerIds(List<Long> permissionIds,Integer sourceType){
-        QueryWrapper<WebPermission> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda()
-                .select(WebPermission::getId)
-                .in(WebPermission::getId, permissionIds)
-                //菜单权限sourceType=0
-                .eq(WebPermission::getSourceType, sourceType);
-        List<WebPermission> webMenuPermissions = baseMapper.selectList(queryWrapper);
-        List<Long> ids = null;
-        if (webMenuPermissions != null && webMenuPermissions.size() != 0) {
-            ids = webMenuPermissions.stream().map(WebPermission::getId).collect(Collectors.toList());
-        }
-        if (ids==null){
-            return new ArrayList<>();
-        }
-        return ids;
-    }
 
     /**
      * 封装菜单权限 包括权限下的子菜单
@@ -221,7 +257,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
                 Map<Long, List<MenuPermissionBean>> menuWebPermissionBeanMap = new HashMap<>(6);
                 for (WebPermission webPermission : webPermissions) {
                     Long parentId = webPermission.getParentId();
-                    List<MenuPermissionBean> children ;
+                    List<MenuPermissionBean> children;
                     //子节点
                     if (parentId != null) {
                         if (menuWebPermissionBeanMap.get(parentId) != null) {
@@ -252,7 +288,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
                 Map<Long, List<ButtonPermissionBean>> menuIdToButtons = new HashMap<>(6);
                 for (WebPermission buttonPermission : webButtonPermissions) {
                     Long parentId = buttonPermission.getParentId();
-                    List<ButtonPermissionBean> children ;
+                    List<ButtonPermissionBean> children;
                     if (menuIdToButtons.get(parentId) != null) {
                         children = menuIdToButtons.get(parentId);
                     } else {
