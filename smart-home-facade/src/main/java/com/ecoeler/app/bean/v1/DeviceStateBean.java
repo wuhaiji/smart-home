@@ -11,13 +11,15 @@ public class DeviceStateBean {
 
     private Long deviceId;
 
+    private String deviceIdStr;
+
     private String dataKey;
 
     private String googleStateName;
 
     private String alexaStateName;
 
-    private String alexaNamespace;
+    private String alexaInterface;
 
     private String value;
 
