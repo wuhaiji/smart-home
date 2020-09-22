@@ -51,7 +51,7 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
      * @return
      */
     @Override
-    public PageBean<Family> selectFamilyList(WebCustomerDto webCustomerDto){
+    public PageBean<Family> selectFamilyList(WebCustomerDto webCustomerDto) {
         QueryWrapper<Family> queryWrapper = new QueryWrapper<>();
         String familyName = Optional.ofNullable(webCustomerDto.getFamilyName()).orElse("");
         String positionName = Optional.ofNullable(webCustomerDto.getPositionName()).orElse("");
@@ -64,7 +64,7 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
         queryWrapper.eq(!"".equals(positionName.trim()), "position_name", positionName);
         queryWrapper.ge(startTime != null, "create_time", startTime);
         queryWrapper.le(endTime != null, "create_time", endTime);
-        Page<Family> page=new Page<>();
+        Page<Family> page = new Page<>();
         page.setSize(webCustomerDto.getSize());
         page.setCurrent(webCustomerDto.getCurrent());
         Page<Family> familyPage = baseMapper.selectPage(page, queryWrapper);
@@ -114,7 +114,7 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
     public List<WebCustomerFamilyRoomBean> selectFamilyRoom(Long id) {
         List<WebCustomerFamilyRoomBean> result = new ArrayList<>();
         QueryWrapper<Room> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "room_name", "floor_id", "family_type");
+        queryWrapper.select("id", "room_name", "floor_id");
         queryWrapper.eq("family_id", id);
         List<Room> list = roomMapper.selectList(queryWrapper);
         if (list != null && list.size() != 0) {

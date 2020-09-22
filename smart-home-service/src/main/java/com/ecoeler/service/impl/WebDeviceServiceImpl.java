@@ -11,6 +11,7 @@ import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.service.*;
 
+import com.ecoeler.util.RatioUtil;
 import com.ecoeler.util.TimeUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,6 +192,42 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
             }
         }
         return result;
+    }
+
+    /**
+     * 查询所有设备数量
+     * @return
+     */
+    @Override
+    public Integer selectDeviceTotalCount() {
+        return  baseMapper.selectCount(null);
+    }
+
+    /**
+     * 查询今天新增设备数量
+     * @return
+     */
+    @Override
+    public Integer selectDeviceTodayCount() {
+       return selectDayCount(LocalDateTime.now());
+    }
+
+    /**
+     * 查询较昨日的日环比
+     * @return
+     */
+    @Override
+    public float selectDeviceDayCompare() {
+        int toady=Optional.ofNullable(selectDeviceTodayCount()).orElse(0);
+        int yesterday=Optional.ofNullable(selectDayCount(LocalDateTime.now().minusDays(1L))).orElse(0);
+        return  RatioUtil.getCompareRatio(yesterday,toady);
+    }
+    private Integer selectDayCount(LocalDateTime queryTime){
+        QueryWrapper<Device> deviceQueryWrapper=new QueryWrapper<>();
+        LocalDateTime startTime=TimeUtil.getEarliestTimeOfDay(queryTime);
+        LocalDateTime endTime=TimeUtil.getLatestTimeOfDay(queryTime);
+        deviceQueryWrapper.between("create_time",startTime,endTime);
+        return baseMapper.selectCount(deviceQueryWrapper);
     }
 
 }

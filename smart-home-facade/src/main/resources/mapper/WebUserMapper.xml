@@ -4,5 +4,17 @@
     <select id="selectUserCountByRoleId" resultType="com.ecoeler.app.bean.v1.WebRoleBean">
         select role_id as id,count(id) as count from sh_web_user group by role_id;
     </select>
+    <select id="selectUserList" resultType="com.ecoeler.app.bean.v1.WebUserBean">
+        select d.id as id , d.user_name as userName, d.email as email, d.update_time as updateTime,
+        d.create_time as createTime, d.phone_number as phoneNumber, d.role_id as roleId,
+        d.description as description, t.role_name as roleName
+        from sh_web_user d left join sh_web_role t on d.role_id=t.id where 1=1
+        <if test="dto.userName!=null">and d.user_name=#{dto.userName}</if>
+        <if test="dto.email!=null">and d.email=#{dto.email}</if>
+        <if test="dto.phoneNumber!=null">and d.phone_number=#{dto.phoneNumber}</if>
+        <if test="dto.startTime!=null">and d.${dto.timeLine} &gt;= #{dto.startTime}</if>
+        <if test="dto.endTime!=null">and d.${dto.timeLine} &lt;= #{dto.endTime}</if>
+    </select>
+
 
 </mapper>

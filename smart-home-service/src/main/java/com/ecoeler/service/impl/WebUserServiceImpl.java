@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebRoleBean;
+import com.ecoeler.app.bean.v1.WebUserBean;
 import com.ecoeler.app.dto.v1.AllocationRoleDto;
 import com.ecoeler.app.dto.v1.WebUserDto;
 import com.ecoeler.app.entity.WebRole;
@@ -98,9 +99,6 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
                 .ne(webUser.getId() != null && !"".equals(email.trim()), "id", webUser.getId())
                 .eq(!"".equals(email.trim()), "email", webUser.getEmail())
                 .or()
-                .ne(webUser.getId() != null && !"".equals(userName.trim()), "id", webUser.getId())
-                .eq(!"".equals(userName.trim()), "user_name", webUser.getUserName())
-                .or()
                 .ne(webUser.getId() != null && !"".equals(phoneNumber.trim()), "id", webUser.getId())
                 .eq(!"".equals(phoneNumber.trim()), "phone_number", webUser.getPhoneNumber());
         List<WebUser> webUsers = baseMapper.selectList(queryWrapper);
@@ -132,10 +130,19 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      * @return
      */
     @Override
-    public PageBean<WebUser> queryWebUserList(WebUserDto webUserDto) {
+    public PageBean<WebUserBean> queryWebUserList(WebUserDto webUserDto) {
         String userName = Optional.ofNullable(webUserDto.getUserName()).orElse("");
         String email = Optional.ofNullable(webUserDto.getEmail()).orElse("");
         String phoneNo = Optional.ofNullable(webUserDto.getPhoneNumber()).orElse("");
+        if ("".equals(userName.trim())) {
+            userName = null;
+        }
+        if ("".equals(email.trim())) {
+            email = null;
+        }
+        if ("".equals(phoneNo.trim())) {
+            phoneNo = null;
+        }
         //默认是创建时间
         Integer timeType = Optional.ofNullable(webUserDto.getTimeType()).orElse(0);
         Page<WebUser> page = new Page<>();
@@ -147,30 +154,33 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         LocalDateTime endTime = stringLocalDateTimeMap.get(TimeUtil.END);
         //0-->create_time  1-->update_time
         String timeLine;
-        switch (timeType) {
-            case 0:
-                timeLine = "create_time";
-                break;
-            case 1:
-                timeLine = "update_time";
-                break;
-            default:
-                timeLine = "";
-                break;
+        if (timeType == 1) {
+            timeLine = "update_time";
+        } else {
+            timeLine = "create_time";
         }
+        webUserDto.setEmail(email);
+        webUserDto.setPhoneNumber(phoneNo);
+        webUserDto.setTimeLine(timeLine);
+        webUserDto.setTimeType(timeType);
+        webUserDto.setUserName(userName);
+        webUserDto.setLimitStart((webUserDto.getCurrent()-1)*webUserDto.getSize());
         QueryWrapper<WebUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "user_name", "email", "update_time", "create_time", "phone_number", "role_id", "description");
-        queryWrapper.eq(!"".equals(userName.trim()), "user_name", userName);
-        queryWrapper.eq(!"".equals(email.trim()), "email", email);
-        queryWrapper.eq(!"".equals(phoneNo.trim()), "phone_number", phoneNo);
+        queryWrapper.eq(userName!=null, "user_name", userName);
+        queryWrapper.eq(email!=null, "email", email);
+        queryWrapper.eq(phoneNo!=null, "phone_number", phoneNo);
         queryWrapper.ge(timeType != -1 && startTime != null, timeLine, startTime);
         queryWrapper.le(timeType != -1 && endTime != null, timeLine, endTime);
-        //  queryWrapper.orderByDesc("id");
-        Page<WebUser> webUserPage = baseMapper.selectPage(page, queryWrapper);
-        PageBean<WebUser> result = new PageBean<>();
-        result.setTotal(webUserPage.getTotal());
-        result.setPages(webUserPage.getPages());
-        result.setList(webUserPage.getRecords());
+        Integer total = baseMapper.selectCount(queryWrapper);
+        List<WebUserBean> userResult=webUserMapper.selectUserList(webUserDto);
+        PageBean<WebUserBean> result = new PageBean<>();
+        result.setTotal(Long.parseLong(total.toString()));
+        int pages=total/webUserDto.getSize();
+        if (total%webUserDto.getSize()!=0){
+            pages++;
+        }
+        result.setPages(Long.parseLong(Integer.toString(pages)));
+        result.setList(userResult);
         return result;
     }
 

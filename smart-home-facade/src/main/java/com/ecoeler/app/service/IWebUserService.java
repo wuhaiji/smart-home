@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebRoleBean;
+import com.ecoeler.app.bean.v1.WebUserBean;
 import com.ecoeler.app.dto.v1.AllocationRoleDto;
 import com.ecoeler.app.dto.v1.WebUserDto;
 import com.ecoeler.app.entity.WebRole;
@@ -59,7 +60,7 @@ public interface IWebUserService extends IService<WebUser> {
      * @param webUserDto 查询条件
      * @return 用户列表
      */
-    PageBean<WebUser> queryWebUserList(WebUserDto webUserDto);
+    PageBean<WebUserBean> queryWebUserList(WebUserDto webUserDto);
 
     /**
      * 给指定用户分配角色

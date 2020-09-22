@@ -25,4 +25,3 @@ management:
         include: "*"
 server:
   port: 11033
-
