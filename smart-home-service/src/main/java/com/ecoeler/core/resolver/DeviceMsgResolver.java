@@ -1,9 +1,8 @@
 package com.ecoeler.core.resolver;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.ecoeler.core.msg.DeviceMsg;
-import com.ecoeler.core.msg.KeyMsg;
+import com.ecoeler.app.msg.DeviceMsg;
+import com.ecoeler.app.msg.KeyMsg;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -26,6 +26,10 @@ public enum  TangCode implements ResultCode {
     CODE_PRODUCT_ID_EMPTY_ERROR("40015","产品ID不能为空!"),
     CODE_SCENE_NAME_EMPTY_ERROR("40016","场景名称不能为空!"),
     CODE_SCENE_ID_NULL_ERROR("40017","场景ID不能为空!"),
+    CODE_DEVICE_ID_EMPTY_ERROR("40018","设备ID不能为空!"),
+    CODE_DATA_KEY_EMPTY_ERROR("40019","键名不能为空!"),
+    CODE_DATA_VALUE_EMPTY_ERROR("40020","键值不能为空!"),
+    CODE_ORDER_MSG_NULL_ERROR("40021","指令内容不能为空!"),
 
     //业务错误
     BLANK_PHONE_NUMBER_EMPTY_ERROR("20001","手机号不能为空"),

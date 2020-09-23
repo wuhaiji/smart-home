@@ -4,7 +4,7 @@ package com.ecoeler.core.scene;
 import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.app.entity.SceneAction;
 import com.ecoeler.core.DeviceEvent;
-import com.ecoeler.core.msg.OrderInfo;
+import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.core.type.EnumType;
 import com.ecoeler.core.type.IType;
 import com.ecoeler.core.type.IntegerType;

@@ -12,7 +12,7 @@ import com.ecoeler.app.service.IDeviceKeyService;
 import com.ecoeler.app.service.IDeviceService;
 import com.ecoeler.constant.DeviceStatusConst;
 import com.ecoeler.core.deliver.Deliver;
-import com.ecoeler.core.msg.*;
+import com.ecoeler.app.msg.*;
 import com.ecoeler.core.resolver.KeyResolver;
 import com.ecoeler.core.resolver.ResolveResult;
 import com.ecoeler.core.type.EnumType;
