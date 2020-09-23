@@ -2,8 +2,8 @@ package com.ecoeler.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.ecoeler.action.AlexaAction;
-import com.ecoeler.action.GoogleAction;
+import com.ecoeler.action.alexa.AlexaAction;
+import com.ecoeler.action.google.GoogleAction;
 import com.ecoeler.app.constant.v1.AppVoiceConstant;
 import com.ecoeler.model.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;

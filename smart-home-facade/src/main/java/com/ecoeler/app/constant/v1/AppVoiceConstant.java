@@ -51,4 +51,18 @@ public interface AppVoiceConstant {
     String GOOGLE_FAILED_COMMANDS_RESPONSE = "ERROR";
 
 
+    String YUNTUN_POWER_STATE_ON = "1";
+    String YUNTUN_POWER_STATE_OFF = "0";
+    String ALEXA_POWER_STATE_ON = "ON";
+    String ALEXA_POWER_STATE_OFF = "OFF";
+
+
+    String ALEXA_NET_STATE_OFFLINE = "UNREACHABLE";
+    String ALEXA_NET_STATE_ONLINE = "OK";
+    String ALEXA_STATE_NAME_POWER_STATE = "powerState";
+    String ALEXA_VALUE_TURN_OFF = "TurnOff";
+    String ALEXA_VALUE_TURN_ON = "TurnOn";
+    String ALEXA_DISCOVER_RESPONSE = "Discover.Response";
+
+    String ALEXA_STATE_NAME_BRIGHTNESS = "brightness";
 }

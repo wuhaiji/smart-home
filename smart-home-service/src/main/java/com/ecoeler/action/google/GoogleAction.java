@@ -1,4 +1,4 @@
-package com.ecoeler.action;
+package com.ecoeler.action.google;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.exception.ServiceException;

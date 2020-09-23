@@ -1,5 +1,7 @@
 package com.ecoeler.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
     /**
      * UserDetailsService
      */
@@ -42,24 +45,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/oauth/token").permitAll()
                 .antMatchers("/oauth/refresh_token").permitAll()
-                .antMatchers("/oauth/customize/logout").permitAll()
+                //自定义退出请求
+                .antMatchers("/oauth/logout").permitAll()
                 //页面请求
                 .antMatchers("/static/**").permitAll()
                 //.antMatchers("/admin/**").hasAuthority("show")//访问 /admin/** 必须要有ADMIN角色
                 //.antMatchers("/test/**").hasAuthority("p1")//访问 /test/** 必须要有p1权限
                 //.antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
                 .anyRequest().authenticated() //除此之外的请求，都需要认证
-
                 .and()
                 .formLogin()
                 //如果不指定loginPage，会使用security自带的登录页面，且地址为/login
-                .loginPage("/page/login")//指定登录的地址为login，没有认证的用户会跳转到这个页面
-                .loginProcessingUrl("/login")//处理登录请求的URL，不需要自行实现，spring security已经实现了
+                //指定登录的地址为/page/login，没有认证的用户会跳转到这个页面
+                .loginPage("/page/login")
+                //处理登录请求的URL，不需要自行实现，spring security已经实现了
+                .loginProcessingUrl("/login")
                 .permitAll()
 
-                .and()
-                .logout()
-                .permitAll()
+
         ;
     }
 

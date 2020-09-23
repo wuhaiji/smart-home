@@ -19,16 +19,16 @@ public class AuthController {
     ConsumerTokenServices consumerTokenServices;
 
 
-    @PostMapping("/oauth/customize/logout")
+    @PostMapping("/oauth/logout")
     public Result Logout(@RequestParam String accessToken) {
         if (accessToken.contains("Bearer")) {
             accessToken = accessToken.substring(7);
         }
-        SecurityContextHolder.clearContext();
         boolean b = consumerTokenServices.revokeToken(accessToken);
         if (b) {
             return Result.ok();
         }
+        SecurityContextHolder.clearContext();
         return Result.error(CommonCode.LOGOUT_FAILED);
     }
 

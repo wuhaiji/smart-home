@@ -1,22 +1,27 @@
 package com.ecoeler.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.bean.v1.DeviceInfo;
 import com.ecoeler.app.bean.v1.DeviceStateBean;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
-import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
-import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
+import com.ecoeler.app.dto.v1.voice.*;
 import com.ecoeler.app.entity.*;
-import com.ecoeler.app.service.*;
+import com.ecoeler.app.mapper.*;
+import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.constant.DeviceStatusConst;
+import com.ecoeler.exception.ExceptionCast;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.AppVoiceCode;
+import com.ecoeler.utils.EptUtil;
+import com.ecoeler.utils.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,24 +34,23 @@ import java.util.stream.Collectors;
 public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
 
-    public static final int action_type_1 = 1;
-    @Autowired
-    IUserFamilyService iUserFamilyService;
+    @Resource
+    UserFamilyMapper userFamilyMapper;
 
     @Autowired
-    IRoomService iRoomService;
+    RoomMapper roomMapper;
 
     @Autowired
-    IDeviceService iDeviceService;
+    DeviceMapper deviceMapper;
 
     @Autowired
-    IDeviceTypeService iDeviceTypeService;
+    DeviceTypeMapper deviceTypeMapper;
 
     @Autowired
-    IDeviceKeyService iDeviceKeyService;
+    DeviceKeyMapper deviceKeyMapper;
 
     @Autowired
-    IDeviceDataService iDeviceDataService;
+    DeviceDataMapper deviceDataMapper;
 
     /**
      * 根据用户ID查询用户的设备列表
@@ -63,39 +67,36 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
                 throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
 
             //查询出用户拥有的家庭ids
-            QueryWrapper<UserFamily> userFamilyQuery = new QueryWrapper<>();
-            userFamilyQuery.eq("app_user_id", userVoiceDto.getUserId());
-            List<UserFamily> families = iUserFamilyService.list(userFamilyQuery);
-            if (CollUtil.isEmpty(families)) return new ArrayList<>();
+            List<UserFamily> families = userFamilyMapper.selectList(
+                    Query.of(UserFamily.class).eq("app_user_id", userVoiceDto.getUserId())
+            );
+            if (CollUtil.isEmpty(families))
+                return new ArrayList<>();
             List<Long> familyIds = families.parallelStream().map(UserFamily::getId).collect(Collectors.toList());
 
 
             //查询家庭下面设备集合
-            QueryWrapper<Device> deviceQuery = new QueryWrapper<>();
-            deviceQuery.in("family_id", familyIds);
-            List<Device> devices = iDeviceService.list(deviceQuery);
-            if (CollUtil.isEmpty(devices)) return new ArrayList<>();
+            List<Device> devices = deviceMapper.selectList(
+                    Query.of(Device.class).in(CollUtil.isNotEmpty(familyIds), "family_id", familyIds)
+            );
+            if (CollUtil.isEmpty(devices))
+                return new ArrayList<>();
             List<String> productIds = devices.parallelStream().map(Device::getProductId).collect(Collectors.toList());
             List<Long> roomIds = devices.parallelStream().map(Device::getRoomId).collect(Collectors.toList());
             log.info("查詢到的设备Ids：{}", JSON.toJSONString(roomIds));
 
             //查询设备对应房间信息集合
-            QueryWrapper<Room> roomQuery = new QueryWrapper<>();
-            roomQuery.in("id", roomIds);
-            List<Room> rooms = iRoomService.list(roomQuery);
+            List<Room> rooms = roomMapper.selectList(
+                    Query.of(Room.class).in(CollUtil.isNotEmpty(roomIds), "id", roomIds)
+            );
             Map<Long, Room> roomMap = rooms.parallelStream().collect(Collectors.toMap(Room::getId, i -> i));
 
             //查询设备对应的设备类型信息
-            QueryWrapper<DeviceType> deviceTypeQuery = new QueryWrapper<>();
-            deviceTypeQuery.in("product_id", productIds);
-            List<DeviceType> deviceTypes = iDeviceTypeService.list(deviceTypeQuery);
+            List<DeviceType> deviceTypes = deviceTypeMapper.selectList(
+                    Query.of(DeviceType.class)
+                            .in(CollUtil.isNotEmpty(productIds), "product_id", productIds)
+            );
             Map<String, DeviceType> deviceTypeMap = deviceTypes.parallelStream().collect(Collectors.toMap(DeviceType::getProductId, i -> i));
-
-            // //查询设备对应的设备key信息
-            // QueryWrapper<DeviceKey> deviceKeyQuery = new QueryWrapper<>();
-            // userFamilyQuery.in("product_id", productIds);
-            // List<DeviceKey> deviceKeys = iDeviceKeyService.list(deviceKeyQuery);
-            // Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getProductId, i -> i));
 
 
             deviceVoiceBeans = devices.parallelStream()
@@ -103,7 +104,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
                         //设备基本信息
                         DeviceVoiceBean deviceVoiceBean = DeviceVoiceBean.of()
-                                .setId(it.getId())
+                                .setId(it.getDeviceId())
                                 .setDeviceName(it.getDeviceName())
                                 .setDefaultNames(it.getDeviceName())
                                 .setNicknames(it.getDeviceName());
@@ -113,7 +114,9 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
                         if (deviceType != null) {
                             deviceVoiceBean.setAlexaDisplayName(deviceType.getAlexaDisplayName())
                                     .setGoogleTraitNames(deviceType.getGoogleTraitNames())
-                                    .setGoogleTypeName(deviceType.getGoogleTypeName());
+                                    .setGoogleTypeName(deviceType.getGoogleTypeName())
+                                    .setDescription(it.getDeviceTypeName())
+                            ;
                         }
 
                         //房间信息
@@ -136,93 +139,281 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
     }
 
     @Override
-    public DeviceInfo getDeviceStates(DeviceVoiceDto dto) {
+    public DeviceInfo getDeviceStatesByDeviceId(String deviceId) {
 
         DeviceInfo deviceInfo;
-        if (dto == null || dto.getDeviceId() == null)
+        if (EptUtil.isEmpty(deviceId))
             throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
 
         //查询设备在线离线
-        Device device;
-        try {
-            device = iDeviceService.getById(dto.getDeviceId());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_STATES_ERROR);
-        }
-        if (device == null)
-            throw new ServiceException(AppVoiceCode.ACTION_DEVICE_NOT_EXIST);
+        Device device = this.getDevice(DeviceVoiceDto.of().setDeviceId(deviceId));
 
         //生成返回对象，并设置网络状态
-        deviceInfo = DeviceInfo.of().setOnline(device.getNetState() == DeviceStatusConst.ONLINE);
-
-        try {
-            //查询设备data
-            QueryWrapper<DeviceData> deviceDataQuery = new QueryWrapper<>();
-            deviceDataQuery.eq("device_id", dto.getDeviceId());
-            List<DeviceData> deviceDatas = iDeviceDataService.list(deviceDataQuery);
-            if (CollUtil.isEmpty(deviceDatas)) return DeviceInfo.of().setDeviceStateBeans(CollUtil.list(false));
-            List<String> deviceKeyList = deviceDatas.parallelStream().map(DeviceData::getDataKey).collect(Collectors.toList());
-
-            //查询设备可控可上传key
-            QueryWrapper<DeviceKey> deviceKeyQuery = new QueryWrapper<>();
-            deviceKeyQuery.in(deviceKeyList.size() > 0, "device_key", deviceKeyList);
-            deviceKeyQuery.eq("action_type", action_type_1);
-            List<DeviceKey> deviceKeys = iDeviceKeyService.list(deviceKeyQuery);
-            Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
-
-            List<DeviceStateBean> deviceStateBeans = deviceDatas.parallelStream()
-                    .map(it -> {
-                        //获取data对应的key
-                        DeviceKey deviceKey = deviceKeyMap.get(it.getDataKey());
-                        if (deviceKey != null) {
-                            DeviceStateBean stateBean = DeviceStateBean.of().setValue(it.getDataValue());
-                            stateBean.setDeviceId(device.getId())
-                                    .setAlexaStateName(deviceKey.getAlexaStateName())
-                                    .setDataKey(deviceKey.getDataKey())
-                                    .setGoogleStateName(deviceKey.getGoogleStateName())
-                                    .setAlexaNamespace(deviceKey.getAlexaNamespace());
-                            return stateBean;
-                        }
-                        //没有找到说明该data不是可控可上传的data
-                        return null;
-                    })
-                    //过滤null值
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+        deviceInfo = DeviceInfo.of()
+                .setDeviceId(device.getDeviceId())
+                .setOnline(device.getNetState() == DeviceStatusConst.ONLINE);
 
 
-            deviceInfo.setDeviceStateBeans(deviceStateBeans);
+        //查询设备data
+        List<DeviceData> deviceDatas = this.getDeviceDataList(DeviceDataVoiceDto.of().setDeviceId(deviceId));
+        if (CollUtil.isEmpty(deviceDatas)) return DeviceInfo.of().setDeviceStateBeans(CollUtil.list(false));
+        List<String> deviceKeyList = deviceDatas.parallelStream().map(DeviceData::getDataKey).collect(Collectors.toList());
 
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_STATES_ERROR);
-        }
+        //查询设备可控可上传key
+        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setDeviceKeyList(deviceKeyList));
+        Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
+
+        List<DeviceStateBean> deviceStateBeans = deviceDatas.parallelStream()
+                .map(it -> {
+                    //获取data对应的key
+                    DeviceKey deviceKey = deviceKeyMap.get(it.getDataKey());
+                    if (deviceKey != null) {
+                        DeviceStateBean stateBean = DeviceStateBean.of().setValue(it.getDataValue());
+                        stateBean.setDeviceId(device.getDeviceId())
+                                .setAlexaStateName(deviceKey.getAlexaStateName())
+                                .setDataKey(deviceKey.getDataKey())
+                                .setGoogleStateName(deviceKey.getGoogleStateName())
+                                .setAlexaInterface(deviceKey.getAlexaInterface())
+                                .setCreateTime(it.getCreateTime())
+                        ;
+                        return stateBean;
+                    }
+                    //没有找到说明该data不是可控可上传的data
+                    return null;
+                })
+                //过滤null值
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+
+        deviceInfo.setDeviceStateBeans(deviceStateBeans);
+
 
         return deviceInfo;
     }
 
     @Override
-    public DeviceType getDeviceType(DeviceVoiceDto dto) {
+    public List<DeviceKey> getDeviceAbleControlKey(String deviceId) {
 
-        if (dto == null || dto.getDeviceId() == null)
+        if (EptUtil.isEmpty(deviceId))
+            ExceptionCast.cast(AppVoiceCode.ACTION_PARAMS_ERROR);
+
+        Device device = this.getDevice(DeviceVoiceDto.of().setDeviceId(deviceId));
+
+        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of());
+
+        return deviceKeys;
+    }
+
+
+    @Override
+    public List<DeviceInfo> getDeviceStatesByIds(List<String> deviceIds) {
+
+        if (CollUtil.isEmpty(deviceIds))
             throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
+
+        //查询所有的设备
+        List<Device> devices = this.getDeviceList(DeviceVoiceDto.of().setDeviceIds(deviceIds));
+        if (CollUtil.isEmpty(devices)) return ListUtil.empty();
+
+        //生成返回deviceInfo集合
+        List<DeviceInfo> deviceInfos = devices.parallelStream()
+                .map(device -> DeviceInfo.of()
+                        .setDeviceId(device.getDeviceId())
+                        .setOnline(device.getNetState() == DeviceStatusConst.ONLINE)
+                )
+                .collect(Collectors.toList());
+
+
+        //查询设备data
+        List<DeviceData> deviceDatas = this.getDeviceDataList(DeviceDataVoiceDto.of().setDeviceIds(deviceIds));
+        if (CollUtil.isEmpty(deviceDatas)) return deviceInfos;
+        List<String> deviceKeyList = deviceDatas.parallelStream().map(DeviceData::getDataKey).collect(Collectors.toList());
+
+
+        //查询设备可控可上传key
+        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setDeviceKeyList(deviceKeyList));
+        Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
+
+        //组装设备状态信息，并按deviceIdStr分组
+        Map<String, List<DeviceStateBean>> DeviceStateBeanGroupMap = deviceDatas.parallelStream()
+
+                .map(deviceData -> {
+
+                    //获取data对应的key
+                    DeviceKey deviceKey = deviceKeyMap.get(deviceData.getDataKey());
+                    if (deviceKey != null) {
+
+                        return DeviceStateBean.of()
+                                .setValue(deviceData.getDataValue())
+                                .setDeviceId(deviceData.getDeviceId())
+                                .setAlexaStateName(deviceKey.getAlexaStateName())
+                                .setDataKey(deviceKey.getDataKey())
+                                .setGoogleStateName(deviceKey.getGoogleStateName())
+                                .setAlexaInterface(deviceKey.getAlexaInterface());
+
+                    }
+                    //没有找到说明该data不是可控可上传的data
+                    return null;
+
+                })
+                //过滤null值
+                .filter(Objects::nonNull)
+                .collect(Collectors.groupingBy(DeviceStateBean::getDeviceId));
+
+        //组合每个device的状态集合
+        deviceInfos.parallelStream().forEach(deviceInfo -> {
+
+            List<DeviceStateBean> deviceStateBeans = DeviceStateBeanGroupMap.get(deviceInfo.getDeviceId());
+
+            if (deviceStateBeans != null) {
+
+                deviceInfo.setDeviceStateBeans(deviceStateBeans);
+
+            }
+
+        });
+        return deviceInfos;
+    }
+
+    @Override
+    public List<DeviceKey> getDeviceKeys(DeviceKeyVoiceDto dto) {
+
+        QueryWrapper<DeviceKey> query = Query.of(DeviceKey.class);
+        if (dto != null) {
+
+            query
+                    .eq("action_type", DeviceKeyVoiceDto.ACTION_TYPE_1)
+                    .in(EptUtil.isNotEmpty(dto.getDeviceKeyList()), "device_key", dto.getDeviceKeyList())
+                    .eq(EptUtil.isNotEmpty(dto.getAlexaStateName()), "alexa_state_name", dto.getAlexaStateName())
+                    .eq(EptUtil.isNotEmpty(dto.getGoogleStateName()), "google_state_name", dto.getGoogleStateName())
+            ;
+        }
+
+        //查询设备可控可上传key
+        try {
+            return deviceKeyMapper.selectList(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_KEY_ERROR);
+        }
+
+    }
+
+    @Override
+    public List<DeviceData> getDeviceDataList(DeviceDataVoiceDto dto) {
+
+        //查询所有设备的data信息
+        QueryWrapper<DeviceData> query = Query.of(DeviceData.class);
+
+        if (dto != null) {
+            query
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceId()), "device_id", dto.getDeviceId())
+                    .eq(EptUtil.isNotEmpty(dto.getDataKey()), "data_key", dto.getDataKey())
+                    .eq(EptUtil.isNotEmpty(dto.getId()), "id", dto.getId())
+                    .eq(EptUtil.isNotEmpty(dto.getSeq()), "seq", dto.getSeq())
+                    .in(EptUtil.isNotEmpty(dto.getDeviceIds()), "device_id", dto.getDeviceIds())
+            ;
+        }
+
+        try {
+
+            return deviceDataMapper.selectList(query);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_LIST_ERROR);
+        }
+    }
+
+
+    @Override
+    public DeviceType getDeviceType(DeviceTypeVoiceDto dto) {
+
+
+        QueryWrapper<DeviceType> query = Query.of(DeviceType.class);
+
+        if (dto != null) {
+            query
+                    .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
+            ;
+        }
+
 
         DeviceType deviceType;
         try {
-            Device device = iDeviceService.getById(dto.getDeviceId());
-            if (device == null) return null;
 
-            QueryWrapper<DeviceType> deviceTypeQuery = new QueryWrapper<>();
-            deviceType = iDeviceTypeService.getOne(deviceTypeQuery);
+            deviceType = deviceTypeMapper.selectOne(query);
 
-            return deviceType;
         } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_TYPE_ERROR);
+        }
 
+        if (deviceType == null)
+            throw new ServiceException(AppVoiceCode.ACTION_DEVICE_TYPE_NOT_EXIST);
+
+        return deviceType;
+
+    }
+
+    public Device getDevice(DeviceVoiceDto dto) {
+
+        QueryWrapper<Device> query = Query.of(Device.class);
+        if (dto != null) {
+            query
+                    .eq(EptUtil.isNotEmpty(dto.getFamilyId()), "device_id", dto.getFamilyId())
+                    .eq(EptUtil.isNotEmpty(dto.getNetState()), "net_state", dto.getNetState())
+                    .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
+                    .eq(EptUtil.isNotEmpty(dto.getFamilyId()), "family_id", dto.getFamilyId())
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceName()), "device_name", dto.getDeviceName())
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceTypeName()), "device_type_name", dto.getDeviceTypeName())
+            ;
+        }
+
+        Device device;
+        try {
+            device = deviceMapper.selectOne(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+            //抛出查询异常
+            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_TYPE_ERROR);
+        }
+
+        //如果为空，抛出异常
+        if (device == null)
+            throw new ServiceException(AppVoiceCode.ACTION_DEVICE_NOT_EXIST);
+
+        return device;
+    }
+
+    @Override
+    public List<Device> getDeviceList(DeviceVoiceDto dto) {
+
+
+        QueryWrapper<Device> query = Query.of(Device.class);
+
+        if (dto != null) {
+
+            query
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceId()), "device_id", dto.getDeviceId())
+                    .eq(EptUtil.isNotEmpty(dto.getNetState()), "net_state", dto.getNetState())
+                    .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
+                    .in(EptUtil.isNotEmpty(dto.getDeviceIds()), "device_id", dto.getDeviceIds())
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceName()), "device_name", dto.getDeviceName())
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceTypeName()), "device_type_name", dto.getDeviceTypeName())
+            ;
+
+        }
+
+        try {
+
+            return deviceMapper.selectList(query);
+
+        } catch (Exception e) {
             e.printStackTrace();
             throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_TYPE_ERROR);
         }
     }
-
 
 }

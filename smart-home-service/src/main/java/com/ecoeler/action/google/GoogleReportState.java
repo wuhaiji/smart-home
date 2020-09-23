@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ecoeler.action;
+package com.ecoeler.action.google;
 
 import com.google.actions.api.smarthome.SmartHomeApp;
 import com.google.gson.Gson;

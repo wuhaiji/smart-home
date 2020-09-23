@@ -27,6 +27,7 @@
         <module>app-oauth2-client</module>
         <module>web-oauth2</module>
         <module>web-oauth2-client</module>
+        <module>smart-home-voice-alexa-web</module>
     </modules>
 
 

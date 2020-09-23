@@ -7,12 +7,13 @@
           content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <!-- Bootstrap -->
     <link href="/static/css/bootstrap.min.css" media="screen" rel="stylesheet">
+    <link href="/static/css/global.css" rel="stylesheet">
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
 </head>
 <body id="app">
 <div class="container">
-    <div class="authorize-box">
+    <div class="content-box">
         <div>
             <img src="/static/img/app-icon.png" class="img-circle img-responsive ava center-block app-icon" alt="icon">
         </div>
@@ -22,13 +23,22 @@
                     请登录
                 </h2>
                 <!--登录错误提示信息-->
-                <input type="text" name="username" class="form-control form-item"
-                       placeholder="请输入邮件">
-                <input type="password" name="password" class="form-control form-item"
-                       placeholder="请输入密码">
+                <label for="inputEmail" class="sr-only">Email address</label>
+                <input id="inputEmail" type="text" name="username" class="form-control form-item"
+                       placeholder="请输入邮件" required autofocus>
+
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input id="inputPassword" type="password" name="password" class="form-control form-item"
+                       placeholder="请输入密码" required>
+
                 <div class="error_tip" th:if="${param.error}">
                     <span v-if="lang==='en'" class="help-block" style="color:red;">
                         邮箱或者密码不正确，请重新输入！
+                    </span>
+                </div>
+                <div class="error_tip" th:if="${param.timeout}">
+                    <span v-if="lang==='en'" class="help-block" style="color:red;">
+                        会话过期，请重新登录！
                     </span>
                 </div>
             </div>
@@ -41,20 +51,15 @@
 
 </body>
 <script>
-
+    let language = navigator.language;
+    console.log("浏览器语言："+language)
 </script>
 <style>
-
-    .authorize-box {
-        padding-top: 20vh;
-        max-width: 330px;
-        margin-left: auto;
-        margin-right: auto;
-    }
 
     .app-icon {
         width: 100px;
         height: 100px;
+        margin-bottom: 20px;
     }
 
 

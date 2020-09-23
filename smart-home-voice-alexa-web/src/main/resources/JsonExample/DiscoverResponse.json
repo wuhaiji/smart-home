@@ -1,0 +1,72 @@
+{
+  "event": {
+    "header": {
+      "namespace": "Alexa.Discovery",
+      "name": "Discover.Response",
+      "payloadVersion": "3",
+      "messageId": "<message id>"
+    },
+    "payload": {
+      "endpoints": [
+        {
+          "endpointId": "<unique ID of the endpoint>",
+          "manufacturerName": "Sample Manufacturer",
+          "description": "Smart Light by Sample Manufacturer",
+          "friendlyName": "Living Room Light",
+          "displayCategories": ["LIGHT"],
+          "capabilities": [
+            {
+              "type": "AlexaInterface",
+              "interface": "Alexa.PowerController",
+              "version": "3",
+              "properties": {
+                "supported": [
+                  {
+                    "name": "powerState"
+                  }
+                ],
+                "proactivelyReported": true,
+                "retrievable": true
+              }
+            },
+            {
+              "type": "AlexaInterface",
+              "interface": "Alexa.BrightnessController",
+              "version": "3",
+              "properties": {
+                "supported": [
+                  {
+                    "name": "brightness"
+                  }
+                ],
+                "proactivelyReported": true,
+                "retrievable": true
+              }
+            },
+            {
+              "type": "AlexaInterface",
+              "interface": "Alexa.EndpointHealth",
+              "version": "3",
+              "properties": {
+                "supported": [
+                  {
+                    "name": "connectivity"
+                  }
+                ],
+                "proactivelyReported": true,
+                "retrievable": true
+              }
+            },
+            {
+              "type": "AlexaInterface",
+              "interface": "Alexa",
+              "version": "3"
+            }
+          ],
+          "cookie": {
+          }
+        }
+      ]
+    }
+  }
+}

@@ -120,6 +120,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <!--读取yml配置参数-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 

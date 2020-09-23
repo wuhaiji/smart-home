@@ -30,7 +30,7 @@ public class ExceptionAdvice {
         return Result.error(TangCode.CODE_NO_AUTH_ERROR);
     }
 
-    private static final Logger log = LoggerFactory.getLogger(ExceptionCatch.class);
+    private static final Logger log = LoggerFactory.getLogger(ExceptionAdvice.class);
 
     @ExceptionHandler(ServiceException.class)
     @ResponseBody

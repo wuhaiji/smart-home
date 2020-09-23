@@ -13,4 +13,6 @@ import com.ecoeler.app.entity.Device;
  */
 public interface DeviceMapper extends BaseMapper<Device> {
 
+
+
 }

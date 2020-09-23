@@ -1,7 +1,6 @@
 package com.ecoeler.app.bean.v1;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -9,14 +8,14 @@ import lombok.experimental.Accessors;
  * whj
  * 2020.01.02
  */
-@Data
+@Data(staticConstructor = "of")
 @Accessors(chain = true)
-@RequiredArgsConstructor(staticName = "of")
 public class DeviceVoiceBean {
+
     /**
      * 设备ID
      */
-    private Long id;
+    private String id;
     /**
      * 房间ID ,如果是0表示该设备未设置房间
      */
@@ -50,4 +49,9 @@ public class DeviceVoiceBean {
      * alexa app显示的设备类别
      */
     private String alexaDisplayName;
+
+    /**
+     * 描述
+     */
+    private String description;
 }
