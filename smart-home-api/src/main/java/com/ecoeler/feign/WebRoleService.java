@@ -98,7 +98,7 @@ public interface WebRoleService {
      * @param customizationPermissionDto 定制的权限 及角色id
      * @return
      */
-    @RequestMapping("/web-role-permission/customization")
+    @RequestMapping("/web-permission/customization")
     Result customizationPermission(@RequestBody CustomizationPermissionDto customizationPermissionDto);
 
     /**

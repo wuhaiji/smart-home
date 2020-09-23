@@ -94,8 +94,7 @@ public class WebUserController {
     @RequestMapping("query/list")
     public Result queryWebUserList(@RequestBody WebUserDto webUserDto) {
         log.info("smart-home-service->WebUserController->begin query webUser list");
-        PageBean<WebUser> result = iWebUserService.queryWebUserList(webUserDto);
-        return Result.ok(result);
+        return Result.ok(iWebUserService.queryWebUserList(webUserDto));
     }
 
     /**

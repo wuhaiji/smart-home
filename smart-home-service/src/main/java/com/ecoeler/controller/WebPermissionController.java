@@ -1,10 +1,12 @@
 package com.ecoeler.controller;
 
 
+import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
 import com.ecoeler.app.service.IWebPermissionService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +65,19 @@ public class WebPermissionController {
     public Result queryEchoPermissionByRoleId(@RequestParam Long roleId) {
         log.info("smart-home-service->WebPermissionController->begin query echo permission for role");
         return Result.ok(iWebPermissionService.selectEchoPermissionByRoleId(roleId));
+    }
+
+    /**
+     * 定制权限
+     *
+     * @param customizationPermissionDto 定制的权限 及角色id
+     * @return
+     */
+    @RequestMapping("customization")
+    public Result customizationPermission(@RequestBody CustomizationPermissionDto customizationPermissionDto) {
+        log.info("smart-home-service->WebPermissionController->begin customization permission for role");
+        iWebPermissionService.customizationPermission(customizationPermissionDto);
+        return Result.ok();
     }
 
 }

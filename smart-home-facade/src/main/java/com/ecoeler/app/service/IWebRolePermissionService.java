@@ -18,12 +18,7 @@ import java.util.List;
  * @since 2020-09-10
  */
 public interface IWebRolePermissionService extends IService<WebRolePermission> {
-    /**
-     * 给角色分配权限
-     *
-     * @param customizationPermissionDto 权限集合 及角色Id
-     */
-    void customizationPermission(CustomizationPermissionDto customizationPermissionDto);
+
 
 
 
