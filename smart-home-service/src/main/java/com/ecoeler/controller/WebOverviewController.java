@@ -1,13 +1,24 @@
 package com.ecoeler.controller;
 
+import com.ecoeler.app.bean.v1.CountOfDateBean;
+import com.ecoeler.app.bean.v1.WebOverviewDataStatisticsBean;
+
+
+import com.ecoeler.app.dto.v1.QueryDateDto;
+import com.ecoeler.app.dto.v1.QueryTimeDto;
+import com.ecoeler.app.service.IWebCustomerService;
 import com.ecoeler.app.service.IWebDeviceService;
+import com.ecoeler.app.service.WebOverviewDataService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author tangcx
@@ -17,39 +28,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/web_overview")
 @RestController
 public class WebOverviewController {
+
     @Autowired
-    private IWebDeviceService iWebDeviceService;
+    private WebOverviewDataService webOverviewDataService;
 
     /**
-     * 查询总的设备数量
-     * @return
+     * 查询数据统计
+     *
+     * @return 统计数据
      */
-    @RequestMapping("query/total/device/count")
-    public Result queryDeviceTotalCount(){
-        log.info("smart-home-service->WebOverviewController->begin query total device count ");
-        Integer total=iWebDeviceService.selectDeviceTotalCount();
-        return Result.ok(total);
-    }
-    /**
-     * 查询今天设备数量
-     * @return
-     */
-    @RequestMapping("query/today/device/count")
-    public Result queryDeviceTodayCount(){
-        log.info("smart-home-service->WebOverviewController->begin query today device count ");
-        Integer today=iWebDeviceService.selectDeviceTodayCount();
-        return Result.ok(today);
-    }
-    /**
-     * 查询设备较昨日的日环比
-     * @return
-     */
-    @RequestMapping("query/device/day/compare")
-    public Result queryDeviceDayCompare(){
-        log.info("smart-home-service->WebOverviewController->begin query device day compare");
-        float ratio=iWebDeviceService.selectDeviceDayCompare();
-        return Result.ok(ratio);
+    @RequestMapping("query/overview/data/statistics")
+    public Result queryOverviewDataStatistics() {
+        log.info("smart-home-service->WebOverviewController->begin query overview statistics ");
+        WebOverviewDataStatisticsBean result = webOverviewDataService.getDataStatistics();
+        return Result.ok(result);
     }
 
+    /**
+     * 查询设备echarts数据
+     *
+     * @return echarts数据
+     */
+    @RequestMapping("query/device/echarts")
+    public Result queryOverviewDeviceDataStatistics(@RequestBody QueryDateDto queryDateDto) {
+        log.info("smart-home-service->WebOverviewController->begin query device echarts");
+        List<CountOfDateBean> result = webOverviewDataService.getDeviceEcharts(queryDateDto);
+        return Result.ok(result);
+    }
 
+    /**
+     * 查询App用户echarts数据
+     *
+     * @return echarts数据
+     */
+    @RequestMapping("query/app/user/echarts")
+    public Result queryAppUserOverviewDeviceDataStatistics(@RequestBody QueryDateDto queryDateDto) {
+        log.info("smart-home-service->WebOverviewController->begin query appUser echarts");
+        List<CountOfDateBean> result = webOverviewDataService.getAppUserEcharts(queryDateDto);
+        return Result.ok(result);
+    }
 }

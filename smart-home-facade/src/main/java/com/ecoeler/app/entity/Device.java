@@ -76,6 +76,10 @@ public class Device implements Serializable {
      * 在线离线 ，1在线 ，0离线
      */
     private Integer netState;
+    /**
+     * 设备是否为网关设备
+     */
+    private Integer gatewayLike;
 
 
 }

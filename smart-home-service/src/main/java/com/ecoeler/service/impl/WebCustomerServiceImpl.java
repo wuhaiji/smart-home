@@ -12,6 +12,7 @@ import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.service.*;
 import com.ecoeler.exception.ServiceException;
+import com.ecoeler.util.OverviewUtil;
 import com.ecoeler.util.TimeUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,7 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
         QueryWrapper<Family> queryWrapper = new QueryWrapper<>();
         String familyName = Optional.ofNullable(webCustomerDto.getFamilyName()).orElse("");
         String positionName = Optional.ofNullable(webCustomerDto.getPositionName()).orElse("");
+        Integer familyType=Optional.ofNullable(webCustomerDto.getFamilyType()).orElse(-1);
         //获取查询时间
         Map<String, LocalDateTime> stringLocalDateTimeMap = TimeUtil.verifyQueryTime(webCustomerDto);
         LocalDateTime startTime = stringLocalDateTimeMap.get(TimeUtil.START);
@@ -62,6 +64,7 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
         //查询条件
         queryWrapper.eq(!"".equals(familyName.trim()), "family_name", familyName);
         queryWrapper.eq(!"".equals(positionName.trim()), "position_name", positionName);
+        queryWrapper.eq(familyType!=-1,"family_type",familyType);
         queryWrapper.ge(startTime != null, "create_time", startTime);
         queryWrapper.le(endTime != null, "create_time", endTime);
         Page<Family> page = new Page<>();
@@ -133,7 +136,12 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
         }
         return result;
     }
-
+    /**
+     * 查询家庭设备
+     *
+     * @param id 家庭 id
+     * @return
+     */
     @Override
     public List<WebCustomerFamilyDeviceBean> selectFamilyDevice(Long id) {
         List<WebCustomerFamilyDeviceBean> result = new ArrayList<>();
@@ -163,4 +171,6 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
         return result;
 
     }
+
+
 }

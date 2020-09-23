@@ -86,6 +86,12 @@ public class CacheAspect {
         return signature.getMethod().getReturnType();
     }
 
+    /**
+     * 获取List的泛型类型
+     * @param joinPoint
+     * @return
+     * @throws ClassNotFoundException
+     */
     private Class<?> getGenericReturnType(JoinPoint joinPoint) throws ClassNotFoundException {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
