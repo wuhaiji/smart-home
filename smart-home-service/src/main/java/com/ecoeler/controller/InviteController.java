@@ -8,6 +8,7 @@ import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -24,6 +25,18 @@ public class InviteController {
     public Result sendInvite(@RequestBody InviteRecordDto inviteRecordDto) {
         ExceptionUtil.notNull(inviteRecordDto, InviteCode.SEND_INVITE_SERVICE_ERROR);
         return Result.ok(iInviteService.sendInvite(inviteRecordDto));
+    }
+
+    @RequestMapping("/accept/invite")
+    public Result acceptInvite(@RequestParam Long id) {
+        ExceptionUtil.notNull(id, InviteCode.PARAM_EMPTY_ERROR);
+        return Result.ok(iInviteService.acceptInvite(id));
+    }
+
+    @RequestMapping("/refuse/invite")
+    public Result refuseInvite(@RequestParam Long id) {
+        ExceptionUtil.notNull(id, InviteCode.PARAM_EMPTY_ERROR);
+        return Result.ok(iInviteService.refuseInvite(id));
     }
 
 }
