@@ -5,6 +5,7 @@ import com.ecoeler.app.dto.v1.QueryTimeDto;
 import com.ecoeler.model.code.TangCode;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +52,23 @@ public class TimeUtil {
         return result;
     }
 
+    /**
+     * 一天的最开始的日期
+     * @param queryTime 查询日期
+     * @return 查询一天最早的时间
+     */
+    public static LocalDateTime getEarliestTimeOfDay(LocalDateTime queryTime){
+        return LocalDateTime.of(queryTime.toLocalDate(), LocalTime.MIN);
+    }
+
+    /**
+     * 一天的最后日期
+     * @param queryTime 查询日期
+     * @return 查询一天最晚的时间
+     */
+    public static LocalDateTime getLatestTimeOfDay(LocalDateTime queryTime){
+        return LocalDateTime.of(queryTime.toLocalDate(),LocalTime.MAX);
+    }
 
 
 }

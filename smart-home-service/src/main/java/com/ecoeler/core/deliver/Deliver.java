@@ -1,7 +1,7 @@
 package com.ecoeler.core.deliver;
 
 
-import com.ecoeler.core.msg.OrderInfo;
+import com.ecoeler.app.msg.OrderInfo;
 
 /**
  * 指令下发方式包

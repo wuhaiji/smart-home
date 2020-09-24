@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * APP
@@ -20,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableAppOauth2Client
+@EnableTransactionManagement
 public class SmartHomeServiceApp {
     public static void main(String [] args){
         SpringApplication.run(SmartHomeServiceApp.class,args);

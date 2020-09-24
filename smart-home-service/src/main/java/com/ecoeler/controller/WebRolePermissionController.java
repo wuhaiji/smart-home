@@ -28,22 +28,5 @@ import java.util.List;
 @RestController
 @RequestMapping("/web-role-permission")
 public class WebRolePermissionController {
-    @Autowired
-    private IWebRolePermissionService iWebRolePermissionService;
-
-    /**
-     * 定制权限
-     *
-     * @param customizationPermissionDto 定制的权限 及角色id
-     * @return
-     */
-    @RequestMapping("customization")
-    public Result customizationPermission(@RequestBody CustomizationPermissionDto customizationPermissionDto) {
-        log.info("smart-home-service->WebRolePermissionController->begin customization permission for role");
-        iWebRolePermissionService.customizationPermission(customizationPermissionDto);
-        return Result.ok();
-    }
-
-
 
 }

@@ -68,7 +68,7 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      *
      * @param id
      */
-    @ClearCache("PER#${id},PER_BACK#${id}")
+    @ClearCache(value = {"PER#${id}","PER_BACK#${id}"})
     @Override
     public void deleteRole(Long id) {
         QueryWrapper<WebRolePermission> queryWrapper = new QueryWrapper<>();
@@ -107,7 +107,11 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
                     if (roleBean.getId() != null && roleBean.getId().equals(roleId)) {
                         webRoleBean.setCount(roleBean.getCount());
                     }
-                }beanResult.add(webRoleBean);
+                }
+                if (webRoleBean.getCount()==null){
+                    webRoleBean.setCount(0);
+                }
+                beanResult.add(webRoleBean);
             }
 
         }

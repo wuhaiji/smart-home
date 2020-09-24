@@ -53,5 +53,4 @@ public interface IWebCustomerService extends IService<Family> {
     List<WebCustomerFamilyDeviceBean> selectFamilyDevice(Long id);
 
 
-
 }

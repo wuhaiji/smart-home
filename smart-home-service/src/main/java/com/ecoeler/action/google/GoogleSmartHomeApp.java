@@ -17,7 +17,7 @@ import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.app.service.IDeviceService;
 import com.ecoeler.app.service.IDeviceTypeService;
 import com.ecoeler.core.DeviceEvent;
-import com.ecoeler.core.msg.OrderInfo;
+import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.feign.Oauth2ClientService;
 import com.ecoeler.model.response.Result;

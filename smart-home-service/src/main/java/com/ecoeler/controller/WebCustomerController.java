@@ -1,6 +1,5 @@
 package com.ecoeler.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ecoeler.app.bean.v1.PageBean;
 import com.ecoeler.app.bean.v1.WebCustomerFamilyDeviceBean;
 import com.ecoeler.app.bean.v1.WebCustomerFamilyMemberBean;
@@ -10,9 +9,10 @@ import com.ecoeler.app.entity.Family;
 import com.ecoeler.app.service.IWebCustomerService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -36,8 +36,8 @@ public class WebCustomerController {
      * @return
      */
     @RequestMapping("/query/family/list")
-    public Result queryFamily(WebCustomerDto webCustomerDto) {
-        log.info("开始查询客户列表");
+    public Result queryFamily(@RequestBody WebCustomerDto webCustomerDto) {
+        log.info("smart-home-service->WebCustomerController->begin query family list");
         PageBean<Family> result = iWebCustomerService.selectFamilyList(webCustomerDto);
         return Result.ok(result);
     }
@@ -48,8 +48,8 @@ public class WebCustomerController {
      * @return
      */
     @RequestMapping("/query/member")
-    public Result queryFamilyMember(Long id) {
-        log.info("开始查询客户列表");
+    public Result queryFamilyMember(@RequestParam Long id) {
+        log.info("smart-home-service->WebCustomerController->begin query family member");
         List<WebCustomerFamilyMemberBean> result = iWebCustomerService.selectFamilyMember(id);
         return Result.ok(result);
     }
@@ -59,8 +59,8 @@ public class WebCustomerController {
      * @return
      */
     @RequestMapping("/query/room")
-    public Result queryFamilyRoom(Long id) {
-        log.info("开始查询客户列表");
+    public Result queryFamilyRoom(@RequestParam Long id) {
+        log.info("smart-home-service->WebCustomerController->begin query family room");
         List<WebCustomerFamilyRoomBean> result = iWebCustomerService.selectFamilyRoom(id);
         return Result.ok(result);
     }
@@ -70,8 +70,8 @@ public class WebCustomerController {
      * @return
      */
     @RequestMapping("/query/device")
-    public Result queryFamilyDevice(Long id) {
-        log.info("开始查询客户列表");
+    public Result queryFamilyDevice(@RequestParam Long id) {
+        log.info("smart-home-service->WebCustomerController->begin query family device");
         List<WebCustomerFamilyDeviceBean> result = iWebCustomerService.selectFamilyDevice(id);
         return Result.ok(result);
     }

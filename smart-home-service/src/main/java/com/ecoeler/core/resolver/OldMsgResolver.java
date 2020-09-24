@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.service.IDeviceService;
-import com.ecoeler.core.msg.KeyMsg;
+import com.ecoeler.app.msg.KeyMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

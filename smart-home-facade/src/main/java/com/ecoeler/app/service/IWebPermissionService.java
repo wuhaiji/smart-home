@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ecoeler.app.bean.v1.PermissionBean;
 import com.ecoeler.app.bean.v1.WebEchoUserPermissionBean;
 import com.ecoeler.app.bean.v1.WebUserPermissionBean;
+import com.ecoeler.app.dto.v1.CustomizationPermissionDto;
 import com.ecoeler.app.entity.WebPermission;
 import com.ecoeler.app.entity.WebRolePermission;
 
@@ -60,7 +61,7 @@ public interface IWebPermissionService extends IService<WebPermission> {
      * @param roleId 角色id
      * @return 权限Ids
      */
-    List<WebRolePermission> selectPermissionList(Long roleId);
+    List<WebRolePermission>  selectRolePermissionIds(Long roleId);
 
     /**
      * 根据用户ID查询后台控制权限
@@ -75,4 +76,11 @@ public interface IWebPermissionService extends IService<WebPermission> {
      * @return
      */
     WebEchoUserPermissionBean selectEchoPermissionByRoleId(Long roleId);
+
+    /**
+     * 给角色分配权限
+     *
+     * @param customizationPermissionDto 权限集合 及角色Id
+     */
+    void customizationPermission(CustomizationPermissionDto customizationPermissionDto);
 }

@@ -11,6 +11,8 @@ import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.service.*;
 
+import com.ecoeler.util.OverviewUtil;
+import com.ecoeler.util.RatioUtil;
 import com.ecoeler.util.TimeUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,10 +98,10 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         queryWrapper.eq(!"".equals(deviceId.trim()), "device_id", deviceId);
         queryWrapper.eq(!"".equals(deviceName.trim()), "device_name", deviceName);
         queryWrapper.eq(!"".equals(deviceTypeName.trim()), "device_type_name", deviceTypeName);
-        queryWrapper.eq(netState!=-1,"net_state",netState);
+        queryWrapper.eq(netState != -1, "net_state", netState);
         queryWrapper.ge(timeType != -1 && startTime != null, timeLine, startTime);
         queryWrapper.le(timeType != -1 && endTime != null, timeLine, endTime);
-        Page<Device> page=new Page<>();
+        Page<Device> page = new Page<>();
         page.setCurrent(webDeviceDto.getCurrent());
         page.setSize(webDeviceDto.getSize());
         Page<Device> webUserPage = baseMapper.selectPage(page, queryWrapper);
@@ -112,22 +114,23 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
 
     /**
      * 分页按条件查询设备类型
+     *
      * @param webDeviceTypeDto
      * @return
      */
     @Override
     public PageBean<DeviceType> selectDeviceType(WebDeviceTypeDto webDeviceTypeDto) {
         QueryWrapper<DeviceType> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("distinct type_name", "id","product_id","image");
-        String typeName=Optional.ofNullable(webDeviceTypeDto.getTypeName()).orElse("");
-        String productId=Optional.ofNullable(webDeviceTypeDto.getProductId()).orElse("");
-        queryWrapper.eq(!"".equals(typeName.trim()),"type_name",typeName);
-        queryWrapper.eq(!"".equals(productId.trim()),"product_id",productId);
-        Page<DeviceType> page=new Page<>();
+        queryWrapper.select("distinct type_name", "id", "product_id", "image", "default_icon", "create_time", "update_time");
+        String typeName = Optional.ofNullable(webDeviceTypeDto.getTypeName()).orElse("");
+        String productId = Optional.ofNullable(webDeviceTypeDto.getProductId()).orElse("");
+        queryWrapper.eq(!"".equals(typeName.trim()), "type_name", typeName);
+        queryWrapper.eq(!"".equals(productId.trim()), "product_id", productId);
+        Page<DeviceType> page = new Page<>();
         page.setCurrent(webDeviceTypeDto.getCurrent());
         page.setSize(webDeviceTypeDto.getSize());
         Page<DeviceType> deviceTypePage = deviceTypeMapper.selectPage(page, queryWrapper);
-        PageBean<DeviceType> result=new PageBean<>();
+        PageBean<DeviceType> result = new PageBean<>();
         result.setList(deviceTypePage.getRecords());
         result.setTotal(deviceTypePage.getTotal());
         result.setPages(deviceTypePage.getPages());

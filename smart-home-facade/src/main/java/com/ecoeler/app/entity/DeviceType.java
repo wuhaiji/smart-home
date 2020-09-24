@@ -44,6 +44,12 @@ public class DeviceType implements Serializable {
     private LocalDateTime updateTime;
 
     private LocalDateTime createTime;
+
+    /**
+     * 默认图标
+     */
+    private String defaultIcon;
+
     /**
      * 谷歌类型名称
      */

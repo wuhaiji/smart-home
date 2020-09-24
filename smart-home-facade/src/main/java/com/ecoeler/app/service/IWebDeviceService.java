@@ -74,5 +74,4 @@ public interface IWebDeviceService extends IService<Device> {
     List<WebDeviceDataBean> queryDeviceData(Long deviceId);
 
 
-
 }

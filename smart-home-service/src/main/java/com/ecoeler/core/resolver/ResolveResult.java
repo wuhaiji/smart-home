@@ -1,6 +1,6 @@
 package com.ecoeler.core.resolver;
 
-import com.ecoeler.core.msg.KeyMsg;
+import com.ecoeler.app.msg.KeyMsg;
 import lombok.Data;
 
 import java.util.List;
