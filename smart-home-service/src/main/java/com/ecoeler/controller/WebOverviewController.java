@@ -47,7 +47,8 @@ public class WebOverviewController {
     /**
      * 查询设备echarts数据
      *
-     * @return echarts数据
+     * @param queryDateDto 查询时间段
+     * @return echarts数据 时间段内每天新增注册设备数量
      */
     @RequestMapping("query/device/echarts")
     public Result queryOverviewDeviceDataStatistics(@RequestBody QueryDateDto queryDateDto) {
@@ -59,7 +60,8 @@ public class WebOverviewController {
     /**
      * 查询App用户echarts数据
      *
-     * @return echarts数据
+     * @param queryDateDto 查询时间段
+     * @return echarts数据 时间段内每天新增注册人员数量
      */
     @RequestMapping("query/app/user/echarts")
     public Result queryAppUserOverviewDeviceDataStatistics(@RequestBody QueryDateDto queryDateDto) {

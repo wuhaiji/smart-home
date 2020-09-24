@@ -171,7 +171,7 @@ public class WebOverviewServiceImpl implements WebOverviewDataService {
                 }
                 if (startDate.isAfter(endDate)) {
                     log.error("smart-home-service->WebOverviewServiceImpl->startDate after endDate");
-                    throw new ServiceException(TangCode.CODE_ECHARTS_DAY_ERROR);
+                    throw new ServiceException(TangCode.START_TIME_AFTER_END_TIME);
                 }
             }
         }
