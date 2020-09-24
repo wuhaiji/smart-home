@@ -51,6 +51,11 @@ public class DeviceType implements Serializable {
     private LocalDateTime createTime;
 
     /**
+     * 默认图标
+     */
+    private String defaultIcon;
+
+    /**
      * 谷歌类型名称
      */
     private String googleTypeName;

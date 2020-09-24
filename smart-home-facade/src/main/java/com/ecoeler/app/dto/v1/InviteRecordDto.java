@@ -19,6 +19,8 @@ public class InviteRecordDto implements Serializable {
 
     private String inviterName;
 
+    private LocalDateTime inviteTime = LocalDateTime.now();
+
     private String receiverEmail;
 
     private String nickName;
@@ -27,5 +29,5 @@ public class InviteRecordDto implements Serializable {
 
     private String familyName;
 
-    private LocalDateTime inviteTime = LocalDateTime.now();
+    private Integer role;
 }

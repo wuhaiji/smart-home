@@ -16,6 +16,10 @@ public class WebCustomerDto extends BasePageQueryTimeDto {
      * 位置名称
      */
     private String positionName;
+    /**
+     * 家庭类型：0别墅，1住宅
+     */
+    private Integer familyType;
 
 
 }

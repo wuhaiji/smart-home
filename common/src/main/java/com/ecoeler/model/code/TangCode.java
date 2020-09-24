@@ -30,6 +30,7 @@ public enum  TangCode implements ResultCode {
     CODE_DATA_KEY_EMPTY_ERROR("40019","键名不能为空!"),
     CODE_DATA_VALUE_EMPTY_ERROR("40020","键值不能为空!"),
     CODE_ORDER_MSG_NULL_ERROR("40021","指令内容不能为空!"),
+    CODE_ECHARTS_DAY_ERROR("40022","选择时间间隔不能大于60天"),
 
     //业务错误
     BLANK_PHONE_NUMBER_EMPTY_ERROR("20001","手机号不能为空"),
@@ -37,7 +38,7 @@ public enum  TangCode implements ResultCode {
     EMAIL_NOT_MATCH_ERROR("20003","邮箱格式不匹配"),
     NULL_ROLE_ID_EMPTY_ERROR("20004","未选中角色"),
     NULL_ROLE_EMPTY_ERROR("20005","角色不能为空"),
-    START_TIME_AFTER_END_TIME("20006","选择的开始时间比结束时间晚"),
+    START_TIME_AFTER_END_TIME("20006","开始时间不能比结束时间晚"),
     CODE_LOGIN_ERROR("20007", "登录失败，账号或密码错误!"),
     CODE_CAPTCHA_ERROR("20008","图片验证码错误!"),
     CODE_LIMIT_EMAIL_ERROR("20009","两分钟内勿重复请求邮箱验证码!"),

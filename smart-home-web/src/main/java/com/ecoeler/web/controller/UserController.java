@@ -26,7 +26,9 @@ public class UserController {
     @RequestMapping("/user")
     public Result user(@RequestParam String account){
         log.info("smart-home-web->UserController->begin query webUser by account");
-        return webUserService.getUser(account);
+        Result<WebUser> user = webUserService.getUser(account);
+        user.getData().setPassword(null);
+        return user ;
     }
     /**
      * 新增用户
