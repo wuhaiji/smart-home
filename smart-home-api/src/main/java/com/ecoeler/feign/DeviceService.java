@@ -1,9 +1,11 @@
 package com.ecoeler.feign;
 
 
+import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(value = "smart-home-service", path = "/device",contextId = "device")
@@ -16,6 +18,9 @@ public interface DeviceService {
     Result listFamilyDevice(@RequestParam Long familyId);
 
     @PostMapping("/move/device")
-    Result moveDevice(@RequestParam Long deviceId,@RequestParam Long roomId);
+    Result moveDevice(@RequestParam String deviceId,@RequestParam Long roomId);
+
+    @PostMapping("/control")
+    Result control(@RequestBody OrderInfo orderInfo);
 
 }

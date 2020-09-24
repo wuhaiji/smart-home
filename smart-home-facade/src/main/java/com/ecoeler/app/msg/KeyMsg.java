@@ -1,4 +1,4 @@
-package com.ecoeler.core.msg;
+package com.ecoeler.app.msg;
 
 
 import lombok.Data;

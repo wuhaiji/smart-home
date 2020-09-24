@@ -2,7 +2,7 @@ package com.ecoeler.core.deliver;
 
 import com.ecoeler.config.mqtt.MqttSenderUtil;
 import com.ecoeler.constant.MqttTopicConst;
-import com.ecoeler.core.msg.OrderInfo;
+import com.ecoeler.app.msg.OrderInfo;
 import org.springframework.stereotype.Component;
 
 /**

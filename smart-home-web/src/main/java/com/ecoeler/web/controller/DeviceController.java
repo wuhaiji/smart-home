@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 角色端口
+ * 设备端口
  *
  * @author tangcx
  * @since 2020/9/16

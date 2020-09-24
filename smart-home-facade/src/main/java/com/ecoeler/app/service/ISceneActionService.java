@@ -13,4 +13,11 @@ import com.ecoeler.app.entity.SceneAction;
  */
 public interface ISceneActionService extends IService<SceneAction> {
 
+    /**
+     * 添加场景动作
+     * @param sceneAction
+     * @return
+     */
+    Long addSceneAction(SceneAction sceneAction);
+
 }

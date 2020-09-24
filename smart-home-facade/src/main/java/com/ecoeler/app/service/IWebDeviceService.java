@@ -73,17 +73,5 @@ public interface IWebDeviceService extends IService<Device> {
      */
     List<WebDeviceDataBean> queryDeviceData(Long deviceId);
 
-    /**
-     * 查询设备总数
-     * @return
-     */
-    Integer selectDeviceTotalCount();
 
-    /**
-     * 查询今天设备总数
-     * @return
-     */
-    Integer selectDeviceTodayCount();
-
-    float selectDeviceDayCompare();
 }

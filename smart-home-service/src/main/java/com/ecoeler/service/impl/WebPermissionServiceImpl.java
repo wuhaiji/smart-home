@@ -19,6 +19,7 @@ import com.ecoeler.util.ExceptionUtil;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,7 +64,10 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
      */
     @Override
     public WebUserPermissionBean selectWebPermissionByUserId(Long userId) {
-        return iWebPermissionService.selectWebPermissionByRoleId(webUserMapper.selectById(userId).getRoleId());
+        WebUserPermissionBean bean = iWebPermissionService.selectWebPermissionByRoleId
+                (webUserMapper.selectById(userId).getRoleId());
+        bean.setUserId(userId);
+        return bean;
     }
 
     /**

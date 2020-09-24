@@ -2,6 +2,7 @@ package com.ecoeler.app.bean.v1;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -9,6 +10,7 @@ import java.util.List;
  */
 @Data
 public class WebUserPermissionBean {
+    private Long userId;
     /**
      * 按钮权限
      */

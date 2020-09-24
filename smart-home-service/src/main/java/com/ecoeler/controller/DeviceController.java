@@ -4,13 +4,11 @@ package com.ecoeler.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ecoeler.app.entity.Device;
+import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.IDeviceService;
 import com.ecoeler.model.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -40,10 +38,16 @@ public class DeviceController {
     }
 
     @PostMapping("/move/device")
-    public Result moveDevice(@RequestParam Long deviceId,@RequestParam Long roomId){
+    public Result moveDevice(@RequestParam String deviceId,@RequestParam Long roomId){
         UpdateWrapper<Device> q=new UpdateWrapper<>();
         q.eq("device_id",deviceId).set("room_id",roomId);
         deviceService.update(q);
+        return Result.ok();
+    }
+
+    @PostMapping("/control")
+    public Result control(@RequestBody OrderInfo orderInfo){
+        deviceService.control(orderInfo);
         return Result.ok();
     }
 

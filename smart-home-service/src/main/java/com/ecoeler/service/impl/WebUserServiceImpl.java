@@ -30,10 +30,10 @@ import java.util.Optional;
 
 /**
  * <p>
- * 服务实现类
+ * 用户实现服务类
  * </p>
  *
- * @author tang
+ * @author tangcx
  * @since 2020-09-10
  */
 @Service
@@ -43,7 +43,6 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
 
     /**
      * 查询角色对应用户的个数
@@ -58,8 +57,8 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
     /**
      * 新增用户
      *
-     * @param webUser
-     * @return
+     * @param webUser 用户信息
+     * @return 新增用户id
      */
     @Override
     public Long addWebUser(WebUser webUser) {
@@ -82,10 +81,9 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
     /**
      * 校验用户是否存在以及给密码加密
      *
-     * @param webUser
+     * @param webUser 用户信息
      */
     private void verifyWebUserExit(WebUser webUser) {
-        String userName = Optional.ofNullable(webUser.getUserName()).orElse("");
         String email = Optional.ofNullable(webUser.getEmail()).orElse("");
         String phoneNumber = Optional.ofNullable(webUser.getPhoneNumber()).orElse("");
         String password = Optional.ofNullable(webUser.getPassword()).orElse("");
@@ -110,7 +108,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
     /**
      * 修改用户
      *
-     * @param webUser
+     * @param webUser 用户
      */
     @Override
     public void updateWebUser(WebUser webUser) {
@@ -119,6 +117,10 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         baseMapper.updateById(webUser);
     }
 
+    /**
+     * 删除用户
+     * @param id 用户Id
+     */
     @Override
     public void deleteWebUser(Long id) {
         baseMapper.deleteById(id);
@@ -126,8 +128,8 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
 
     /***
      *根据条件分页查询
-     * @param webUserDto
-     * @return
+     * @param webUserDto 查询条件
+     * @return 分页的用户信息
      */
     @Override
     public PageBean<WebUserBean> queryWebUserList(WebUserDto webUserDto) {
