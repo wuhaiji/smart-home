@@ -10,4 +10,7 @@ import com.ecoeler.app.entity.InviteRecord;
 public interface IInviteService extends IService<InviteRecord> {
     Boolean sendInvite(InviteRecordDto inviteRecordDto);
 
+    String acceptInvite(Long id);
+
+    String refuseInvite(Long id);
 }

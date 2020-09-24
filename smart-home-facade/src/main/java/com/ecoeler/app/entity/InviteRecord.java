@@ -26,13 +26,19 @@ public class InviteRecord implements Serializable {
 
     private String inviterName;
 
+    private LocalDateTime inviteTime;
+
     private String receiverEmail;
 
     private String nickName;
+
+    private LocalDateTime responseTime;
 
     private Long familyId;
 
     private String familyName;
 
-    private LocalDateTime inviteTime;
+    private Integer status;
+
+    private Integer role;
 }
