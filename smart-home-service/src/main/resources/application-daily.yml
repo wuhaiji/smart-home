@@ -64,3 +64,17 @@ invite:
   host:
     accept: http://127.0.0.1:11031/open/smart/home/accept/invite
     refuse: http://127.0.0.1:11031/open/smart/home/refuse/invite
+
+# xxl-job
+xxl:
+  job:
+    admin:
+      addresses: http://127.0.0.1:8088/xxl-job-admin
+    accessToken: # token
+    executor: # 执行器信息
+      appname: ${spring.application.name}
+      address:
+      ip:
+      port: 9999
+      logpath: data/logs/xxl-job
+      logretentiondays: 30

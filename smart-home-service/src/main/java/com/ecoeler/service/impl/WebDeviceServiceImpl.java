@@ -187,7 +187,7 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
                 if (deviceDatum.getDataKeyId() != null) {
                     DeviceKey deviceKey = deviceKeyMapper.selectById(deviceDatum.getDataKeyId());
                     if (deviceKey != null) {
-                        bean.setKeyName(deviceKey.getKeyName());
+                        bean.setKeyName(deviceKey.getZhKeyName());
                     }
                 }
                 result.add(bean);

@@ -27,6 +27,8 @@
         <module>app-oauth2-client</module>
         <module>web-oauth2</module>
         <module>web-oauth2-client</module>
+        <module>xxl-job-admin</module>
+        <module>xxl-job-core</module>
         <module>smart-home-voice-alexa-web</module>
     </modules>
 

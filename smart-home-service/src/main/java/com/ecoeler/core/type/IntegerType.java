@@ -13,7 +13,12 @@ public class IntegerType implements IType {
     /**
      * 单位
      */
-    private String unit;
+    private String zhUnit;
+
+    /**
+     * 单位
+     */
+    private String enUnit;
 
     /**
      * 最小
