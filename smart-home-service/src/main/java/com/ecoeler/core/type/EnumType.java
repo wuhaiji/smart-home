@@ -13,6 +13,10 @@ import java.util.List;
 public class EnumType extends NormalTypeAdapter {
 
     private List<String> range;
+
+    private List<String> zhRange;
+
+    private List<String> enRange;
     
     @Override
     public Object match(Object value) {

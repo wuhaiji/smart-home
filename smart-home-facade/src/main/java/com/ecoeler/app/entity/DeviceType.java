@@ -29,7 +29,12 @@ public class DeviceType implements Serializable {
     /**
      * 类型名称
      */
-    private String typeName;
+    private String zhTypeName;
+
+    /**
+     * 类型名称
+     */
+    private String enTypeName;
 
     /**
      * 网关类型：0否，显示在首页，1是，不显示在首页

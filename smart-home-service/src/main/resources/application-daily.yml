@@ -58,3 +58,21 @@ mybatis-plus:
   configuration:
     # 是否将sql打印到控制面板(该配置会将sql语句和查询的结果都打印到控制台)
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+invite:
+  host:
+    accept: 1
+    refuse: 1
+
+# xxl-job
+xxl:
+  job:
+    admin:
+      addresses: http://127.0.0.1:8088/xxl-job-admin
+    accessToken: # token
+    executor: # 执行器信息
+      appname: ${spring.application.name}
+      address:
+      ip:
+      port: 9999
+      logpath: data/logs/xxl-job
+      logretentiondays: 30

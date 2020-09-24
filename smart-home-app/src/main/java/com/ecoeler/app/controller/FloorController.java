@@ -36,7 +36,6 @@ public class FloorController {
 
     @RequestMapping("/update/floor")
     public Result updateFloor(Floor floor){
-        ExceptionUtil.notNull(floor.getId(),TangCode.CODE_FLOOR_ID_NULL_ERROR);
         ExceptionUtil.notBlank(floor.getFloorName(),TangCode.CODE_FLOOR_NAME_EMPTY_ERROR);
         floor.setFamilyId(null);
         return floorService.updateFloor(floor);

@@ -46,9 +46,14 @@ public class DeviceKey implements Serializable {
     private String keyInfo;
 
     /**
-     * 键的名称
+     * 键的名称 中文
      */
-    private String keyName;
+    private String zhKeyName;
+
+    /**
+     * 键的名称 英文
+     */
+    private String enKeyName;
 
     /**
      * 谷歌语音key对应的state名称
@@ -65,7 +70,7 @@ public class DeviceKey implements Serializable {
      */
     private String alexaStateName;
 
-    private Integer ActionType;
+    private Integer actionType;
 
 
 }

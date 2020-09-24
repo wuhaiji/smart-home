@@ -8,11 +8,9 @@ import com.ecoeler.model.code.TangCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 
 /**
  * 设备
@@ -46,7 +44,7 @@ public class DeviceController {
     }
 
     @RequestMapping("/control")
-    public Result control( String deviceId,String productId,String msg){
+    public Result control( String deviceId,String productId,String msg ){
         OrderInfo orderInfo=new OrderInfo();
         orderInfo.setProductId(productId);
         orderInfo.setDeviceId(deviceId);
