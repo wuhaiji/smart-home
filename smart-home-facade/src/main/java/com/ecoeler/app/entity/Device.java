@@ -45,9 +45,14 @@ public class Device implements Serializable {
     private String deviceName;
 
     /**
-     * 设备类型名
+     * 类型中文名
      */
-    private String deviceTypeName;
+    private String zhTypeName;
+
+    /**
+     * 类型英文名
+     */
+    private String enTypeName;
 
     /**
      * 设备图标
