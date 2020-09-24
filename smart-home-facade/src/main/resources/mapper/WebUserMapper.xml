@@ -14,6 +14,7 @@
         <if test="dto.phoneNumber!=null">and d.phone_number=#{dto.phoneNumber}</if>
         <if test="dto.startTime!=null">and d.${dto.timeLine} &gt;= #{dto.startTime}</if>
         <if test="dto.endTime!=null">and d.${dto.timeLine} &lt;= #{dto.endTime}</if>
+        <if test="dto.roleId!=-1">and d.role_id = #{dto.roleId} </if>
         limit #{dto.limitStart},#{dto.size}
     </select>
 
