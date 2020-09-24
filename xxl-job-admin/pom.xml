@@ -2,10 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>sc</artifactId>
-		<groupId>com.bailb.blbs</groupId>
+		<artifactId>smart-home</artifactId>
+		<groupId>com.ecoeler</groupId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>xxl-job-admin</artifactId>
 
 	<!--<dependencyManagement>
@@ -67,7 +68,7 @@
 
 		<!-- xxl-job-core -->
 		<dependency>
-			<groupId>com.bailb.blbs</groupId>
+			<groupId>com.ecoeler</groupId>
 			<artifactId>xxl-job-core</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
