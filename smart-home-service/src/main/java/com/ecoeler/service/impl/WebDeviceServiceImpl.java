@@ -40,11 +40,6 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
 
-    @Autowired
-    private DeviceDataMapper deviceDataMapper;
-
-    @Autowired
-    private DeviceKeyMapper deviceKeyMapper;
 
     /**
      * 设备分布

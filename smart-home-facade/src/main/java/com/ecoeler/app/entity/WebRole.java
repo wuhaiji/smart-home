@@ -30,7 +30,6 @@ public class WebRole implements Serializable {
 
     private String roleName;
 
-    private String role;
 
     private String description;
 

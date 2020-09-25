@@ -1,7 +1,7 @@
 package com.ecoeler.app.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ecoeler.app.entity.TimeAxis;
+import com.ecoeler.app.entity.TimerJob;
 
 /**
  * <p>
@@ -9,8 +9,8 @@ import com.ecoeler.app.entity.TimeAxis;
  * </p>
  *
  * @author tang
- * @since 2020-09-24
+ * @since 2020-09-25
  */
-public interface TimeAxisMapper extends BaseMapper<TimeAxis> {
+public interface TimerJobMapper extends BaseMapper<TimerJob> {
 
 }
