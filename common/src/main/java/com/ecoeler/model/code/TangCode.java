@@ -31,6 +31,7 @@ public enum  TangCode implements ResultCode {
     CODE_DATA_VALUE_EMPTY_ERROR("40020","键值不能为空!"),
     CODE_ORDER_MSG_NULL_ERROR("40021","指令内容不能为空!"),
     CODE_ECHARTS_DAY_ERROR("40022","选择时间间隔不能大于60天"),
+    CODE_FILE_EMPTY_ERROR("40023","未选择上传文件"),
 
     //业务错误
     BLANK_PHONE_NUMBER_EMPTY_ERROR("20001","手机号不能为空"),
@@ -45,6 +46,8 @@ public enum  TangCode implements ResultCode {
     CODE_EMAIL_CODE_ERROR("20010","邮箱验证码错误!"),
     CODE_USER_EXIST("20011","用户已存在!"),
     CODE_FAMILY_NOT_VILLA("20012","当前家庭应该为别墅!"),
+    CODE_UPLOAD_FILE_FAIL("20013","文件上传失败!"),
+    CODE_ROLE_TO_USER_NOT_EMPTY("20014","该角色还有用户使用,不能删除"),
 
     //TOKEN
     CODE_TOKEN_ERROR("30005","无效TOKEN,TOKEN超时或异常!"),

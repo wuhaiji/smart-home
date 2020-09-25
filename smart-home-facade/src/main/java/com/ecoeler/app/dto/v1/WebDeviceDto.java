@@ -18,7 +18,7 @@ public class WebDeviceDto extends BasePageQueryTimeDto {
     /**
      * 设备类型
      */
-    private String deviceTypeName;
+    private String productId;
     /**
      * 在线离线 ，1在线 ，0离线
      */

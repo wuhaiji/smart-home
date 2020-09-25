@@ -8,6 +8,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -135,11 +136,17 @@ public class CacheAspect {
     public void clearCachePointCut() {
     }
 
-    @Around("clearCachePointCut() && @annotation(clearCache)")
-    public Object process(ProceedingJoinPoint joinPoint, ClearCache clearCache) throws Throwable {
+    /**
+     * 不管方法是否执行都要清理缓存
+     * @param joinPoint
+     * @param clearCache
+     * @throws Throwable
+     */
+    @After("clearCachePointCut() && @annotation(clearCache)")
+    public void process(JoinPoint joinPoint, ClearCache clearCache) throws Throwable {
         String[] values = clearCache.value();
-        Object proceed = joinPoint.proceed();
         for (String value : values) {
+
             if (value.indexOf('$') == -1) {
                 //说明是批量删
                 redisUtil.delete(redisUtil.keys(value));
@@ -148,7 +155,6 @@ public class CacheAspect {
                 redisUtil.delete(key);
             }
         }
-        return proceed;
     }
 
 }

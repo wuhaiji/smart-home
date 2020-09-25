@@ -13,6 +13,7 @@ public class WebUserDto extends BasePageQueryTimeDto{
     private String phoneNumber;
     private String timeLine;
     private  Integer limitStart;
+    private Long roleId;
 
 
 

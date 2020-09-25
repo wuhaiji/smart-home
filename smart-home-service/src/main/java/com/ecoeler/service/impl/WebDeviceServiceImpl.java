@@ -68,7 +68,7 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
     public PageBean<Device> selectDeviceList(WebDeviceDto webDeviceDto) {
         String deviceId = Optional.ofNullable(webDeviceDto.getDeviceId()).orElse("");
         String deviceName = Optional.ofNullable(webDeviceDto.getDeviceName()).orElse("");
-        String deviceTypeName = Optional.ofNullable(webDeviceDto.getDeviceTypeName()).orElse("");
+        String productId = Optional.ofNullable(webDeviceDto.getProductId()).orElse("");
         Integer netState = Optional.ofNullable(webDeviceDto.getNetState()).orElse(-1);
         //时间段字段  3-online_time 2-offline_time 0-create_time 1-update_time
         Integer timeType = Optional.ofNullable(webDeviceDto.getTimeType()).orElse(0);
@@ -95,12 +95,13 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
                 break;
         }
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(!"".equals(deviceId.trim()), "device_id", deviceId);
-        queryWrapper.eq(!"".equals(deviceName.trim()), "device_name", deviceName);
-        queryWrapper.eq(!"".equals(deviceTypeName.trim()), "device_type_name", deviceTypeName);
-        queryWrapper.eq(netState != -1, "net_state", netState);
-        queryWrapper.ge(timeType != -1 && startTime != null, timeLine, startTime);
-        queryWrapper.le(timeType != -1 && endTime != null, timeLine, endTime);
+        queryWrapper
+                .eq(!"".equals(deviceId.trim()), "device_id", deviceId)
+                .eq(!"".equals(deviceName.trim()), "device_name", deviceName)
+                .eq(!"".equals(productId.trim()), "product_id", productId)
+                .eq(netState != -1, "net_state", netState)
+                .ge(timeType != -1 && startTime != null, timeLine, startTime)
+                .le(timeType != -1 && endTime != null, timeLine, endTime);
         Page<Device> page = new Page<>();
         page.setCurrent(webDeviceDto.getCurrent());
         page.setSize(webDeviceDto.getSize());
@@ -120,12 +121,16 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
      */
     @Override
     public PageBean<DeviceType> selectDeviceType(WebDeviceTypeDto webDeviceTypeDto) {
-        QueryWrapper<DeviceType> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("distinct type_name", "id", "product_id", "image", "default_icon", "create_time", "update_time");
+
         String typeName = Optional.ofNullable(webDeviceTypeDto.getTypeName()).orElse("");
         String productId = Optional.ofNullable(webDeviceTypeDto.getProductId()).orElse("");
-        queryWrapper.eq(!"".equals(typeName.trim()), "type_name", typeName);
-        queryWrapper.eq(!"".equals(productId.trim()), "product_id", productId);
+        QueryWrapper<DeviceType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("zh_type_name", "en_type_name", "id", "product_id", "image", "default_icon", "create_time", "update_time")
+                .eq(!"".equals(typeName.trim()), "zh_type_name", typeName)
+                .eq(!"".equals(productId.trim()), "product_id", productId)
+                .or()
+                .eq(!"".equals(typeName.trim()), "en_type_name", typeName)
+                .eq(!"".equals(productId.trim()), "product_id", productId);
         Page<DeviceType> page = new Page<>();
         page.setCurrent(webDeviceTypeDto.getCurrent());
         page.setSize(webDeviceTypeDto.getSize());
@@ -135,6 +140,18 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         result.setTotal(deviceTypePage.getTotal());
         result.setPages(deviceTypePage.getPages());
         return result;
+    }
+
+    /**
+     * 查询所有设备类型 下拉框
+     *
+     * @return
+     */
+    @Override
+    public List<DeviceType> selectAllDeviceType() {
+        QueryWrapper<DeviceType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("product_id", "zh_type_name", "en_type_name");
+        return deviceTypeMapper.selectList(queryWrapper);
     }
 
     /**
@@ -195,5 +212,6 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         }
         return result;
     }
+
 
 }
