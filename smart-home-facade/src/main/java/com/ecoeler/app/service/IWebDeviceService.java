@@ -43,36 +43,12 @@ public interface IWebDeviceService extends IService<Device> {
      */
     PageBean<DeviceType> selectDeviceType(WebDeviceTypeDto webDeviceTypeDto);
 
-    /**
-     * 新增设备
-     *
-     * @param device 设备数据
-     * @return 新增id
-     */
-    Long addDevice(Device device);
+
 
     /**
-     * 修改设备
+     * 查询设备类型下拉选择框
      *
-     * @param device 设备数据
+     * @return 设备类型列表
      */
-    void updateDevice(Device device);
-
-    /**
-     * 删除设备
-     *
-     * @param id 设备id
-     */
-    void deleteDevice(Long id);
-
-    /**
-     * 查询当前设备对应的设备参数
-     *
-     * @param deviceId 设备id
-     * @return 当前设备设备参数列表
-     */
-    List<WebDeviceDataBean> queryDeviceData(Long deviceId);
-
-
     List<DeviceType> selectAllDeviceType();
 }

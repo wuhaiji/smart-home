@@ -48,8 +48,8 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
     /**
      * 分页查询家庭
      *
-     * @param webCustomerDto
-     * @return
+     * @param webCustomerDto 查询条件
+     * @return 家庭列表
      */
     @Override
     public PageBean<Family> selectFamilyList(WebCustomerDto webCustomerDto) {
