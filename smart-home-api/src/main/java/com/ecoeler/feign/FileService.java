@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author TangCX
  */
-@FeignClient(value = "smart-home-service", path = "/file",contextId = "family")
+@FeignClient(value = "smart-home-service", path = "/file",contextId = "file")
 public interface FileService {
     /**
      * 文件上传
