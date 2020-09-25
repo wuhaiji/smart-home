@@ -1,8 +1,8 @@
 package com.ecoeler.app.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 
-import java.util.Map;
 
 public interface AppVoiceService {
     /**
@@ -12,4 +12,11 @@ public interface AppVoiceService {
      * @return
      */
     String action(JSONObject data);
+
+    /**
+     *  请求同步
+     * @param dto
+     * @return
+     */
+    void requestSync(UserVoiceDto dto);
 }

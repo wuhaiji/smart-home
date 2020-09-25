@@ -77,7 +77,4 @@ public class WebDeviceController {
         return Result.ok(result);
     }
 
-
-
-
 }

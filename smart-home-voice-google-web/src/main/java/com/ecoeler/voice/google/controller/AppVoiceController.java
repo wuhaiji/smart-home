@@ -1,13 +1,11 @@
-package com.ecoeler.app.controller;
+package com.ecoeler.voice.google.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.ecoeler.app.config.AppResourceProperties;
 import com.ecoeler.app.constant.v1.AppVoiceConstant;
 import com.ecoeler.app.service.AppVoiceService;
+import com.ecoeler.voice.google.util.PrincipalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,29 +18,35 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class AppVoiceController {
 
-
     @Autowired
     AppVoiceService appVoiceService;
 
-    @Autowired
-    AppResourceProperties appResourceProperties;
-
     @PostMapping(value = "/google/action")
-    public JSONObject googleAction(@RequestBody JSONObject data, OAuth2Authentication authentication, HttpServletRequest request) {
-
+    public JSONObject googleAction(@RequestBody JSONObject data, HttpServletRequest request) {
         data.put(AppVoiceConstant.CLIENT_NAME, AppVoiceConstant.GOOGLE_CLIENT);
-        String userId = (String) authentication.getPrincipal();
         String accessToken = request.getHeader(AppVoiceConstant.HEADER_AUTHORIZATION);
         if (accessToken.startsWith("Bearer")) {
             accessToken = accessToken.substring(7);
         }
-
-        log.info("user id:{}", userId);
-        log.info("access_token:{}", JSON.toJSONString(authentication));
-
+        Long userId = PrincipalUtil.getUserId();
         data.put(AppVoiceConstant.DTO_KEY_USER_ID, userId);
         data.put(AppVoiceConstant.DTO_KEY_AUTHORIZATION, accessToken);
-        String action = appVoiceService.action(data);
+
+        String action;
+        try {
+            action = appVoiceService.action(data);
+        } catch (Exception e) {
+            log.error("Abnormal execution of google voice command：", e);
+            String requestId = data.getString("requestId");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("requestId", requestId);
+            JSONObject payload = new JSONObject();
+            payload.put("errorCode", "hardError ");
+            payload.put("status", "ERROR ");
+            jsonObject.put("payload", payload);
+            action = jsonObject.toJSONString();
+        }
+
         return JSONObject.parseObject(action);
     }
 

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.app.constant.v1.AppVoiceConstant;
 import com.ecoeler.app.service.AppVoiceService;
-import com.ecoeler.voice.alexa.config.ResourceProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -22,10 +21,6 @@ public class AppVoiceController {
 
     @Autowired
     AppVoiceService appVoiceService;
-
-    @Autowired
-    ResourceProperties appResourceProperties;
-
 
     @PostMapping(value = "/alexa/action")
     public JSONObject alexaAction(@RequestBody JSONObject requestJson, OAuth2Authentication authentication, HttpServletRequest request) {

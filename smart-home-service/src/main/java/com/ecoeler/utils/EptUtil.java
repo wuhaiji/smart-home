@@ -17,7 +17,7 @@ public class EptUtil {
      * 判断对象是否为空
      * 如果是集合还会判读集合中是否有元素
      * 如果是map还会判读map中是否有键值对
-     * 如果是String还会判读map中是否是空字符串
+     * 如果是String还会判读是否是空字符串
      *
      * @param object 对象
      * @return
@@ -37,7 +37,7 @@ public class EptUtil {
      * 判断对象是否不为空
      * 如果是集合还会判读集合中是否有元素
      * 如果是map还会判读map中是否有键值对
-     * 如果是String还会判读map中是否是空字符串
+     * 如果是String还会判读是否是空字符串
      *
      * @param object 对象
      * @return

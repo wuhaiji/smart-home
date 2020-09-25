@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author tang
@@ -55,8 +55,5 @@ public class DeviceData implements Serializable {
     private LocalDateTime updateTime;
 
     private LocalDateTime createTime;
-
-    private Long dataKeyId;
-
 
 }

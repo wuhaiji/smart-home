@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.action.alexa.AlexaAction;
 import com.ecoeler.action.google.GoogleAction;
 import com.ecoeler.app.constant.v1.AppVoiceConstant;
+import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.model.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,12 @@ public class AppVoiceController {
                 response = "{\"error\":\"invalid client\"}";
         }
         return Result.ok(response);
+    }
+
+    @PostMapping("/request/sync")
+    public Result<String> requestSync(@RequestBody UserVoiceDto dto) {
+        googleAction.requestSync(dto.getUserId());
+        return Result.ok();
     }
 
 }

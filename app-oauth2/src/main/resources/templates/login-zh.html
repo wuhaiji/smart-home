@@ -32,12 +32,17 @@
                        placeholder="请输入密码" required>
 
                 <div class="error_tip" th:if="${param.error}">
-                    <span v-if="lang==='en'" class="help-block" style="color:red;">
+                    <span  class="help-block" style="color:red;" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}">
                         邮箱或者密码不正确，请重新输入！
                     </span>
                 </div>
+<!--                <div class="error_tip" th:if="${param.error}">-->
+<!--&lt;!&ndash;                    <span  class="help-block" style="color:red;" th:text="${JSON.toJSONString(session)}">&ndash;&gt;-->
+
+<!--&lt;!&ndash;                    </span>&ndash;&gt;-->
+<!--                </div>-->
                 <div class="error_tip" th:if="${param.timeout}">
-                    <span v-if="lang==='en'" class="help-block" style="color:red;">
+                    <span  class="help-block" style="color:red;">
                         会话过期，请重新登录！
                     </span>
                 </div>

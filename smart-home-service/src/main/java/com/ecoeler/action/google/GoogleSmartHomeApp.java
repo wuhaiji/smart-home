@@ -11,31 +11,38 @@ import com.ecoeler.app.constant.v1.AppVoiceConstant;
 import com.ecoeler.app.dto.v1.voice.DeviceTypeVoiceDto;
 import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
+import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceType;
+import com.ecoeler.app.mapper.AppUserMapper;
+import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.app.service.IDeviceService;
 import com.ecoeler.app.service.IDeviceTypeService;
 import com.ecoeler.core.DeviceEvent;
-import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.feign.Oauth2ClientService;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.SpringUtils;
 import com.google.actions.api.smarthome.*;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.home.graph.v1.DeviceProto;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.ecoeler.app.constant.v1.AppVoiceConstant.*;
+
 @Service
 @Slf4j
-public class GoogleSmartHomeApp extends SmartHomeApp {
+public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean {
 
 
     @Autowired
@@ -49,6 +56,22 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
     @Autowired
     Oauth2ClientService oauth2ClientService;
+
+    /**
+     * bean初始化后，注入googleApi密匙
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+        try {
+            InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("yoti-mart.json");
+            assert resourceAsStream != null;
+            GoogleCredentials credentials = GoogleCredentials.fromStream(resourceAsStream);
+            this.setCredentials(credentials);
+        } catch (Exception e) {
+            log.error("couldn't load credentials");
+        }
+    }
 
     @NotNull
     @Override
@@ -107,7 +130,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         if (map == null)
             throw new ServiceException("params map can not be empty");
 
-        Long userId = Long.valueOf((String) map.get(AppVoiceConstant.DTO_KEY_USER_ID));
+        Long userId = Long.valueOf((String) map.get(DTO_KEY_USER_ID));
 
         QueryRequest.Inputs.Payload.Device[] devices = ((QueryRequest.Inputs) queryRequest.getInputs()[0]).payload.devices;
         Map<String, Map<String, Object>> deviceStates = new HashMap<>();
@@ -121,8 +144,11 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
                 deviceStates.put(device.id, states);
 
-                //ReportState
-                GoogleReportState.makeRequest(this, String.valueOf(userId), device.id, states);
+                //开关量1/0转换成google需要的boolean
+                if (states.containsKey(GOOGLE_ON_OFF_KEY)) {
+                    String on = (String) states.get(GOOGLE_ON_OFF_KEY);
+                    states.put(GOOGLE_ON_OFF_KEY, !on.equals(YUNTUN_POWER_STATE_OFF));
+                }
 
             } catch (ServiceException e) {
                 e.printStackTrace();
@@ -142,6 +168,25 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         return res;
     }
 
+    @Autowired
+    AppUserMapper appUserMapper;
+
+    @Override
+    public void onDisconnect(@NotNull DisconnectRequest disconnectRequest, @Nullable Map<?, ?> map) {
+        assert map != null;
+        String access_token = (String) map.get(DTO_KEY_AUTHORIZATION);
+        Result result = oauth2ClientService.logout(access_token);
+
+        //更新appUser的googleLinkStatus
+        Long userId = Long.valueOf((String) map.get(DTO_KEY_USER_ID));
+        appUserMapper.updateById(
+                new AppUser()
+                        .setGoogleLinkStatus(GOOGLE_LINK_STATUS_IS_NOT)
+                        .setId(userId)
+        );
+
+        log.info("退出登录返回数据：{}", JSON.toJSON(result));
+    }
 
     @NotNull
     @Override
@@ -149,7 +194,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         if (map == null)
             throw new ServiceException("params map can not be empty");
 
-        Long userId = Long.valueOf((String) map.get(AppVoiceConstant.DTO_KEY_USER_ID));
+        Long userId = Long.valueOf((String) map.get(DTO_KEY_USER_ID));
 
         ExecuteResponse res = new ExecuteResponse();
 
@@ -170,6 +215,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
                     successfulDevices.add(device.id);
 
+                    //改变了设备状态，需要发起状态报告
                     GoogleReportState.makeRequest(this, String.valueOf(userId), device.id, states);
 
                 } catch (Exception e) {
@@ -180,7 +226,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
                     failedDevice.ids = new String[]{device.id};
 
-                    failedDevice.status = AppVoiceConstant.GOOGLE_FAILED_COMMANDS_RESPONSE;
+                    failedDevice.status = GOOGLE_FAILED_COMMANDS_RESPONSE;
 
                     failedDevice.setErrorCode(e.getMessage());
 
@@ -191,7 +237,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
         }
 
         ExecuteResponse.Payload.Commands successfulCommands = new ExecuteResponse.Payload.Commands();
-        successfulCommands.status = AppVoiceConstant.GOOGLE_SUCCESS_COMMANDS_RESPONSE;
+        successfulCommands.status = GOOGLE_SUCCESS_COMMANDS_RESPONSE;
         successfulCommands.setStates(states);
         successfulCommands.ids = successfulDevices.toArray(new String[]{});
         commandsResponse.add(successfulCommands);
@@ -209,7 +255,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
         Map<String, Object> states = this.getDeviceStatesMap(deviceId);
 
-        if (!(Boolean) states.get(AppVoiceConstant.GOOGLE_NET_STATE_KEY))
+        if (!(Boolean) states.get(GOOGLE_NET_STATE_KEY))
             throw new ServiceException();
 
         //下发命令的json内容
@@ -221,20 +267,21 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
             switch (execution.command) {
 
-                case AppVoiceConstant.GOOGLE_COMMAND_BRIGHTNESS:
+                case GOOGLE_COMMAND_BRIGHTNESS:
 
-                    Object brightness = Objects.requireNonNull(execution.getParams()).get(AppVoiceConstant.GOOGLE_BRIGHTNESS_KEY);
-                    jobJson.put(AppVoiceConstant.YUNTUN_BRIGHTNESS_DATA_KEY, brightness);
-                    states.put(AppVoiceConstant.GOOGLE_BRIGHTNESS_KEY, brightness);
+                    Object brightness = Objects.requireNonNull(execution.getParams()).get(GOOGLE_BRIGHTNESS_KEY);
+                    jobJson.put(YUNTUN_BRIGHTNESS_DATA_KEY, brightness);
+                    states.put(GOOGLE_BRIGHTNESS_KEY, brightness);
                     break;
 
-                case AppVoiceConstant.GOOGLE_COMMAND_ONOFF:
+                case GOOGLE_COMMAND_ON_OFF:
 
-                    boolean onOffValue = (boolean) Objects.requireNonNull(execution.getParams()).get(AppVoiceConstant.GOOGLE_ON_OFF_KEY);
+                    boolean onOffValue = (boolean) Objects.requireNonNull(execution.getParams()).get(GOOGLE_ON_OFF_KEY);
 
                     DeviceInfo deviceStates = appVoiceActionService.getDeviceStatesByDeviceId(deviceId);
 
                     List<DeviceStateBean> deviceStateBeans = deviceStates.getDeviceStateBeans();
+
                     log.info("设备状态信息集合：{}", JSON.toJSONString(deviceStateBeans));
 
                     //这里因为google "on" 的key对应的指令device key有多个(多路开关)，我只能查出所有on对应的data key执行统一命令
@@ -246,9 +293,9 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
 
                             .collect(Collectors.toList())
 
-                            .forEach(i -> jobJson.put(i, onOffValue ? AppVoiceConstant.YUNTUN_POWER_STATE_ON : AppVoiceConstant.YUNTUN_POWER_STATE_OFF));
+                            .forEach(i -> jobJson.put(i, onOffValue ? YUNTUN_POWER_STATE_ON : YUNTUN_POWER_STATE_OFF));
 
-                    states.put(AppVoiceConstant.GOOGLE_ON_OFF_KEY, onOffValue);
+                    states.put(GOOGLE_ON_OFF_KEY, onOffValue);
 
                     break;
             }
@@ -292,17 +339,9 @@ public class GoogleSmartHomeApp extends SmartHomeApp {
                         )
                 );
 
-        states.put(AppVoiceConstant.GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
+        states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
         return states;
     }
 
-
-    @Override
-    public void onDisconnect(@NotNull DisconnectRequest disconnectRequest, @Nullable Map<?, ?> map) {
-        assert map != null;
-        String access_token = (String) map.get(AppVoiceConstant.DTO_KEY_AUTHORIZATION);
-        Result result = oauth2ClientService.logout(access_token);
-        log.info("退出登录返回数据：{}", JSON.toJSON(result));
-    }
 
 }

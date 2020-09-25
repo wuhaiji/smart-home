@@ -53,7 +53,7 @@ public interface Oauth2ClientService {
      *
      * @return
      */
-    @PostMapping(value = "/customize/logout")
+    @PostMapping(value = "/logout")
     Result logout(String accessToken);
 
 

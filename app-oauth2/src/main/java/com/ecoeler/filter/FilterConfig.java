@@ -25,8 +25,9 @@ public class FilterConfig {
         registrationBean.setFilter(
                 (ServletRequest request, ServletResponse response, FilterChain chain) -> {
                     HttpServletRequest res = (HttpServletRequest) request;
-                    log.info("请求进来了");
+
                     if (!res.getRequestURI().contains("/static/")) {
+                        log.info("请求进来了");
                         log.info("请求进来了");
                         log.info("请求url:{}", res.getRequestURL());
                         log.info("请求uri:{}", res.getRequestURI());

@@ -1,6 +1,5 @@
 package com.ecoeler.action.alexa.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -22,16 +21,15 @@ import com.ecoeler.app.entity.AlexaReportTime;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceKey;
 import com.ecoeler.app.entity.DeviceType;
+import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.app.service.IAlexaReportTimeService;
 import com.ecoeler.core.DeviceEvent;
-import com.ecoeler.core.msg.OrderInfo;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.util.SpringUtils;
 import com.ecoeler.utils.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -43,6 +41,8 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.ecoeler.app.constant.v1.AppVoiceConstant.*;
+
 /**
  * @author whj
  * @createTime 2020-02-19 12:26
@@ -52,9 +52,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AlexaServiceImpl implements AlexaService {
 
-
-    @Value("${home.app.apiJobUrl}")
-    private String apiJobUrl;
 
     @Autowired
     private AppVoiceActionService appVoiceActionService;
@@ -234,11 +231,8 @@ public class AlexaServiceImpl implements AlexaService {
             String value = deviceStateBean.getValue();
 
             //因为开关类的状态值最终json数据需要的value值并不是0和1，而是ON/OFF所以这里转换一下
-            if (AppVoiceConstant.ALEXA_STATE_NAME_POWER_STATE.equals(deviceStateBean.getAlexaStateName())) {
-
-                value = StrUtil.equals(value, AppVoiceConstant.YUNTUN_POWER_STATE_ON) ?
-                        AppVoiceConstant.ALEXA_POWER_STATE_ON : AppVoiceConstant.ALEXA_POWER_STATE_OFF;
-
+            if (ALEXA_STATE_NAME_POWER_STATE.equals(deviceStateBean.getAlexaStateName())) {
+                value = YUNTUN_POWER_STATE_ON.equals(value) ? ALEXA_POWER_STATE_ON : ALEXA_POWER_STATE_OFF;
             }
 
             this.setProperty(
@@ -322,14 +316,14 @@ public class AlexaServiceImpl implements AlexaService {
         //查询开关的data key
         List<DeviceKey> deviceKeys = appVoiceActionService.getDeviceKeys(
                 DeviceKeyVoiceDto.of()
-                        .setAlexaStateName(AppVoiceConstant.ALEXA_STATE_NAME_POWER_STATE)
+                        .setAlexaStateName(ALEXA_STATE_NAME_POWER_STATE)
         );
 
         deviceKeys.parallelStream().forEach(deviceKey -> {
-            if (AppVoiceConstant.ALEXA_VALUE_TURN_OFF.equals(name))
-                stateJson.put(deviceKey.getDataKey(), AppVoiceConstant.YUNTUN_POWER_STATE_OFF);
-            else if (AppVoiceConstant.ALEXA_VALUE_TURN_ON.equals(name))
-                stateJson.put(deviceKey.getDataKey(), AppVoiceConstant.YUNTUN_POWER_STATE_ON);
+            if (ALEXA_VALUE_TURN_OFF.equals(name))
+                stateJson.put(deviceKey.getDataKey(), YUNTUN_POWER_STATE_OFF);
+            else if (ALEXA_VALUE_TURN_ON.equals(name))
+                stateJson.put(deviceKey.getDataKey(), YUNTUN_POWER_STATE_ON);
         });
 
         return addJob(userId, correlationToken, endpointId, stateJson);

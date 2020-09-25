@@ -1,11 +1,13 @@
 package com.ecoeler.controller;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,8 @@ public class PageController {
      * 登录
      */
     @RequestMapping("/page/login")
-    public String loginPage(HttpServletRequest request) {
-
+    public String loginPage(HttpServletRequest request, HttpSession session) {
+        log.info("会话：{}", JSON.toJSON(session).toString());
         String language = request.getLocale().getLanguage();
         log.info("browserLanguage is：{}", language);
 

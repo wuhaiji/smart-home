@@ -30,6 +30,7 @@
         <module>xxl-job-admin</module>
         <module>xxl-job-core</module>
         <module>smart-home-voice-alexa-web</module>
+        <module>smart-home-voice-google-web</module>
     </modules>
 
 

@@ -14,7 +14,6 @@ import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.constant.DeviceStatusConst;
 import com.ecoeler.exception.ExceptionCast;
 import com.ecoeler.exception.ServiceException;
-import com.ecoeler.model.code.AppVoiceCode;
 import com.ecoeler.utils.EptUtil;
 import com.ecoeler.utils.Query;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +27,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.ecoeler.model.code.AppVoiceCode.*;
+
 
 @Service
 @Slf4j
 public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
+    /**
+     * 非网关设备代号
+     */
+    public static final int GATEWAY_LIKE_NOT = 0;
 
     @Resource
     UserFamilyMapper userFamilyMapper;
@@ -61,10 +66,12 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
     @Override
     public List<DeviceVoiceBean> getDeviceVoiceBeans(UserVoiceDto userVoiceDto) {
 
+        if (userVoiceDto == null || userVoiceDto.getUserId() == null)
+            throw new ServiceException(ACTION_PARAMS_ERROR);
+
         List<DeviceVoiceBean> deviceVoiceBeans;
         try {
-            if (userVoiceDto == null || userVoiceDto.getUserId() == null)
-                throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
+
 
             //查询出用户拥有的家庭ids
             List<UserFamily> families = userFamilyMapper.selectList(
@@ -76,8 +83,10 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
 
             //查询家庭下面设备集合
-            List<Device> devices = deviceMapper.selectList(
-                    Query.of(Device.class).in(CollUtil.isNotEmpty(familyIds), "family_id", familyIds)
+            List<Device> devices = this.getDeviceList(
+                    DeviceVoiceDto.of()
+                            .setFamilyIds(familyIds)
+                            .setGatewayLike(DeviceVoiceDto.GATEWAY_LIKE_IS_NOT)
             );
             if (CollUtil.isEmpty(devices))
                 return new ArrayList<>();
@@ -106,7 +115,6 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
                         DeviceVoiceBean deviceVoiceBean = DeviceVoiceBean.of()
                                 .setId(it.getDeviceId())
                                 .setDeviceName(it.getDeviceName())
-                                .setDefaultNames(it.getDeviceName())
                                 .setNicknames(it.getDeviceName());
 
                         //设备类型信息
@@ -115,7 +123,8 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
                             deviceVoiceBean.setAlexaDisplayName(deviceType.getAlexaDisplayName())
                                     .setGoogleTraitNames(deviceType.getGoogleTraitNames())
                                     .setGoogleTypeName(deviceType.getGoogleTypeName())
-                                    .setDescription(it.getDeviceTypeName())
+                                    .setDescription(it.getEnTypeName())
+                                    .setDefaultNames(it.getEnTypeName())
                             ;
                         }
 
@@ -133,7 +142,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
             log.info("返回的设备集合：{}", JSON.toJSONString(deviceVoiceBeans));
         } catch (ServiceException e) {
             e.printStackTrace();
-            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_LIST_ERROR);
+            throw new ServiceException(ACTION_SELECT_DEVICE_LIST_ERROR);
         }
         return deviceVoiceBeans;
     }
@@ -143,7 +152,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
         DeviceInfo deviceInfo;
         if (EptUtil.isEmpty(deviceId))
-            throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
+            throw new ServiceException(ACTION_PARAMS_ERROR);
 
         //查询设备在线离线
         Device device = this.getDevice(DeviceVoiceDto.of().setDeviceId(deviceId));
@@ -160,7 +169,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
         List<String> deviceKeyList = deviceDatas.parallelStream().map(DeviceData::getDataKey).collect(Collectors.toList());
 
         //查询设备可控可上传key
-        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setDeviceKeyList(deviceKeyList));
+        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setDataKeys(deviceKeyList));
         Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
 
         List<DeviceStateBean> deviceStateBeans = deviceDatas.parallelStream()
@@ -196,11 +205,11 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
     public List<DeviceKey> getDeviceAbleControlKey(String deviceId) {
 
         if (EptUtil.isEmpty(deviceId))
-            ExceptionCast.cast(AppVoiceCode.ACTION_PARAMS_ERROR);
+            ExceptionCast.cast(ACTION_PARAMS_ERROR);
 
         Device device = this.getDevice(DeviceVoiceDto.of().setDeviceId(deviceId));
 
-        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of());
+        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setProductId(device.getProductId()));
 
         return deviceKeys;
     }
@@ -210,7 +219,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
     public List<DeviceInfo> getDeviceStatesByIds(List<String> deviceIds) {
 
         if (CollUtil.isEmpty(deviceIds))
-            throw new ServiceException(AppVoiceCode.ACTION_PARAMS_ERROR);
+            ExceptionCast.cast(ACTION_PARAMS_ERROR);
 
         //查询所有的设备
         List<Device> devices = this.getDeviceList(DeviceVoiceDto.of().setDeviceIds(deviceIds));
@@ -232,14 +241,13 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
 
         //查询设备可控可上传key
-        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setDeviceKeyList(deviceKeyList));
+        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setDataKeys(deviceKeyList));
         Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
 
-        //组装设备状态信息，并按deviceIdStr分组
+        //组装设备状态信息，并按deviceId分组
         Map<String, List<DeviceStateBean>> DeviceStateBeanGroupMap = deviceDatas.parallelStream()
 
                 .map(deviceData -> {
-
                     //获取data对应的key
                     DeviceKey deviceKey = deviceKeyMap.get(deviceData.getDataKey());
                     if (deviceKey != null) {
@@ -255,7 +263,6 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
                     }
                     //没有找到说明该data不是可控可上传的data
                     return null;
-
                 })
                 //过滤null值
                 .filter(Objects::nonNull)
@@ -284,9 +291,10 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
             query
                     .eq("action_type", DeviceKeyVoiceDto.ACTION_TYPE_1)
-                    .in(EptUtil.isNotEmpty(dto.getDeviceKeyList()), "device_key", dto.getDeviceKeyList())
+                    .in(EptUtil.isNotEmpty(dto.getDataKeys()), "device_key", dto.getDataKeys())
                     .eq(EptUtil.isNotEmpty(dto.getAlexaStateName()), "alexa_state_name", dto.getAlexaStateName())
                     .eq(EptUtil.isNotEmpty(dto.getGoogleStateName()), "google_state_name", dto.getGoogleStateName())
+                    .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
             ;
         }
 
@@ -295,7 +303,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
             return deviceKeyMapper.selectList(query);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_KEY_ERROR);
+            throw new ServiceException(ACTION_SELECT_DEVICE_KEY_ERROR);
         }
 
     }
@@ -322,7 +330,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_LIST_ERROR);
+            throw new ServiceException(ACTION_SELECT_DEVICE_LIST_ERROR);
         }
     }
 
@@ -347,11 +355,11 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_TYPE_ERROR);
+            throw new ServiceException(ACTION_SELECT_DEVICE_TYPE_ERROR);
         }
 
         if (deviceType == null)
-            throw new ServiceException(AppVoiceCode.ACTION_DEVICE_TYPE_NOT_EXIST);
+            throw new ServiceException(ACTION_DEVICE_TYPE_NOT_EXIST);
 
         return deviceType;
 
@@ -368,6 +376,8 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
                     .eq(EptUtil.isNotEmpty(dto.getFamilyId()), "family_id", dto.getFamilyId())
                     .eq(EptUtil.isNotEmpty(dto.getDeviceName()), "device_name", dto.getDeviceName())
                     .eq(EptUtil.isNotEmpty(dto.getDeviceTypeName()), "device_type_name", dto.getDeviceTypeName())
+                    .eq(EptUtil.isNotEmpty(dto.getGatewayLike()), "gate_way_like", dto.getGatewayLike())
+
             ;
         }
 
@@ -377,12 +387,12 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
         } catch (Exception e) {
             e.printStackTrace();
             //抛出查询异常
-            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_TYPE_ERROR);
+            throw new ServiceException(ACTION_DEVICE_NOT_EXIST);
         }
 
         //如果为空，抛出异常
         if (device == null)
-            throw new ServiceException(AppVoiceCode.ACTION_DEVICE_NOT_EXIST);
+            throw new ServiceException(ACTION_DEVICE_NOT_EXIST);
 
         return device;
     }
@@ -399,9 +409,12 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
                     .eq(EptUtil.isNotEmpty(dto.getDeviceId()), "device_id", dto.getDeviceId())
                     .eq(EptUtil.isNotEmpty(dto.getNetState()), "net_state", dto.getNetState())
                     .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
-                    .in(EptUtil.isNotEmpty(dto.getDeviceIds()), "device_id", dto.getDeviceIds())
                     .eq(EptUtil.isNotEmpty(dto.getDeviceName()), "device_name", dto.getDeviceName())
+                    .eq(EptUtil.isNotEmpty(dto.getFamilyId()), "family_id", dto.getFamilyId())
                     .eq(EptUtil.isNotEmpty(dto.getDeviceTypeName()), "device_type_name", dto.getDeviceTypeName())
+                    .eq(EptUtil.isNotEmpty(dto.getGatewayLike()), "gateway_like", dto.getGatewayLike())
+                    .in(EptUtil.isNotEmpty(dto.getDeviceIds()), "device_id", dto.getDeviceIds())
+                    .in(EptUtil.isNotEmpty(dto.getFamilyIds()), "family_id", dto.getFamilyIds())
             ;
 
         }
@@ -412,7 +425,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException(AppVoiceCode.ACTION_SELECT_DEVICE_TYPE_ERROR);
+            throw new ServiceException(ACTION_SELECT_DEVICE_TYPE_ERROR);
         }
     }
 

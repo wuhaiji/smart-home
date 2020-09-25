@@ -16,11 +16,14 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("voice.alexa")
 @Component
 public class AlexaOAuth2Properties {
+
     private String clientId;
 
     private String oauthUrl;
 
     private String clientSecret;
+
+    private String reportUrl;
 
     public String getClientId() {
         return clientId;
@@ -44,5 +47,13 @@ public class AlexaOAuth2Properties {
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    public String getReportUrl() {
+        return reportUrl;
+    }
+
+    public void setReportUrl(String reportUrl) {
+        this.reportUrl = reportUrl;
     }
 }

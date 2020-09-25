@@ -10,6 +10,12 @@ import java.util.List;
 public class DeviceKeyVoiceDto {
 
     /**
+     * productId
+     */
+    private String productId;
+
+
+    /**
      * alexaInterface ，alexa设备接口
      */
     private String alexaInterface;
@@ -28,7 +34,7 @@ public class DeviceKeyVoiceDto {
     /**
      * deviceKeyList ,批量查询参数
      */
-    private List<String> deviceKeyList;
+    private List<String> dataKeys;
 
     /**
      * actionType 0:可上传 1:可上传，可下发 2：可下发
@@ -44,8 +50,6 @@ public class DeviceKeyVoiceDto {
     public static final int ACTION_TYPE_1 = 1;
 
     public static final int ACTION_TYPE_2 = 2;
-
-
 
 
 }

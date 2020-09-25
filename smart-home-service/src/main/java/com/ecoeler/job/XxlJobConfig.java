@@ -4,6 +4,7 @@ import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,10 +14,11 @@ import org.springframework.context.annotation.Configuration;
  * @author xuxueli 2017-04-28
  */
 @Configuration
+@ConfigurationProperties(prefix = "xxl.job")
 public class XxlJobConfig {
     private Logger logger = LoggerFactory.getLogger(XxlJobConfig.class);
 
-    @Value("${xxl.job.admin.addresses}")
+    // @Value("${xxl.job.admin.addresses}")
     private String adminAddresses;
 
     @Value("${xxl.job.accessToken}")
