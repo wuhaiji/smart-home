@@ -87,4 +87,6 @@ public class Device implements Serializable {
     private Integer gatewayLike;
 
 
+    private String eventClass;
+
 }
