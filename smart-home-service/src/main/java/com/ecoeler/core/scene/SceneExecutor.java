@@ -27,24 +27,6 @@ public class SceneExecutor {
     private static ScheduledThreadPoolExecutor executor=new ScheduledThreadPoolExecutor(8, new ThreadPoolExecutor.AbortPolicy());
 
     /**
-     * 获得键类型
-     * @param action
-     * @return
-     */
-    private IType parseType(SceneAction action){
-        String keyType = action.getKeyType();
-        IType type = null;
-        if (IType.TYPE_ENUM.equals(keyType)) {
-            type = JSONObject.parseObject(action.getKeyInfo(), EnumType.class);
-        }
-        if (IType.TYPE_INTEGER.equals(keyType)) {
-            type = JSONObject.parseObject(action.getKeyInfo(), IntegerType.class);
-        }
-        return type;
-    }
-
-
-    /**
      * 组装指令
      * @param action
      * @return
@@ -53,11 +35,10 @@ public class SceneExecutor {
         OrderInfo orderInfo=new OrderInfo();
         orderInfo.setDeviceId(action.getDeviceId());
         orderInfo.setProductId(action.getProductId());
-        IType keyType = parseType(action);
         JSONObject msg=new JSONObject();
         msg.put(
                 action.getDataKey(),
-                keyType.checkout(action.getDataValue())
+                action.getDataValue()
         );
         orderInfo.setMsg(msg);
         return orderInfo;

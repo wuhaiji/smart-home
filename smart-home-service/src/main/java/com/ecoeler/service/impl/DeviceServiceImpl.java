@@ -28,11 +28,6 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     @Autowired
     private DeviceTypeMapper deviceTypeMapper;
 
-    @Autowired
-    private RoomMapper roomMapper;
-
-    @Autowired
-    private FloorMapper floorMapper;
 
     @Override
     public void control(OrderInfo orderInfo) {
@@ -44,34 +39,4 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         deviceEvent.getDeliver().deliver(orderInfo);
     }
 
-
-    @Override
-    public DeviceSpace getDeviceSpace(String deviceId) {
-
-        QueryWrapper<Device> q1=new QueryWrapper<>();
-        q1.eq("device_id",deviceId);
-        Device device = baseMapper.selectOne(q1);
-
-        if(device==null) { return null; }
-
-        DeviceSpace deviceSpace=new DeviceSpace();
-        deviceSpace.setRoomId(device.getRoomId());
-        deviceSpace.setFamilyId(device.getFamilyId());
-
-
-        Room room = roomMapper.selectById(device.getRoomId());
-        deviceSpace.setRoomName(room.getRoomName());
-
-        deviceSpace.setFloorId(room.getFloorId());
-
-        if(room.getFloorId()==0){
-            deviceSpace.setRoomName("");
-            return deviceSpace;
-        }
-
-        Floor floor = floorMapper.selectById(room.getFloorId());
-        deviceSpace.setFloorName(floor.getFloorName());
-
-        return deviceSpace;
-    }
 }

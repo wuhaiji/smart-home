@@ -1,14 +1,10 @@
 package com.ecoeler.controller;
 
 
-import com.ecoeler.app.dto.v1.TimerJobDto;
-import com.ecoeler.app.entity.DeviceSpace;
 import com.ecoeler.app.entity.TimerJob;
-import com.ecoeler.app.service.IDeviceService;
 import com.ecoeler.app.service.ITimerJobService;
 
 import com.ecoeler.model.response.Result;
-import org.bouncycastle.cms.PasswordRecipientId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,17 +21,47 @@ public class TimerJobController {
     @Autowired
     private ITimerJobService timerJobService;
 
-    @Autowired
-    private IDeviceService deviceService;
-
+    /**
+     * 新增计时任务
+     * @param timerJob
+     * @return
+     */
     @PostMapping("/add")
     public Result add(@RequestBody TimerJob timerJob){
+        return Result.ok(timerJobService.add(timerJob));
+    }
 
-        DeviceSpace deviceSpace = deviceService.getDeviceSpace(timerJob.getDeviceId());
+    /**
+     * 更新任务信息（不涉及时间）
+     * @param timerJob
+     * @return
+     */
+    @PostMapping("/update")
+    public Result update(@RequestBody TimerJob timerJob){
+        return Result.ok(timerJobService.updateById(timerJob));
+    }
 
+    /**
+     * 更新任务的cron！
+     * @param id
+     * @param jobCron
+     * @return
+     */
+    @PostMapping("/update/cron")
+    public Result updateCron(@RequestParam Long id,@RequestParam String jobCron){
+        timerJobService.updateCron(id,jobCron);
+        return Result.ok();
+    }
 
-        return null;
-
+    /**
+     * 删除计时任务
+     * @param id
+     * @return
+     */
+    @PostMapping("/delete")
+    public Result delete(@RequestParam Long id){
+        timerJobService.deleteJob(id);
+        return Result.ok();
     }
 
 }

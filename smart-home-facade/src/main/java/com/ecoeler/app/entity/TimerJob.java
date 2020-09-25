@@ -32,7 +32,7 @@ public class TimerJob implements Serializable {
     /**
      * 任务ID
      */
-    private String jobId;
+    private Integer jobId;
 
     /**
      * 0：倒计时，1：定时
@@ -59,18 +59,14 @@ public class TimerJob implements Serializable {
      */
     private String jobCron;
 
-
-
+    /**
+     * 下次执行时间
+     */
     private Date nextTime;
 
-    private Long familyId;
-
-    private Long roomId;
-
-    private String roomName;
-
-    private Long floorId;
-
-    private String floorName;
+    /**
+     * 位置名称
+     */
+    private String positionName;
 
 }

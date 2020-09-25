@@ -86,6 +86,10 @@ public class Device implements Serializable {
      */
     private Integer gatewayLike;
 
+    /**
+     * 位置名称
+     */
+    private String positionName;
 
     private String eventClass;
 

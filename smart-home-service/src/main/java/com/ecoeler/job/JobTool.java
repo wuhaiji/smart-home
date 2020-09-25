@@ -41,6 +41,11 @@ public class JobTool {
         return restTemplate.getForObject(uri,ReturnT.class);
     }
 
+
+    public ReturnT update(String cron, String param,Integer jobId ){
+        return update(cron, param, jobId , DEFAULT_HANDLER);
+    }
+
     @RequestMapping("/update")
     public ReturnT update(String cron, String param,Integer jobId , String handler){
         String api="/timer_job/update";

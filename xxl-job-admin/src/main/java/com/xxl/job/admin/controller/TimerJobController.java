@@ -21,7 +21,7 @@ public class TimerJobController {
     public XxlJobInfo newJob(String handler){
         XxlJobInfo jobInfo =new XxlJobInfo();
         jobInfo.setJobGroup(1);
-        jobInfo.setJobDesc("智能控制时间调度任务");
+        jobInfo.setJobDesc("源泰智能家居");
         jobInfo.setAddTime(new Date());
         jobInfo.setUpdateTime(new Date());
         jobInfo.setAuthor("xxl");
