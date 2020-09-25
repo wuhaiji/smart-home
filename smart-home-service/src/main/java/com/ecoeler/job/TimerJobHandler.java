@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class TimerJob {
+public class TimerJobHandler {
 
     @XxlJob("TimerJob")
     public ReturnT<String> timeJob(String param) throws Exception {

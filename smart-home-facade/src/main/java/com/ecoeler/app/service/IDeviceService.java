@@ -2,6 +2,7 @@ package com.ecoeler.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ecoeler.app.entity.Device;
+import com.ecoeler.app.entity.DeviceSpace;
 import com.ecoeler.app.msg.OrderInfo;
 
 /**
@@ -19,5 +20,12 @@ public interface IDeviceService extends IService<Device> {
      * @param orderInfo
      */
     void control(OrderInfo orderInfo);
+
+    /**
+     * 获得设备空间
+     * @param deviceId
+     * @return
+     */
+    DeviceSpace getDeviceSpace(String deviceId);
 
 }
