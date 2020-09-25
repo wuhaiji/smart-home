@@ -7,13 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 /**
  * <p>
  * 图片控制器控制器
@@ -24,7 +17,7 @@ import java.util.UUID;
  */
 @Slf4j
 @RestController
-@RequestMapping("/web-file")
+@RequestMapping("/file")
 public class FileController {
 
     @Autowired
