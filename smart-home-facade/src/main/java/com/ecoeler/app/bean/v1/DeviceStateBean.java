@@ -1,15 +1,15 @@
 package com.ecoeler.app.bean.v1;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
-@Data
+import java.time.LocalDateTime;
+
+@Data(staticConstructor = "of")
 @Accessors(chain = true)
-@RequiredArgsConstructor(staticName = "of")
 public class DeviceStateBean {
 
-    private Long deviceId;
+    private String deviceId;
 
     private String dataKey;
 
@@ -17,10 +17,11 @@ public class DeviceStateBean {
 
     private String alexaStateName;
 
-    private String alexaNamespace;
+    private String alexaInterface;
 
     private String value;
 
+    private LocalDateTime createTime;
 
 
 }

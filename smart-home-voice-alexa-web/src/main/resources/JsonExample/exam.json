@@ -1,0 +1,35 @@
+{
+  "event": {
+    "header": {
+      "namespace": "Alexa",
+      "name": "Response",
+      "messageId": "<message id>",
+      "correlationToken": "<an opaque correlation token>",
+      "payloadVersion": "3"
+    },
+    "endpoint": {
+      "endpointId": "<endpoint id>"
+    },
+    "payload": {}
+  },
+  "context": {
+    "properties": [
+      {
+        "namespace": "Alexa.PowerController",
+        "name": "powerState",
+        "value": "ON",
+        "timeOfSample": "2017-02-03T16:20:50.52Z",
+        "uncertaintyInMilliseconds": 500
+      },
+      {
+        "namespace": "Alexa.EndpointHealth",
+        "name": "connectivity",
+        "value": {
+          "value": "OK"
+        },
+        "timeOfSample": "2017-02-03T16:20:50.52Z",
+        "uncertaintyInMilliseconds": 0
+      }
+    ]
+  }
+}

@@ -134,6 +134,7 @@ public class DeviceEvent {
         if (keyMsgList.size() == 0) {
             return;
         }
+
         this.record0(keyMsgList);
     }
 

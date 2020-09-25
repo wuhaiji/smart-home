@@ -1,0 +1,324 @@
+{
+  "event": {
+    "endpoint": {
+      "endpointId": "INVALID",
+      "scope": {
+        "type": "BearerToken",
+        "token": "INVALID"
+      }
+    },
+    "payload": {
+      "endpoints": [
+        {
+          "displayCategories": [
+            "LIGHT"
+          ],
+          "capabilities": [
+            {
+              "interface": "Alexa.EndpointHealth",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "connectivity"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.BrightnessController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "brightness"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.PowerController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "powerState"
+                  }
+                ]
+              }
+            }
+          ],
+          "cookie": {},
+          "endpointId": "6354104",
+          "manufacturerName": "Lighting",
+          "description": "???",
+          "friendlyName": "???"
+        },
+        {
+          "displayCategories": [
+            "SMARTPLUG"
+          ],
+          "capabilities": [
+            {
+              "interface": "Alexa.EndpointHealth",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "connectivity"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.PowerController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "powerState"
+                  }
+                ]
+              }
+            }
+          ],
+          "cookie": {},
+          "endpointId": "10919303",
+          "manufacturerName": "Double Socket",
+          "description": "??Wifi??",
+          "friendlyName": "??"
+        },
+        {
+          "displayCategories": [
+            "LIGHT"
+          ],
+          "capabilities": [
+            {
+              "interface": "Alexa.EndpointHealth",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "connectivity"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.BrightnessController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "brightness"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.PowerController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "powerState"
+                  }
+                ]
+              }
+            }
+          ],
+          "cookie": {},
+          "endpointId": "12345678-654656",
+          "manufacturerName": "Lighting",
+          "description": "???"
+        },
+        {
+          "displayCategories": [
+            "SMARTPLUG"
+          ],
+          "capabilities": [
+            {
+              "interface": "Alexa.EndpointHealth",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "connectivity"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.PowerController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "powerState"
+                  }
+                ]
+              }
+            }
+          ],
+          "cookie": {},
+          "endpointId": "12345678-555556",
+          "manufacturerName": "WIFI Socket",
+          "description": "WIFI Socket"
+        },
+        {
+          "displayCategories": [
+            "SMARTPLUG"
+          ],
+          "capabilities": [
+            {
+              "interface": "Alexa.EndpointHealth",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "connectivity"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.PowerController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "powerState"
+                  }
+                ]
+              }
+            }
+          ],
+          "cookie": {},
+          "endpointId": "12345678-555557",
+          "manufacturerName": "WIFI Socket",
+          "description": "WIFI Socket"
+        },
+        {
+          "displayCategories": [
+            "SMARTPLUG"
+          ],
+          "capabilities": [
+            {
+              "interface": "Alexa.EndpointHealth",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "connectivity"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.PowerController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "powerState"
+                  }
+                ]
+              }
+            }
+          ],
+          "cookie": {},
+          "endpointId": "12345678-555558",
+          "manufacturerName": "Double Socket",
+          "description": "??Wifi??"
+        },
+        {
+          "displayCategories": [
+            "SMARTPLUG"
+          ],
+          "capabilities": [
+            {
+              "interface": "Alexa.EndpointHealth",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "connectivity"
+                  }
+                ]
+              }
+            },
+            {
+              "interface": "Alexa.PowerController",
+              "type": "AlexaInterface",
+              "version": "3",
+              "properties": {
+                "retrievable": "true",
+                "proactivelyReported": "true",
+                "supported": [
+                  {
+                    "name": "powerState"
+                  }
+                ]
+              }
+            }
+          ],
+          "cookie": {},
+          "endpointId": "12345678-555559",
+          "manufacturerName": "Double Socket",
+          "description": "??Wifi??"
+        }
+      ]
+    },
+    "header": {
+      "payloadVersion": "3",
+      "namespace": "Alexa.Discovery",
+      "name": "Discover.Response",
+      "messageId": "260cef95-e061-4614-8172-b51dd0b21ecc"
+    }
+  }
+}

@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author tang
@@ -64,9 +64,9 @@ public class DeviceKey implements Serializable {
     private String googleStateName;
 
     /**
-     * alexa语音对应的命名空间
+     * alexa语音对应的设备控制接口
      */
-    private String alexaNamespace;
+    private String alexaInterface;
 
     /**
      * alexa语音对应的state名称

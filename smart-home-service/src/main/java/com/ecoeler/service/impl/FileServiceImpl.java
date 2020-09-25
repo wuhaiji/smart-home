@@ -56,6 +56,7 @@ public class FileServiceImpl implements FileService {
             if (!fileNew.exists()) {
                 fileNew.mkdirs();
             }
+            //生成新名字
             String newName = UUID.randomUUID().toString() + extName;
             String path = prefixPath + dateString + newName;
             File file1 = new File(path);

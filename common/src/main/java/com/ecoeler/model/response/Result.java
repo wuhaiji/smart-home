@@ -31,6 +31,10 @@ public class Result<T> {
     public Result() {
     }
 
+    public Result(String message) {
+        this.message = message;
+    }
+
     public Result(String code, String message) {
         this.code = code;
         this.message = message;
@@ -70,6 +74,12 @@ public class Result<T> {
         return new Result<>(code, message);
     }
 
+    /**
+     * 失败
+     */
+    public static Result<String> error(String message) {
+        return new Result<>(message);
+    }
 
     @Override
     public String toString() {

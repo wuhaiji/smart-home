@@ -1,8 +1,7 @@
-package com.ecoeler.app.controller;
+package com.ecoeler.voice.alexa.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.ecoeler.app.config.AppResourceProperties;
 import com.ecoeler.app.constant.v1.AppVoiceConstant;
 import com.ecoeler.app.service.AppVoiceService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,42 +15,30 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/app/voice")
+@RequestMapping("/voice")
 @Slf4j
 public class AppVoiceController {
-
 
     @Autowired
     AppVoiceService appVoiceService;
 
-    @Autowired
-    AppResourceProperties appResourceProperties;
-
-    @PostMapping(value = "/google/action")
-    public JSONObject googleAction(@RequestBody JSONObject data, OAuth2Authentication authentication, HttpServletRequest request) {
-        data.put(AppVoiceConstant.CLIENT_NAME, AppVoiceConstant.GOOGLE_CLIENT);
-        String result = toAction(data, authentication, request);
-        return JSONObject.parseObject(result);
-    }
-
     @PostMapping(value = "/alexa/action")
-    public JSONObject alexaAction(@RequestBody JSONObject data, OAuth2Authentication authentication, HttpServletRequest request) {
+    public JSONObject alexaAction(@RequestBody JSONObject requestJson, OAuth2Authentication authentication, HttpServletRequest request) {
+        JSONObject data = requestJson;
         data.put(AppVoiceConstant.CLIENT_NAME, AppVoiceConstant.ALEXA_CLIENT);
-        String result = toAction(data, authentication, request);
-        return JSONObject.parseObject(result);
-    }
-
-    private String toAction(JSONObject data, OAuth2Authentication authentication, HttpServletRequest request) {
         String userId = (String) authentication.getPrincipal();
         String accessToken = request.getHeader(AppVoiceConstant.HEADER_AUTHORIZATION);
         if (accessToken.startsWith("Bearer")) {
             accessToken = accessToken.substring(7);
         }
+
         log.info("user id:{}", userId);
         log.info("access_token:{}", JSON.toJSONString(authentication));
         data.put(AppVoiceConstant.DTO_KEY_USER_ID, userId);
         data.put(AppVoiceConstant.DTO_KEY_AUTHORIZATION, accessToken);
         String action = appVoiceService.action(data);
-        return action;
+
+        return JSONObject.parseObject(action);
     }
+
 }

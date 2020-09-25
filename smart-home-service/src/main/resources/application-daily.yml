@@ -5,7 +5,8 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.0.108:8848
+        #        server-addr: 192.168.0.108:8848
+        server-addr: localhost:8848
     sentinel:
       transport:
         dashboard: 192.168.0.108:8858
@@ -78,6 +79,7 @@ xxl:
       port: 9999
       logpath: data/logs/xxl-job
       logretentiondays: 30
+#文件上传路径
 upload:
   file:
     path:

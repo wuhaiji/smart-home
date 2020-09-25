@@ -1,6 +1,6 @@
 package com.ecoeler.controller;
 
-import com.ecoeler.util.ServletUtil;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +31,18 @@ public class PageController {
      * 登录
      */
     @RequestMapping("/page/login")
-    public String loginPage(HttpSession session) {
-
-        String language = ServletUtil.getRequest().getLocale().getLanguage();
+    public String loginPage(HttpServletRequest request, HttpSession session) {
+        log.info("会话：{}", JSON.toJSON(session).toString());
+        String language = request.getLocale().getLanguage();
         log.info("browserLanguage is：{}", language);
-        if (language.startsWith("en")) {
+
+        if (language.startsWith("zh")) {
+            return "login-zh";
+        } else if (language.startsWith("en")) {
+            return "login-en";
+        } else {
             return "login-en";
         }
-        return "login-zh";
     }
 
     /**
@@ -50,7 +54,7 @@ public class PageController {
      * @throws Exception Exception
      */
     @RequestMapping("/oauth/confirm_access")
-    public String getAccessConfirmation(Map<String, Object> model, HttpServletRequest request, HttpSession session) throws Exception {
+    public String getAccessConfirmation(Map<String, Object> model, HttpServletRequest request) throws Exception {
 
         @SuppressWarnings("unchecked")
         Map<String, String> scopes = (Map<String, String>) (model.containsKey("scopes") ? model.get("scopes") : request.getAttribute("scopes"));
@@ -60,12 +64,15 @@ public class PageController {
         }
         model.put("scopeList", scopeList);
 
-        String language = ServletUtil.getRequest().getLocale().getLanguage();
+        String language = request.getLocale().getLanguage();
         log.info("browserLanguage is：{}", language);
-        if (language.startsWith("en")) {
+        if (language.startsWith("zh")) {
+            return "authorize-zh";
+        } else if (language.startsWith("en")) {
+            return "authorize-en";
+        } else {
             return "authorize-en";
         }
-        return "authorize-zh";
     }
 
 }

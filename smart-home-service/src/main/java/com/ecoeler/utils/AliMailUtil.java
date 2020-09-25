@@ -33,10 +33,10 @@ public class AliMailUtil {
     @Value("${ali.account.secret}")
     private String secret;
 
-    @Value("${invite.host.accept}")
+    // @Value("${invite.host.accept}")
     private String acceptInviteAddress;
 
-    @Value("${invite.host.refuse}")
+    // @Value("${invite.host.refuse}")
     private String refuseInviteAddress;
 
     public static Logger logger = LoggerFactory.getLogger(AliMailUtil.class);

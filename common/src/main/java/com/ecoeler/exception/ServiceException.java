@@ -6,7 +6,7 @@ import lombok.Data;
 
 /**
  * @author whj
- * @since  2020-02-09 17:29
+ * @since 2020-02-09 17:29
  **/
 @Data
 public class ServiceException extends RuntimeException {
@@ -42,17 +42,16 @@ public class ServiceException extends RuntimeException {
     }
 
     public ServiceException(String code, String msg) {
-        super(code);
+        super(msg);
         this.code = code;
         this.msg = msg;
     }
 
     public ServiceException(String code, String msg, Throwable cause) {
-        super(code, cause);
+        super(msg, cause);
         this.code = code;
         this.msg = msg;
     }
-
 
 
     @Override

@@ -1,6 +1,7 @@
 package com.ecoeler.feign;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,5 +24,14 @@ public interface AppVoiceFeignClient {
      */
     @PostMapping("/action")
     Result<String> action(@RequestBody JSONObject data);
+
+    /**
+     * google 请求同步
+     *
+     * @param dto 用户信息
+     * @return
+     */
+    @PostMapping("/request/sync")
+    Result<String> requestSync(@RequestBody UserVoiceDto dto);
 
 }

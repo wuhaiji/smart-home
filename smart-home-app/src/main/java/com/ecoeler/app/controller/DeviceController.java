@@ -2,6 +2,7 @@ package com.ecoeler.app.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.ecoeler.app.aspect.GoogleRequestSync;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.feign.DeviceService;
 import com.ecoeler.model.code.TangCode;
@@ -36,6 +37,7 @@ public class DeviceController {
         return deviceService.listFamilyDevice(familyId);
     }
 
+    @GoogleRequestSync
     @RequestMapping("/move/device")
     public Result moveDevice(String deviceId, Long roomId){
         ExceptionUtil.notBlank(deviceId,TangCode.CODE_DEVICE_ID_EMPTY_ERROR);

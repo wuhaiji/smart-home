@@ -1,6 +1,7 @@
 package com.ecoeler.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.app.service.AppVoiceService;
 import com.ecoeler.exception.ExceptionCast;
 import com.ecoeler.feign.AppVoiceFeignClient;
@@ -22,11 +23,22 @@ public class AppVoiceServiceImpl implements AppVoiceService {
         try {
             result = appVoiceFeignClient.action(data);
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
+            log.error("Request error:", e);
             result = null;
         }
         ExceptionCast.feignCast(result);
         return result.getData();
+    }
+
+    @Override
+    public void requestSync(UserVoiceDto dto) {
+        Result<String> result;
+        try {
+            result = appVoiceFeignClient.requestSync(dto);
+        } catch (Exception e) {
+            log.error("Request error:", e);
+            result = null;
+        }
+        ExceptionCast.feignCast(result);
     }
 }

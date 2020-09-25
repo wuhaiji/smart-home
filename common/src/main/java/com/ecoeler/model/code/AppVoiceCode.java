@@ -7,13 +7,17 @@ public enum AppVoiceCode implements ResultCode {
 
     ACTION_SELECT_DEVICE_LIST_ERROR("30001", " error occurred in query user device list "),
 
-    ACTION_PARAMS_ERROR("30002", " userId can not be null "),
+    ACTION_PARAMS_ERROR("30002", " Parameter error "),
 
     ACTION_SELECT_DEVICE_STATES_ERROR("30003", " error occurred in query  device states "),
 
-    ACTION_SELECT_DEVICE_TYPE_ERROR("30004", " error occurred in query  device states "),
+    ACTION_SELECT_DEVICE_TYPE_ERROR("30004", " error occurred in query  device type "),
 
-    ACTION_DEVICE_NOT_EXIST("30005", " device does not exist "),
+    ACTION_DEVICE_TYPE_NOT_EXIST("30005", " device type does not exist "),
+
+    ACTION_DEVICE_NOT_EXIST("30006", " device does not exist "),
+
+    ACTION_SELECT_DEVICE_KEY_ERROR("30007", " error occurred in query  device key "),
     ;
 
 

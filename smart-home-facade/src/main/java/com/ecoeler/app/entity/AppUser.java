@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author tang
@@ -52,6 +52,13 @@ public class AppUser implements Serializable {
     private LocalDateTime updateTime;
 
     private LocalDateTime createTime;
+
+    /**
+     * Google语音状态1.连接2.断开
+     */
+    private Integer googleLinkStatus;
+
+
 
 
 }

@@ -1,0 +1,24 @@
+{
+  "version": "string",
+  "context": {
+    "System": {
+      "application": {
+        "applicationId": "string"
+      },
+      "user": {
+        "userId": "string"
+      },
+      "apiEndpoint": "https://api.amazonalexa.com"
+    }
+  },
+  "request": {
+    "type": "AlexaSkillEvent.SkillDisabled",
+    "requestId": "string",
+    "timeStamp": "string",
+    "eventCreationTime": "string",
+    "eventPublishingTime": "string",
+    "body": {
+      "userInformationPersistenceStatus": "PERSISTED"
+    }
+  }
+}
