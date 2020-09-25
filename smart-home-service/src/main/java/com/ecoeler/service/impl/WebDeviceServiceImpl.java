@@ -154,64 +154,7 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         return deviceTypeMapper.selectList(queryWrapper);
     }
 
-    /**
-     * 新增设备
-     *
-     * @param device
-     * @return
-     */
-    @Override
-    public Long addDevice(Device device) {
-        baseMapper.insert(device);
-        return device.getId();
-    }
 
-    /**
-     * 修改设备
-     *
-     * @param device
-     */
-    @Override
-    public void updateDevice(Device device) {
-        baseMapper.updateById(device);
-    }
-
-    /**
-     * 删除设备
-     */
-    @Override
-    public void deleteDevice(Long id) {
-        baseMapper.deleteById(id);
-    }
-
-    /**
-     * 查询设备参数
-     *
-     * @param deviceId 设备ID
-     * @return
-     */
-    @Override
-    public List<WebDeviceDataBean> queryDeviceData(Long deviceId) {
-        List<WebDeviceDataBean> result = new ArrayList<>();
-        QueryWrapper<DeviceData> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "device_id", "data_key", "data_value", "data_key_id");
-        queryWrapper.eq("device_id", deviceId);
-        List<DeviceData> deviceData = deviceDataMapper.selectList(queryWrapper);
-        if (deviceData != null && deviceData.size() != 0) {
-            for (DeviceData deviceDatum : deviceData) {
-                WebDeviceDataBean bean = new WebDeviceDataBean();
-                BeanUtils.copyProperties(deviceDatum, bean);
-                if (deviceDatum.getDataKeyId() != null) {
-                    DeviceKey deviceKey = deviceKeyMapper.selectById(deviceDatum.getDataKeyId());
-                    if (deviceKey != null) {
-                        bean.setKeyName(deviceKey.getZhKeyName());
-                    }
-                }
-                result.add(bean);
-            }
-        }
-        return result;
-    }
 
 
 }

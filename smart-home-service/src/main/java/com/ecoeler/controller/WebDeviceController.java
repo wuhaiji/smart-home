@@ -79,49 +79,5 @@ public class WebDeviceController {
 
 
 
-    /***
-     * 新增设备
-     * @return 新增设备id
-     */
-    @RequestMapping("/save")
-    public Result saveDevice(Device device) {
-        log.info("开始新增设备");
-        Long result = iWebDeviceService.addDevice(device);
-        return Result.ok(result);
-    }
-
-    /***
-     * 修改设备
-     * @return 修改设备id
-     */
-    @RequestMapping("/update")
-    public Result updateDevice(Device device) {
-        log.info("开始修改设备");
-        iWebDeviceService.updateDevice(device);
-        return Result.ok();
-    }
-
-    /***
-     * 删除设备
-     * @return 删除设备id
-     */
-    @RequestMapping("/delete")
-    public Result deleteDevice(Long id) {
-        log.info("开始删除设备");
-        iWebDeviceService.deleteDevice(id);
-        return Result.ok();
-    }
-
-    /***
-     * 查询设备参数
-     * @return 查询设备参数
-     */
-    @RequestMapping("/query/data")
-    public Result queryDeviceData(Long deviceId) {
-        log.info("开始删除设备");
-        List<WebDeviceDataBean> result = iWebDeviceService.queryDeviceData(deviceId);
-        return Result.ok(result);
-    }
-
 
 }

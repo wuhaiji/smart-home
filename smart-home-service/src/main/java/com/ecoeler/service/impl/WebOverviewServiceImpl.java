@@ -72,7 +72,6 @@ public class WebOverviewServiceImpl implements WebOverviewDataService {
         bean.setCustomerTodayCount(userTotal);
         bean.setCustomerTodayCount(todayUser);
         bean.setCustomerDayCompare(userCompare);
-        log.error("bean"+bean);
         return bean;
     }
 

@@ -41,7 +41,7 @@ public class FileController {
         log.info("smart-home-service->FileController->begin upload file");
         String url = fileService.uploadFile(file);
         return Result.ok(url);
-
     }
+
 
 }

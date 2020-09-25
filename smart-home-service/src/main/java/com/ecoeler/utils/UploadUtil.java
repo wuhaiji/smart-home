@@ -52,28 +52,8 @@ public class UploadUtil {
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
-        if (file == null) {
-            throw new ServiceException(TangCode.CODE_FILE_EMPTY_ERROR);
-        }
-        //原名
-        String oName = Optional.ofNullable(file.getOriginalFilename()).orElse("");
-        //后缀/
-        String extName = "";
-        if (!"".equals(oName.trim()) && oName.lastIndexOf(".") != -1) {
-            extName = oName.substring(oName.lastIndexOf("."));
-        }
-        //生成多级目录  oName原名 LocalDate.now().toString() 文件夹以上传日期分类
-        String path =  "/"+ LocalDate.now().toString() + "/";
-        //如果传到其它的服务器就将 realPath 转成 prefixPath
-        File fileNew = new File(prefixPath + path);
-        if (!fileNew.exists()) {
-            fileNew.mkdirs();
-        }
-        String newName = UUID.randomUUID().toString() + extName;
-        String url=prefixPath + path+newName;
-        File file1=new File(url);
-        FileUtils.copyInputStreamToFile(file.getInputStream(), file1);
-        return url;
+
+        return null;
     }
 
 
