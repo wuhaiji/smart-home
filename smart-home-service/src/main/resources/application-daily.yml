@@ -78,6 +78,7 @@ xxl:
       port: 9999
       logpath: data/logs/xxl-job
       logretentiondays: 30
+#文件上传路径
 upload:
   file:
     path:
