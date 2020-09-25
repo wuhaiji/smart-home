@@ -9,11 +9,14 @@ import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.dto.v1.BasePageDto;
 import com.ecoeler.app.entity.WebRole;
 import com.ecoeler.app.entity.WebRolePermission;
+import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.app.mapper.WebRoleMapper;
 import com.ecoeler.app.mapper.WebRolePermissionMapper;
 import com.ecoeler.app.mapper.WebUserMapper;
 import com.ecoeler.app.service.IWebRoleService;
 import com.ecoeler.cache.ClearCache;
+import com.ecoeler.exception.ServiceException;
+import com.ecoeler.model.code.TangCode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,8 +74,18 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
     @ClearCache(value = {"PER#${id}","PER_BACK#${id}"})
     @Override
     public void deleteRole(Long id) {
+        QueryWrapper<WebUser> webUserQueryWrapper=new QueryWrapper<>();
+        webUserQueryWrapper.select("id")
+                .eq("role_id",id);
+        List<WebUser> webUsers = webUserMapper.selectList(webUserQueryWrapper);
+        if (webUsers.size()!=0){
+            log.error("还有用户是当前角色,不能删除");
+            throw new ServiceException(TangCode.CODE_ROLE_TO_USER_NOT_EMPTY);
+
+        }
         QueryWrapper<WebRolePermission> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("role_id", id);
+
         //删除角色权限表中的
         webRolePermissionMapper.delete(queryWrapper);
         baseMapper.deleteById(id);

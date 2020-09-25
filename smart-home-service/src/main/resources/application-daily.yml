@@ -78,3 +78,7 @@ xxl:
       port: 9999
       logpath: data/logs/xxl-job
       logretentiondays: 30
+upload:
+  file:
+    path:
+      prefix: d:/file

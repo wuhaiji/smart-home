@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -136,6 +137,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         String userName = Optional.ofNullable(webUserDto.getUserName()).orElse("");
         String email = Optional.ofNullable(webUserDto.getEmail()).orElse("");
         String phoneNo = Optional.ofNullable(webUserDto.getPhoneNumber()).orElse("");
+        Long roleId=Optional.ofNullable(webUserDto.getRoleId()).orElse(-1L);
         if ("".equals(userName.trim())) {
             userName = null;
         }
@@ -166,15 +168,22 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         webUserDto.setTimeLine(timeLine);
         webUserDto.setTimeType(timeType);
         webUserDto.setUserName(userName);
+        webUserDto.setRoleId(roleId);
         webUserDto.setLimitStart((webUserDto.getCurrent()-1)*webUserDto.getSize());
+        //查询总数
         QueryWrapper<WebUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(userName!=null, "user_name", userName);
         queryWrapper.eq(email!=null, "email", email);
         queryWrapper.eq(phoneNo!=null, "phone_number", phoneNo);
+        queryWrapper.eq(roleId!=-1,"role_id",roleId);
         queryWrapper.ge(timeType != -1 && startTime != null, timeLine, startTime);
         queryWrapper.le(timeType != -1 && endTime != null, timeLine, endTime);
         Integer total = baseMapper.selectCount(queryWrapper);
-        List<WebUserBean> userResult=webUserMapper.selectUserList(webUserDto);
+        //查询列表
+        List<WebUserBean> userResult=new ArrayList<>();
+        if (total>0){
+           userResult=webUserMapper.selectUserList(webUserDto);
+        }
         PageBean<WebUserBean> result = new PageBean<>();
         result.setTotal(Long.parseLong(total.toString()));
         int pages=total/webUserDto.getSize();
