@@ -15,6 +15,7 @@ import com.ecoeler.core.deliver.Deliver;
 import com.ecoeler.app.msg.*;
 import com.ecoeler.core.resolver.KeyResolver;
 import com.ecoeler.core.resolver.ResolveResult;
+import com.ecoeler.core.type.BooleanType;
 import com.ecoeler.core.type.EnumType;
 import com.ecoeler.core.type.IType;
 import com.ecoeler.core.type.IntegerType;
@@ -60,6 +61,9 @@ public class DeviceEvent {
         }
         if (IType.TYPE_INTEGER.equals(keyType)) {
             type = JSONObject.parseObject(deviceKey.getKeyInfo(), IntegerType.class);
+        }
+        if(IType.TYPE_BOOLEAN.equals(keyType)){
+            type= JSONObject.parseObject(deviceKey.getKeyInfo(), BooleanType.class);
         }
         return type;
     }

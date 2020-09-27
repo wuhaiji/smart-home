@@ -17,6 +17,8 @@ spring:
     default-property-inclusion: non_null
     generator:
       write_numbers_as_strings: true
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 feign:
   client:
     config:

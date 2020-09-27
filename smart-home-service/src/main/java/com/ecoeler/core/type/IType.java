@@ -11,6 +11,8 @@ public interface IType {
 
     String TYPE_INTEGER="Integer";
 
+    String TYPE_BOOLEAN="Boolean";
+
     /**
      * 输入时匹配判断 并 改变值
      * @param value
