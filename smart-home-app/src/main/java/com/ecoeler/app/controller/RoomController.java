@@ -1,8 +1,12 @@
 package com.ecoeler.app.controller;
 
+import com.ecoeler.app.dto.v1.RoomDto;
+import com.ecoeler.app.entity.Floor;
 import com.ecoeler.app.entity.Room;
+import com.ecoeler.common.NullContentJudge;
 import com.ecoeler.feign.RoomService;
 import com.ecoeler.model.code.TangCode;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,18 @@ public class RoomController {
             room.setFloorId(0L);
         }
         return roomService.addRoom(room);
+    }
+
+    /**
+     * 通过房间id、房间名、楼层id、家庭id去删除房间
+     * @author wujihong
+     * @param roomDto
+     * @since 14:55 2020-09-27
+     */
+    @RequestMapping("/remove/room")
+    public Result removeRoom(RoomDto roomDto) {
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(RoomDto.class, roomDto), WJHCode.PARAM_EMPTY_ERROR);
+        return roomService.removeRoom(roomDto);
     }
 
 }

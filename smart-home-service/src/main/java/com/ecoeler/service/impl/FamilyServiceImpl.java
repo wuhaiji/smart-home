@@ -54,4 +54,9 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, Family> impleme
         userFamilyMapper.insert(userFamily);
         return family.getId();
     }
+
+    @Override
+    public Boolean removeFamily(Long id) {
+        return null;
+    }
 }

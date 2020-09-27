@@ -3,7 +3,9 @@ package com.ecoeler.controller;
 
 import com.ecoeler.app.entity.Family;
 import com.ecoeler.app.service.IFamilyService;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
+import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +37,10 @@ public class FamilyController {
         return Result.ok(familyService.addFamily(family,userId,nickname));
     }
 
-
+    @PostMapping("/remove/family")
+    public Result removeFamily(@RequestParam Long id) {
+        ExceptionUtil.notNull(id, WJHCode.FAMILY_ID_EMPTY_ERROR);
+        return Result.ok(familyService.removeFamily(id));
+    }
 
 }

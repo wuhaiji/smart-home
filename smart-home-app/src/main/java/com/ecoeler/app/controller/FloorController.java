@@ -1,8 +1,12 @@
 package com.ecoeler.app.controller;
 
+import com.ecoeler.app.dto.v1.FloorDto;
+import com.ecoeler.app.dto.v1.RoomDto;
 import com.ecoeler.app.entity.Floor;
+import com.ecoeler.common.NullContentJudge;
 import com.ecoeler.feign.FloorService;
 import com.ecoeler.model.code.TangCode;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +43,17 @@ public class FloorController {
         ExceptionUtil.notBlank(floor.getFloorName(),TangCode.CODE_FLOOR_NAME_EMPTY_ERROR);
         floor.setFamilyId(null);
         return floorService.updateFloor(floor);
+    }
+
+    /**
+     * 通过楼层id、楼层名、家庭id去删除楼层
+     * @author wujihong
+     * @param floorDto
+     * @since 14:56 2020-09-27
+     */
+    @RequestMapping("/remove/floor")
+    public Result removeFloor(FloorDto floorDto) {
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(FloorDto.class, floorDto), WJHCode.PARAM_EMPTY_ERROR);
+        return floorService.removeFloor(floorDto);
     }
 }

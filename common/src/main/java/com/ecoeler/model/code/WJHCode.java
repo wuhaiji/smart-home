@@ -3,10 +3,15 @@ package com.ecoeler.model.code;
 /**
  * @author wujihong
  */
-public enum InviteCode implements ResultCode{
+public enum WJHCode implements ResultCode{
 
     // 参数错误
     PARAM_EMPTY_ERROR("10001", "参数不能为空！"),
+    ROOM_ID_EMPTY_ERROR("10002", "房间id不能为空！"),
+    ROOM_NAME_EMPTY_ERROR("100021", "房间名不能为空！"),
+    FLOOR_ID_EMPTY_ERROR("10003", "楼层id不能为空！"),
+    FLOOR_NAME_EMPTY_ERROR("100031", "楼层名不能为空！"),
+    FAMILY_ID_EMPTY_ERROR("10004", "家庭id不能为空！"),
 
     // 业务错误
     SEND_INVITE_SERVICE_ERROR("20001", "发送邀请失败！"),
@@ -24,7 +29,7 @@ public enum InviteCode implements ResultCode{
 
     private String msg;
 
-    InviteCode(String code, String msg) {
+    WJHCode(String code, String msg) {
         this.code = code;
         this.msg = msg;
     }

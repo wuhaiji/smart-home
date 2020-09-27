@@ -33,6 +33,19 @@ public class ExceptionUtil {
     }
 
     /**
+     * 
+     * @author wujihong
+     * @param condition	
+     * @param code	
+     * @since 16:41 2020-09-27
+     */
+    public static void notNull(Boolean condition, ResultCode code) {
+        if (condition) {
+            throw new ServiceException(code.getCode(), code.getMsg());
+        }
+    }
+
+    /**
      * 验证字符串格式是否匹配
      *
      * @param obj   目标字符串

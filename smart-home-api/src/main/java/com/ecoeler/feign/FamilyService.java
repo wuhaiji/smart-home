@@ -18,5 +18,6 @@ public interface FamilyService {
     @PostMapping("/add/family")
     Result<Long> addFamily(@RequestBody Family family, @RequestParam Long userId, @RequestParam String nickname);
 
-
+    @PostMapping("/remove/family")
+    Result removeFamily(@RequestParam Long id);
 }

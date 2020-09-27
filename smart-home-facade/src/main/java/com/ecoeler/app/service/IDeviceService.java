@@ -5,6 +5,8 @@ import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceSpace;
 import com.ecoeler.app.msg.OrderInfo;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -21,4 +23,5 @@ public interface IDeviceService extends IService<Device> {
      */
     void control(OrderInfo orderInfo);
 
+    Boolean removeDevice(List<Long> roomIdList);
 }

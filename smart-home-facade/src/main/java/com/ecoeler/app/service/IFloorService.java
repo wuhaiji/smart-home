@@ -1,6 +1,7 @@
 package com.ecoeler.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ecoeler.app.dto.v1.FloorDto;
 import com.ecoeler.app.entity.Floor;
 
 import java.util.List;
@@ -19,4 +20,5 @@ public interface IFloorService extends IService<Floor> {
 
     Long addFloor(Floor floor);
 
+    Boolean removeFloor(FloorDto floorDto);
 }

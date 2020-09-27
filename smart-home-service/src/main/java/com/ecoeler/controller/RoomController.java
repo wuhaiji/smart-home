@@ -2,9 +2,14 @@ package com.ecoeler.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ecoeler.app.dto.v1.FloorDto;
+import com.ecoeler.app.dto.v1.RoomDto;
 import com.ecoeler.app.entity.Room;
 import com.ecoeler.app.service.IRoomService;
+import com.ecoeler.common.NullContentJudge;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
+import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +44,16 @@ public class RoomController {
     public Result addRoom(@RequestBody Room room){
         roomService.save(room);
         return Result.ok(room.getId());
+    }
+
+    @RequestMapping("/remove/room")
+    public Result removeRoom(@RequestBody RoomDto roomDto) {
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(RoomDto.class, roomDto), WJHCode.PARAM_EMPTY_ERROR);
+//        ExceptionUtil.notNull(room.getId(), WJHCode.ROOM_ID_EMPTY_ERROR);
+//        ExceptionUtil.notNull(room.getRoomName(), WJHCode.ROOM_NAME_EMPTY_ERROR);
+//        ExceptionUtil.notNull(room.getFloorId(), WJHCode.FLOOR_ID_EMPTY_ERROR);
+//        ExceptionUtil.notNull(room.getFamilyId(), WJHCode.FAMILY_ID_EMPTY_ERROR);
+        return Result.ok(roomService.removeRoom(roomDto));
     }
 
 }

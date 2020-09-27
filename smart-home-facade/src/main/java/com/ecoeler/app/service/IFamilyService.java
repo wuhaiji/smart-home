@@ -30,4 +30,5 @@ public interface IFamilyService extends IService<Family> {
      */
     Long addFamily(Family family,Long userId,String nickname);
 
+    Boolean removeFamily(Long id);
 }

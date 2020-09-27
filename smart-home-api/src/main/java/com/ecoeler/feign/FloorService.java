@@ -1,6 +1,7 @@
 package com.ecoeler.feign;
 
 
+import com.ecoeler.app.dto.v1.FloorDto;
 import com.ecoeler.app.entity.Floor;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -21,4 +22,7 @@ public interface FloorService {
 
     @PostMapping("/update/floor")
     Result updateFloor(@RequestBody Floor floor);
+
+    @PostMapping("/remove/floor")
+    Result removeFloor(@RequestBody FloorDto floorDto);
 }

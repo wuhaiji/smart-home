@@ -1,5 +1,6 @@
 package com.ecoeler.feign;
 
+import com.ecoeler.app.dto.v1.RoomDto;
 import com.ecoeler.app.entity.Room;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,5 +28,6 @@ public interface RoomService {
     @PostMapping("/add/room")
     Result<Long> addRoom(@RequestBody Room room);
 
-
+    @PostMapping("/remove/room")
+    Result removeRoom(@RequestBody RoomDto roomDto);
 }

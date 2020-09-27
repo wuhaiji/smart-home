@@ -1,8 +1,10 @@
 package com.ecoeler.app.controller;
 
 import com.ecoeler.app.dto.v1.DeviceControlDto;
+import com.ecoeler.app.dto.v1.InviteRecordDto;
+import com.ecoeler.common.NullContentJudge;
 import com.ecoeler.feign.DeviceSwitchService;
-import com.ecoeler.model.code.InviteCode;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,7 @@ public class DeviceSwitchController {
      */
     @RequestMapping("/open/all/switch")
     public Result openSwitch(DeviceControlDto deviceControlDto) {
-        ExceptionUtil.notNull(deviceControlDto, InviteCode.PARAM_EMPTY_ERROR);
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(DeviceControlDto.class, deviceControlDto), WJHCode.PARAM_EMPTY_ERROR);
         return deviceSwitchService.openSwitch(deviceControlDto);
     }
 
@@ -39,7 +41,7 @@ public class DeviceSwitchController {
      */
     @RequestMapping("/close/all/switch")
     public Result closeSwitch(DeviceControlDto deviceControlDto) {
-        ExceptionUtil.notNull(deviceControlDto, InviteCode.PARAM_EMPTY_ERROR);
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(DeviceControlDto.class, deviceControlDto), WJHCode.PARAM_EMPTY_ERROR);
         return deviceSwitchService.closeSwitch(deviceControlDto);
     }
 }

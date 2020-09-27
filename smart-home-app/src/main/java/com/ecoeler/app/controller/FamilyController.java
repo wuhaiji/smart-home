@@ -5,8 +5,10 @@ import com.ecoeler.app.entity.Family;
 import com.ecoeler.app.utils.PrincipalUtil;
 import com.ecoeler.feign.FamilyService;
 import com.ecoeler.model.code.TangCode;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +36,18 @@ public class FamilyController {
         ExceptionUtil.notBlank(family.getFamilyName(), TangCode.CODE_FAMILY_NAME_EMPTY_ERROR);
         ExceptionUtil.notNull(family.getFamilyType(), TangCode.CODE_FAMILY_TYPE_NULL_ERROR);
         return familyService.addFamily(family, PrincipalUtil.getUserId(principal),nickname);
+    }
+
+    /**
+     * 通过家庭id删除家庭
+     * @author wujihong
+     * @param id
+     * @since 17:55 2020-09-27
+     */
+    @PostMapping("/remove/family")
+    public Result removeFamily(Long id) {
+        ExceptionUtil.notNull(id, WJHCode.FAMILY_ID_EMPTY_ERROR);
+        return familyService.removeFamily(id);
     }
 
 }

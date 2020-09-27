@@ -27,7 +27,26 @@ public class AppUserController {
         return Result.ok();
     }
 
+    /**
+     * 用户离开家庭（指定其他用户为家庭拥有者）
+     * @author wujihong
+     * @param
+     * @since 17:34 2020-09-27
+     */
+    @RequestMapping("/leave/family")
+    public Result leaveFamily() {
+        return null;
+    }
 
-
+    /**
+     * 用户解散家庭（删除家庭）
+     * @author wujihong
+     * @param
+     * @since 17:37 2020-09-27
+     */
+    @RequestMapping("/dissolve/family")
+    public Result dissolveFamily() {
+        return null;
+    }
 
 }

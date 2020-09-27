@@ -6,9 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.IDeviceService;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
+import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -49,6 +53,12 @@ public class DeviceController {
     public Result control(@RequestBody OrderInfo orderInfo){
         deviceService.control(orderInfo);
         return Result.ok();
+    }
+
+    @PostMapping("/remove/device")
+    public Result removeDevice(@RequestBody List<Long> roomIdList) {
+        ExceptionUtil.notNull(roomIdList, WJHCode.ROOM_ID_EMPTY_ERROR);
+        return Result.ok(deviceService.removeDevice(roomIdList));
     }
 
 }

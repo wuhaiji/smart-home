@@ -43,7 +43,7 @@ public class DeviceSwitchServiceImpl extends ServiceImpl<DeviceSwitchMapper, Dev
         // 1.查询所有设备
         List<Device> deviceList = getDeviceList(deviceControlDto);
         // 2.获取productId集合
-        List<String> productIdList = deviceList.stream().map(Device::getProductId).collect(Collectors.toList());
+        List<String> productIdList = deviceList.stream().map(Device::getProductId).distinct().collect(Collectors.toList());
         //获得设备类型的所有 开关键
         Map<String, List<DeviceSwitch>> deviceSwitchMap = getDeviceSwitchMap(productIdList);
 
@@ -69,8 +69,8 @@ public class DeviceSwitchServiceImpl extends ServiceImpl<DeviceSwitchMapper, Dev
     public void openSwitch(DeviceControlDto deviceControlDto) {
         // 1.查询所有设备
         List<Device> deviceList = getDeviceList(deviceControlDto);
-        // 2.以productId为键，DeviceSwitch为值 的map集合
-        List<String> productIdList= deviceList.stream().map(Device::getProductId).collect(Collectors.toList());
+        // 2.获取productId集合(去重)
+        List<String> productIdList= deviceList.stream().map(Device::getProductId).distinct().collect(Collectors.toList());
         Map<String, List<DeviceSwitch>> deviceSwitchMap = getDeviceSwitchMap(productIdList);
         System.out.println("以productId为键，DeviceSwitch为值的map集合："+JSONObject.toJSONString(deviceSwitchMap));
 

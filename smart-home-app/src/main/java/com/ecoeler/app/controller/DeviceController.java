@@ -6,11 +6,14 @@ import com.ecoeler.app.aspect.GoogleRequestSync;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.feign.DeviceService;
 import com.ecoeler.model.code.TangCode;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 /**
@@ -55,6 +58,18 @@ public class DeviceController {
         ExceptionUtil.notBlank(orderInfo.getProductId(),TangCode.CODE_PRODUCT_ID_EMPTY_ERROR);
         ExceptionUtil.notNull(orderInfo.getMsg(),TangCode.CODE_ORDER_MSG_NULL_ERROR);
         return deviceService.control(orderInfo);
+    }
+
+    /**
+     * 软删除房间下的设备（将roomId重置为0）
+     * @author wujihong
+     * @param roomIdList
+     * @since 18:23 2020-09-27
+     */
+    @RequestMapping("/remove/device")
+    public Result removeDevice(List<Long> roomIdList){
+        ExceptionUtil.notNull(roomIdList, WJHCode.ROOM_ID_EMPTY_ERROR);
+        return deviceService.removeDevice(roomIdList);
     }
 
 }

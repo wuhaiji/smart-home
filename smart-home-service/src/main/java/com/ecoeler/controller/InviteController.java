@@ -2,7 +2,7 @@ package com.ecoeler.controller;
 
 import com.ecoeler.app.dto.v1.InviteRecordDto;
 import com.ecoeler.app.service.IInviteService;
-import com.ecoeler.model.code.InviteCode;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +23,19 @@ public class InviteController {
 
     @RequestMapping("/send/invite")
     public Result sendInvite(@RequestBody InviteRecordDto inviteRecordDto) {
-        ExceptionUtil.notNull(inviteRecordDto, InviteCode.SEND_INVITE_SERVICE_ERROR);
+        ExceptionUtil.notNull(inviteRecordDto, WJHCode.SEND_INVITE_SERVICE_ERROR);
         return Result.ok(iInviteService.sendInvite(inviteRecordDto));
     }
 
     @RequestMapping("/accept/invite")
     public Result acceptInvite(@RequestParam Long id) {
-        ExceptionUtil.notNull(id, InviteCode.PARAM_EMPTY_ERROR);
+        ExceptionUtil.notNull(id, WJHCode.PARAM_EMPTY_ERROR);
         return Result.ok(iInviteService.acceptInvite(id));
     }
 
     @RequestMapping("/refuse/invite")
     public Result refuseInvite(@RequestParam Long id) {
-        ExceptionUtil.notNull(id, InviteCode.PARAM_EMPTY_ERROR);
+        ExceptionUtil.notNull(id, WJHCode.PARAM_EMPTY_ERROR);
         return Result.ok(iInviteService.refuseInvite(id));
     }
 

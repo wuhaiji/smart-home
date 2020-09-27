@@ -11,20 +11,16 @@ import com.ecoeler.app.mapper.InviteRecordMapper;
 import com.ecoeler.app.mapper.UserFamilyMapper;
 import com.ecoeler.app.service.IInviteService;
 import com.ecoeler.exception.ServiceException;
-import com.ecoeler.model.code.InviteCode;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.utils.AliMailUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 /**
  * @author wujihong
@@ -67,7 +63,7 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
             BeanUtils.copyProperties(inviteRecordDto, inviteRecord);
             result = inviteRecordMapper.insert(inviteRecord);
             if(result <= 0) {
-                throw new ServiceException(InviteCode.INSERT_INVITE_RECORD_SERVICE_ERROR);
+                throw new ServiceException(WJHCode.INSERT_INVITE_RECORD_SERVICE_ERROR);
             }
             inviteRecordDto.setId(inviteRecord.getId());
         }
@@ -78,7 +74,7 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
             BeanUtils.copyProperties(inviteRecordDto, inviteRecord);
             result = inviteRecordMapper.updateById(inviteRecord);
             if(result <= 0) {
-                throw new ServiceException(InviteCode.UPDATE_INVITE_RECORD_SERVICE_ERROR);
+                throw new ServiceException(WJHCode.UPDATE_INVITE_RECORD_SERVICE_ERROR);
             }
         }
         // 发送邀请邮件
@@ -127,11 +123,11 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
             // 当前用户在家庭中
             else {
                 logger.warn("警告，被邀请用户已出现在家庭中！");
-                throw new ServiceException(InviteCode.EXIST_FAMILY_USER);
+                throw new ServiceException(WJHCode.EXIST_FAMILY_USER);
             }
 
         } else {
-            throw new ServiceException(InviteCode.INVITE_LOSE_EFFECT);
+            throw new ServiceException(WJHCode.INVITE_LOSE_EFFECT);
         }
 
         return result;
@@ -159,7 +155,7 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
             }
         }else {
             logger.warn("警告，拒绝邀请无效（因为：该用户已加入到家庭）！");
-            throw new ServiceException(InviteCode.INVALID_REFUSE_INVITE);
+            throw new ServiceException(WJHCode.INVALID_REFUSE_INVITE);
         }
 
         return result;
@@ -177,7 +173,7 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
         appUserQueryWrapper.eq("email", email);
         appUser = appUserMapper.selectOne(appUserQueryWrapper);
         if (appUser == null) {
-            throw new ServiceException(InviteCode.USER_UNREGISTERED_SERVICE_ERROR);
+            throw new ServiceException(WJHCode.USER_UNREGISTERED_SERVICE_ERROR);
         }
         return appUser;
     }
@@ -193,7 +189,7 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
         Duration between = Duration.between(before, LocalDateTime.now());
         if (between.toDays() >= 7L) {
             logger.warn("邀请至今已有{}天了！", between.toDays());
-            throw new ServiceException(InviteCode.INVITE_LOSE_EFFECT);
+            throw new ServiceException(WJHCode.INVITE_LOSE_EFFECT);
         }
     }
 }
