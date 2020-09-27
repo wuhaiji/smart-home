@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ecoeler.app.bean.v1.CountOfDateBean;
 import com.ecoeler.app.dto.v1.WebOverviewEchartsDto;
 import com.ecoeler.app.entity.AppUser;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author tang
  * @since 2020-09-10
  */
-
+@Mapper
 public interface WebOverviewMapper {
     /**
      * 查询echarts数据

@@ -7,7 +7,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: 192.168.0.108:8848
 
   oauth2:
     resourceId: google_client
@@ -26,4 +26,11 @@ management:
       exposure:
         include: "*"
 
+
+logging:
+  level:
+    com:
+      alibaba:
+        nacos:
+          client: warn
 

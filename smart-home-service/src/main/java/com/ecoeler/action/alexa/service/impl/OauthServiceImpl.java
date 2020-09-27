@@ -10,7 +10,6 @@ import com.ecoeler.app.service.IAlexaTokenService;
 import com.ecoeler.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,7 +20,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 
 /**
  * @author whj
@@ -102,7 +101,7 @@ public class OauthServiceImpl implements OauthService {
         //先从数据库查询token信息
         AlexaToken one = alexaTokenService.getOne(new QueryWrapper<AlexaToken>().eq("user_id", userId));
         //检查是否过期
-        long creatTime = one.getCreatTime().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        long creatTime = one.getCreatTime().toInstant(OffsetDateTime.now().getOffset()).toEpochMilli();
         long nowTime = System.currentTimeMillis();
         Long expiresIn = Long.valueOf(one.getExpiresIn());
         //如果access_token没有超期,直接返回

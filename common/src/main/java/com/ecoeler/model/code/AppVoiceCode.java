@@ -18,6 +18,8 @@ public enum AppVoiceCode implements ResultCode {
     ACTION_DEVICE_NOT_EXIST("30006", " device does not exist "),
 
     ACTION_SELECT_DEVICE_KEY_ERROR("30007", " error occurred in query  device key "),
+
+    ACTION_SELECT_DEVICE_SWITCH_ERROR("30008", " error occurred in query  device switch "),
     ;
 
 

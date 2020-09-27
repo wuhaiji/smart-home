@@ -7,7 +7,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: 192.168.0.108:8848
   oauth2:
     resourceId: alexa_client
     clientId: alexa_client

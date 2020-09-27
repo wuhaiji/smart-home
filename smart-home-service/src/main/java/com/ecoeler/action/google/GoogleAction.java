@@ -3,10 +3,7 @@ package com.ecoeler.action.google;
 import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.app.dto.v1.voice.DeviceKeyVoiceDto;
 import com.ecoeler.app.entity.*;
-import com.ecoeler.app.mapper.AppUserMapper;
-import com.ecoeler.app.mapper.DeviceMapper;
-import com.ecoeler.app.mapper.FamilyMapper;
-import com.ecoeler.app.mapper.UserFamilyMapper;
+import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.msg.KeyMsg;
 import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.exception.ServiceException;
@@ -47,6 +44,9 @@ public class GoogleAction {
     DeviceMapper deviceMapper;
     @Autowired
     FamilyMapper familyMapper;
+
+    @Autowired
+    DeviceSwitchMapper deviceSwitchMapper;
 
     /**
      * 主动向google申请同步
@@ -116,8 +116,10 @@ public class GoogleAction {
 
             //查询所有的对应deviceKey
             List<String> datakeys = keyMsgs.parallelStream().map(KeyMsg::getDataKey).collect(Collectors.toList());
-            List<DeviceKey> deviceKeys = appVoiceActionService.getDeviceKeys(DeviceKeyVoiceDto.of().setDataKeys(datakeys));
-            Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
+            List<DeviceKey> deviceKeys = appVoiceActionService.getDeviceKeyList(DeviceKeyVoiceDto.of().setDataKeys(datakeys));
+            Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream()
+                    .collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
+
 
             //先按设备id分组
             Map<String, List<KeyMsg>> listMap = keyMsgs.parallelStream()
@@ -133,16 +135,25 @@ public class GoogleAction {
                             //获取deviceKey，主要是获取alexa state name
                             DeviceKey deviceKey = deviceKeyMap.get(keyMsg.getDataKey());
                             if (deviceKey != null) {
-
+                                //value
                                 Object dataValue = keyMsg.getDataValue();
+
                                 String alexaStateName = deviceKey.getAlexaStateName();
 
                                 //如果是开关类型的value需要转换成ON/OFF
-                                if (GOOGLE_ON_OFF_KEY.equals(deviceKey.getAlexaStateName())) {
-                                    Integer dataValueInt = (Integer) dataValue;
-                                    String dataValueStr = dataValueInt.equals(Integer.parseInt(YUNTUN_POWER_STATE_ON))
+                                if (GOOGLE_POWER_STATE_KEY.equals(deviceKey.getAlexaStateName())) {
+                                    String dataValueStr = (String) dataValue;
+
+                                    //获取开关类型的value对应的云屯枚举值
+                                    DeviceSwitch deviceSwitch = deviceSwitchMapper.selectOne(
+                                            Query.of(DeviceSwitch.class)
+                                                    .eq("product_id", deviceKey.getProductId())
+                                                    .eq("data_key", deviceKey.getDataKey())
+                                    );
+                                    //判断是ON还是OFF
+                                    dataValueStr = dataValueStr.equals(deviceSwitch.getDeviceOn())
                                             ? ALEXA_POWER_STATE_ON : ALEXA_POWER_STATE_OFF;
-                                    states.put(alexaStateName, dataValueInt);
+                                    states.put(alexaStateName, dataValueStr);
                                 } else {
                                     states.put(alexaStateName, dataValue);
                                 }

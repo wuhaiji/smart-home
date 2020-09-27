@@ -1,12 +1,12 @@
 package com.ecoeler.app.service;
 
 import com.ecoeler.app.bean.v1.DeviceInfo;
+import com.ecoeler.app.bean.v1.DeviceStateBean;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
+import com.ecoeler.app.dto.v1.DeviceSwitchVoiceDto;
 import com.ecoeler.app.dto.v1.voice.*;
-import com.ecoeler.app.entity.Device;
-import com.ecoeler.app.entity.DeviceData;
-import com.ecoeler.app.entity.DeviceKey;
-import com.ecoeler.app.entity.DeviceType;
+import com.ecoeler.app.entity.*;
+
 
 import java.util.List;
 
@@ -41,14 +41,21 @@ public interface AppVoiceActionService {
      * @param dto 条件
      * @return
      */
-    List<DeviceKey> getDeviceKeys(DeviceKeyVoiceDto dto);
+    List<DeviceKey> getDeviceKeyList(DeviceKeyVoiceDto dto);
+
+    /**
+     * 查询deviceType 集合
+     * @param dto
+     * @return
+     */
+    List<DeviceType> getDeviceTypeList(DeviceTypeVoiceDto dto);
 
     /**
      * 根据deviceIds获取设备状态信息
      *
      * @return
      */
-    List<DeviceInfo> getDeviceStatesByIds(List<String> deviceIds);
+    List<DeviceStateBean> getDeviceKeysByIds(List<String> deviceIds);
 
 
     /**
@@ -67,6 +74,14 @@ public interface AppVoiceActionService {
      */
     Device getDevice(DeviceVoiceDto dto);
 
+
+    /**
+     * 查询device_switch
+     * @param dto
+     * @return
+     */
+    List<DeviceSwitch> getDeviceSwitchList(DeviceSwitchVoiceDto dto);
+
     /**
      * 查询设备列表
      *
@@ -83,4 +98,12 @@ public interface AppVoiceActionService {
      * @return
      */
     DeviceType getDeviceType(DeviceTypeVoiceDto dto);
+
+
+    /**
+     *  获取设备开关量 集合
+     * @param deviceId
+     */
+
+    List<DeviceSwitch> getDeviceSwitchListByDeviceId(String deviceId);
 }

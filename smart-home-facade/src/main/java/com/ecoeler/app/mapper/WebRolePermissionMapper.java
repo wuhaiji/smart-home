@@ -3,6 +3,7 @@ package com.ecoeler.app.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ecoeler.app.entity.WebRolePermission;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
  * @author tang
  * @since 2020-09-10
  */
+@Mapper
 public interface WebRolePermissionMapper extends BaseMapper<WebRolePermission> {
     /**
      * 批量插入

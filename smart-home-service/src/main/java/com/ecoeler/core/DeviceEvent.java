@@ -21,7 +21,7 @@ import com.ecoeler.core.type.IType;
 import com.ecoeler.core.type.IntegerType;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.Date;
@@ -47,6 +47,8 @@ public class DeviceEvent {
     private IDeviceDataService deviceDataService;
 
     private IDeviceKeyService deviceKeyService;
+
+
 
     /**
      * 获得键信息中的 键Type 信息

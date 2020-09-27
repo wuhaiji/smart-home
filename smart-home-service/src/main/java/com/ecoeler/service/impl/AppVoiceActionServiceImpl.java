@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.bean.v1.DeviceInfo;
 import com.ecoeler.app.bean.v1.DeviceStateBean;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
+import com.ecoeler.app.dto.v1.DeviceSwitchVoiceDto;
 import com.ecoeler.app.dto.v1.voice.*;
 import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.ecoeler.app.constant.v1.AppVoiceConstant.*;
 import static com.ecoeler.model.code.AppVoiceCode.*;
 
 
@@ -38,6 +40,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
      * 非网关设备代号
      */
     public static final int GATEWAY_LIKE_NOT = 0;
+
 
     @Resource
     UserFamilyMapper userFamilyMapper;
@@ -56,6 +59,9 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
     @Autowired
     DeviceDataMapper deviceDataMapper;
+
+    @Autowired
+    DeviceSwitchMapper deviceSwitchMapper;
 
     /**
      * 根据用户ID查询用户的设备列表
@@ -95,18 +101,21 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
             log.info("查詢到的设备Ids：{}", JSON.toJSONString(roomIds));
 
             //查询设备对应房间信息集合
-            List<Room> rooms = roomMapper.selectList(
-                    Query.of(Room.class).in(CollUtil.isNotEmpty(roomIds), "id", roomIds)
-            );
+            List<Room> rooms = ListUtil.empty();
+            if (EptUtil.isNotEmpty(roomIds)) {
+                rooms = roomMapper.selectList(
+                        Query.of(Room.class).in(CollUtil.isNotEmpty(roomIds), "id", roomIds)
+                );
+            }
             Map<Long, Room> roomMap = rooms.parallelStream().collect(Collectors.toMap(Room::getId, i -> i));
 
             //查询设备对应的设备类型信息
-            List<DeviceType> deviceTypes = deviceTypeMapper.selectList(
-                    Query.of(DeviceType.class)
-                            .in(CollUtil.isNotEmpty(productIds), "product_id", productIds)
-            );
-            Map<String, DeviceType> deviceTypeMap = deviceTypes.parallelStream().collect(Collectors.toMap(DeviceType::getProductId, i -> i));
+            List<DeviceType> deviceTypes = ListUtil.empty();
+            if (EptUtil.isNotEmpty(productIds)) {
+                deviceTypes = this.getDeviceTypeList(DeviceTypeVoiceDto.of().setProductIds(productIds));
+            }
 
+            Map<String, DeviceType> deviceTypeMap = deviceTypes.parallelStream().collect(Collectors.toMap(DeviceType::getProductId, i -> i));
 
             deviceVoiceBeans = devices.parallelStream()
                     .map(it -> {
@@ -169,26 +178,50 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
         List<String> deviceKeyList = deviceDatas.parallelStream().map(DeviceData::getDataKey).collect(Collectors.toList());
 
         //查询设备可控可上传key
-        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setDataKeys(deviceKeyList));
+        List<DeviceKey> deviceKeys = this.getDeviceKeyList(DeviceKeyVoiceDto.of().setDataKeys(deviceKeyList));
         Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
 
+
+        //查询开关量的value值
+        List<Long> deviceKeyIds = deviceKeys.parallelStream()
+                .filter(i -> i.getAlexaStateName().equals(ALEXA_STATE_NAME_POWER_STATE))
+                .map(DeviceKey::getId).collect(Collectors.toList());
+        List<DeviceSwitch> deviceSwitchList;
+        if (EptUtil.isNotEmpty(deviceKeyIds)) {
+            deviceSwitchList = getDeviceSwitchList(DeviceSwitchVoiceDto.of().setDeviceKeyIds(deviceKeyIds));
+        } else {
+            deviceSwitchList = new ArrayList<>();
+        }
+        Map<Long, DeviceSwitch> deviceSwitchMap = deviceSwitchList.parallelStream()
+                .collect(Collectors.toMap(DeviceSwitch::getDeviceKeyId, i -> i));
+
         List<DeviceStateBean> deviceStateBeans = deviceDatas.parallelStream()
-                .map(it -> {
+                .map(deviceData -> {
                     //获取data对应的key
-                    DeviceKey deviceKey = deviceKeyMap.get(it.getDataKey());
-                    if (deviceKey != null) {
-                        DeviceStateBean stateBean = DeviceStateBean.of().setValue(it.getDataValue());
-                        stateBean.setDeviceId(device.getDeviceId())
-                                .setAlexaStateName(deviceKey.getAlexaStateName())
-                                .setDataKey(deviceKey.getDataKey())
-                                .setGoogleStateName(deviceKey.getGoogleStateName())
-                                .setAlexaInterface(deviceKey.getAlexaInterface())
-                                .setCreateTime(it.getCreateTime())
-                        ;
-                        return stateBean;
-                    }
+                    DeviceKey deviceKey = deviceKeyMap.get(deviceData.getDataKey());
                     //没有找到说明该data不是可控可上传的data
-                    return null;
+                    if (deviceKey == null)
+                        return null;
+
+                    DeviceStateBean stateBean = DeviceStateBean.of()
+                            .setValue(deviceData.getDataValue());
+                    //如果是开关量，转换成固定的值
+                    DeviceSwitch deviceSwitch = deviceSwitchMap.get(deviceKey.getId());
+                    if (deviceSwitch != null) {
+                        String devicePowerStateValue = deviceData.getDataValue().equals(deviceSwitch.getDeviceOn())
+                                ? POWER_STATE_ON : POWER_STATE_OFF;
+                        stateBean.setValue(devicePowerStateValue);
+                    }
+
+                    stateBean
+                            .setDeviceId(device.getDeviceId())
+                            .setAlexaStateName(deviceKey.getAlexaStateName())
+                            .setDataKey(deviceKey.getDataKey())
+                            .setGoogleStateName(deviceKey.getGoogleStateName())
+                            .setAlexaInterface(deviceKey.getAlexaInterface())
+                            .setCreateTime(deviceData.getCreateTime())
+                    ;
+                    return stateBean;
                 })
                 //过滤null值
                 .filter(Objects::nonNull)
@@ -201,6 +234,32 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
         return deviceInfo;
     }
 
+
+    @Override
+    public List<DeviceStateBean> getDeviceKeysByIds(List<String> deviceIds) {
+
+        if (CollUtil.isEmpty(deviceIds))
+            ExceptionCast.cast(ACTION_PARAMS_ERROR);
+
+        //查询所有的设备
+        List<Device> devices = this.getDeviceList(DeviceVoiceDto.of().setDeviceIds(deviceIds));
+
+        //查询设备可控可上传key
+        List<String> productIds = devices.parallelStream().map(Device::getProductId).collect(Collectors.toList());
+        if (EptUtil.isEmpty(productIds))
+            return ListUtil.empty();
+
+        List<DeviceKey> deviceKeyList = this.getDeviceKeyList(DeviceKeyVoiceDto.of().setProductIds(productIds));
+        //转换
+        return deviceKeyList.parallelStream()
+                .map(
+                        deviceKey -> DeviceStateBean.of()
+                                .setAlexaStateName(deviceKey.getAlexaStateName())
+                                .setAlexaInterface(deviceKey.getAlexaInterface())).collect(Collectors.toList()
+                );
+    }
+
+
     @Override
     public List<DeviceKey> getDeviceAbleControlKey(String deviceId) {
 
@@ -209,98 +268,68 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
         Device device = this.getDevice(DeviceVoiceDto.of().setDeviceId(deviceId));
 
-        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setProductId(device.getProductId()));
+        List<DeviceKey> deviceKeys = this.getDeviceKeyList(DeviceKeyVoiceDto.of().setProductId(device.getProductId()));
 
         return deviceKeys;
     }
 
-
     @Override
-    public List<DeviceInfo> getDeviceStatesByIds(List<String> deviceIds) {
+    public List<DeviceSwitch> getDeviceSwitchListByDeviceId(String deviceId) {
+        //先查询设备
+        Device device = this.getDevice(DeviceVoiceDto.of().setDeviceId(deviceId));
 
-        if (CollUtil.isEmpty(deviceIds))
-            ExceptionCast.cast(ACTION_PARAMS_ERROR);
+        //再查询device_key
+        List<DeviceKey> deviceKeys = this.getDeviceKeyList(DeviceKeyVoiceDto.of().setProductId(device.getProductId()));
+        List<Long> deviceKeyIds = deviceKeys.parallelStream().map(DeviceKey::getId).collect(Collectors.toList());
 
-        //查询所有的设备
-        List<Device> devices = this.getDeviceList(DeviceVoiceDto.of().setDeviceIds(deviceIds));
-        if (CollUtil.isEmpty(devices)) return ListUtil.empty();
-
-        //生成返回deviceInfo集合
-        List<DeviceInfo> deviceInfos = devices.parallelStream()
-                .map(device -> DeviceInfo.of()
-                        .setDeviceId(device.getDeviceId())
-                        .setOnline(device.getNetState() == DeviceStatusConst.ONLINE)
-                )
-                .collect(Collectors.toList());
-
-
-        //查询设备data
-        List<DeviceData> deviceDatas = this.getDeviceDataList(DeviceDataVoiceDto.of().setDeviceIds(deviceIds));
-        if (CollUtil.isEmpty(deviceDatas)) return deviceInfos;
-        List<String> deviceKeyList = deviceDatas.parallelStream().map(DeviceData::getDataKey).collect(Collectors.toList());
-
-
-        //查询设备可控可上传key
-        List<DeviceKey> deviceKeys = this.getDeviceKeys(DeviceKeyVoiceDto.of().setDataKeys(deviceKeyList));
-        Map<String, DeviceKey> deviceKeyMap = deviceKeys.parallelStream().collect(Collectors.toMap(DeviceKey::getDataKey, i -> i));
-
-        //组装设备状态信息，并按deviceId分组
-        Map<String, List<DeviceStateBean>> DeviceStateBeanGroupMap = deviceDatas.parallelStream()
-
-                .map(deviceData -> {
-                    //获取data对应的key
-                    DeviceKey deviceKey = deviceKeyMap.get(deviceData.getDataKey());
-                    if (deviceKey != null) {
-
-                        return DeviceStateBean.of()
-                                .setValue(deviceData.getDataValue())
-                                .setDeviceId(deviceData.getDeviceId())
-                                .setAlexaStateName(deviceKey.getAlexaStateName())
-                                .setDataKey(deviceKey.getDataKey())
-                                .setGoogleStateName(deviceKey.getGoogleStateName())
-                                .setAlexaInterface(deviceKey.getAlexaInterface());
-
-                    }
-                    //没有找到说明该data不是可控可上传的data
-                    return null;
-                })
-                //过滤null值
-                .filter(Objects::nonNull)
-                .collect(Collectors.groupingBy(DeviceStateBean::getDeviceId));
-
-        //组合每个device的状态集合
-        deviceInfos.parallelStream().forEach(deviceInfo -> {
-
-            List<DeviceStateBean> deviceStateBeans = DeviceStateBeanGroupMap.get(deviceInfo.getDeviceId());
-
-            if (deviceStateBeans != null) {
-
-                deviceInfo.setDeviceStateBeans(deviceStateBeans);
-
-            }
-
-        });
-        return deviceInfos;
+        //再查询device_switch
+        if (EptUtil.isEmpty(deviceKeyIds)) {
+            return new ArrayList<>();
+        }
+        return this.getDeviceSwitchList(DeviceSwitchVoiceDto.of().setDeviceKeyIds(deviceKeyIds));
     }
 
     @Override
-    public List<DeviceKey> getDeviceKeys(DeviceKeyVoiceDto dto) {
+    public List<DeviceKey> getDeviceKeyList(DeviceKeyVoiceDto dto) {
 
         QueryWrapper<DeviceKey> query = Query.of(DeviceKey.class);
         if (dto != null) {
 
             query
                     .eq("action_type", DeviceKeyVoiceDto.ACTION_TYPE_1)
-                    .in(EptUtil.isNotEmpty(dto.getDataKeys()), "device_key", dto.getDataKeys())
                     .eq(EptUtil.isNotEmpty(dto.getAlexaStateName()), "alexa_state_name", dto.getAlexaStateName())
                     .eq(EptUtil.isNotEmpty(dto.getGoogleStateName()), "google_state_name", dto.getGoogleStateName())
                     .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
+                    .in(EptUtil.isNotEmpty(dto.getDataKeys()), "data_key", dto.getDataKeys())
+                    .in(EptUtil.isNotEmpty(dto.getProductIds()), "product_id", dto.getProductIds())
             ;
         }
-
         //查询设备可控可上传key
         try {
             return deviceKeyMapper.selectList(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServiceException(ACTION_SELECT_DEVICE_KEY_ERROR);
+        }
+
+    }
+
+    @Override
+    public List<DeviceType> getDeviceTypeList(DeviceTypeVoiceDto dto) {
+
+        QueryWrapper<DeviceType> query = Query.of(DeviceType.class);
+        if (dto != null) {
+
+            query
+                    .ne("google_trait_names", "")
+                    .ne("google_type_name", "")
+                    .ne("alexa_display_name", "")
+                    .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
+                    .in(EptUtil.isNotEmpty(dto.getProductIds()), "product_id", dto.getProductIds())
+            ;
+        }
+        try {
+            return deviceTypeMapper.selectList(query);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServiceException(ACTION_SELECT_DEVICE_KEY_ERROR);
@@ -334,67 +363,29 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
         }
     }
 
-
     @Override
-    public DeviceType getDeviceType(DeviceTypeVoiceDto dto) {
+    public List<DeviceSwitch> getDeviceSwitchList(DeviceSwitchVoiceDto dto) {
 
-
-        QueryWrapper<DeviceType> query = Query.of(DeviceType.class);
+        QueryWrapper<DeviceSwitch> query = Query.of(DeviceSwitch.class);
 
         if (dto != null) {
+
             query
+                    .eq(EptUtil.isNotEmpty(dto.getDataKey()), "data_key", dto.getDataKey())
                     .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
+                    .in(EptUtil.isNotEmpty(dto.getDeviceKeyIds()), "device_key_id", dto.getDeviceKeyIds())
             ;
+
         }
 
-
-        DeviceType deviceType;
         try {
 
-            deviceType = deviceTypeMapper.selectOne(query);
+            return deviceSwitchMapper.selectList(query);
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException(ACTION_SELECT_DEVICE_TYPE_ERROR);
+            throw new ServiceException(ACTION_SELECT_DEVICE_SWITCH_ERROR);
         }
-
-        if (deviceType == null)
-            throw new ServiceException(ACTION_DEVICE_TYPE_NOT_EXIST);
-
-        return deviceType;
-
-    }
-
-    public Device getDevice(DeviceVoiceDto dto) {
-
-        QueryWrapper<Device> query = Query.of(Device.class);
-        if (dto != null) {
-            query
-                    .eq(EptUtil.isNotEmpty(dto.getFamilyId()), "device_id", dto.getFamilyId())
-                    .eq(EptUtil.isNotEmpty(dto.getNetState()), "net_state", dto.getNetState())
-                    .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
-                    .eq(EptUtil.isNotEmpty(dto.getFamilyId()), "family_id", dto.getFamilyId())
-                    .eq(EptUtil.isNotEmpty(dto.getDeviceName()), "device_name", dto.getDeviceName())
-                    .eq(EptUtil.isNotEmpty(dto.getDeviceTypeName()), "device_type_name", dto.getDeviceTypeName())
-                    .eq(EptUtil.isNotEmpty(dto.getGatewayLike()), "gate_way_like", dto.getGatewayLike())
-
-            ;
-        }
-
-        Device device;
-        try {
-            device = deviceMapper.selectOne(query);
-        } catch (Exception e) {
-            e.printStackTrace();
-            //抛出查询异常
-            throw new ServiceException(ACTION_DEVICE_NOT_EXIST);
-        }
-
-        //如果为空，抛出异常
-        if (device == null)
-            throw new ServiceException(ACTION_DEVICE_NOT_EXIST);
-
-        return device;
     }
 
     @Override
@@ -428,5 +419,73 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
             throw new ServiceException(ACTION_SELECT_DEVICE_TYPE_ERROR);
         }
     }
+
+    @Override
+    public DeviceType getDeviceType(DeviceTypeVoiceDto dto) {
+
+
+        QueryWrapper<DeviceType> query = Query.of(DeviceType.class);
+
+        if (dto != null) {
+            query
+                    .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
+            ;
+        }
+
+
+        DeviceType deviceType;
+        try {
+
+            deviceType = deviceTypeMapper.selectOne(query);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServiceException(ACTION_SELECT_DEVICE_TYPE_ERROR);
+        }
+
+        if (deviceType == null)
+            throw new ServiceException(ACTION_DEVICE_TYPE_NOT_EXIST);
+
+        return deviceType;
+
+    }
+
+
+    @Override
+    public Device getDevice(DeviceVoiceDto dto) {
+
+        QueryWrapper<Device> query = Query.of(Device.class);
+        if (dto != null) {
+            query
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceId()), "device_id", dto.getDeviceId())
+                    .eq(EptUtil.isNotEmpty(dto.getNetState()), "net_state", dto.getNetState())
+                    .eq(EptUtil.isNotEmpty(dto.getProductId()), "product_id", dto.getProductId())
+                    .eq(EptUtil.isNotEmpty(dto.getFamilyId()), "family_id", dto.getFamilyId())
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceName()), "device_name", dto.getDeviceName())
+                    .eq(EptUtil.isNotEmpty(dto.getDeviceTypeName()), "device_type_name", dto.getDeviceTypeName())
+                    .eq(EptUtil.isNotEmpty(dto.getGatewayLike()), "gate_way_like", dto.getGatewayLike())
+
+            ;
+        }
+
+        Device device;
+        try {
+            device = deviceMapper.selectOne(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+            //抛出查询异常
+            throw new ServiceException(ACTION_DEVICE_NOT_EXIST);
+        }
+
+        //如果为空，抛出异常
+        if (device == null)
+            throw new ServiceException(ACTION_DEVICE_NOT_EXIST);
+
+        return device;
+    }
+
+
+
+
 
 }

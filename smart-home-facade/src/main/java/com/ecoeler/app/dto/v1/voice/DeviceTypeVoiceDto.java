@@ -3,6 +3,8 @@ package com.ecoeler.app.dto.v1.voice;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Data(staticConstructor = "of")
 @Accessors(chain = true)
 public class DeviceTypeVoiceDto {
@@ -27,6 +29,11 @@ public class DeviceTypeVoiceDto {
      * 设备产品id
      */
     private String productId;
+
+    /**
+     * 设备产品id
+     */
+    private List<String> productIds;
 
 
 }

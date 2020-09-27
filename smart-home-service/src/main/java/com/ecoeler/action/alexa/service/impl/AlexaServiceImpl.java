@@ -83,10 +83,9 @@ public class AlexaServiceImpl implements AlexaService {
         List<String> deviceIds = deviceVoiceBeans.parallelStream().map(DeviceVoiceBean::getId).collect(Collectors.toList());
 
         //查询所有设备的对应设备状态信息
-        List<DeviceInfo> deviceInfos = appVoiceActionService.getDeviceStatesByIds(deviceIds);
-
+        List<DeviceStateBean> deviceStateBeansAllDevice = appVoiceActionService.getDeviceKeysByIds(deviceIds);
         //转成map
-        Map<String, DeviceInfo> deviceInfoMap = deviceInfos.parallelStream().collect(Collectors.toMap(DeviceInfo::getDeviceId, i -> i));
+        Map<String, List<DeviceStateBean>> deviceStateBeansGroup = deviceStateBeansAllDevice.parallelStream().collect(Collectors.groupingBy(DeviceStateBean::getDeviceId));
 
         //获取返回头信息
         JSONObject header = params.getJSONObject("directive").getJSONObject("header");
@@ -110,9 +109,7 @@ public class AlexaServiceImpl implements AlexaService {
 
             capabilities.add(healthyCapability);
 
-            DeviceInfo deviceInfo = deviceInfoMap.get(deviceVoiceBean.getId());
-
-            List<DeviceStateBean> deviceStateBeans = deviceInfo.getDeviceStateBeans();
+            List<DeviceStateBean> deviceStateBeans = deviceStateBeansGroup.get(deviceVoiceBean.getId());
 
             for (DeviceStateBean deviceStateBean : deviceStateBeans) {
 
@@ -177,7 +174,7 @@ public class AlexaServiceImpl implements AlexaService {
         JSONObject context = getContext(endpointId, userId);
 
         //获取alexa_token,用于异步发送,
-//        String token = oauthService.getToken(userId);
+        // String token = oauthService.getToken(userId);
 
         //生成返回数据对象
         AlexaResponse alexaResponse = new AlexaResponse("Alexa", "StateReport",
@@ -221,7 +218,7 @@ public class AlexaServiceImpl implements AlexaService {
 
         //这里根据网络状态set不同的value对象
         JSONObject netValue = new JSONObject();
-        netValue.put("value", netState ? AppVoiceConstant.ALEXA_NET_STATE_ONLINE : AppVoiceConstant.ALEXA_NET_STATE_OFFLINE);
+        netValue.put("value", netState ? ALEXA_NET_STATE_ONLINE : ALEXA_NET_STATE_OFFLINE);
 
         this.setProperty(alexaReportTime.getQueryTime(), properties, netValue, connectivity, namespace, LocalDateTime.now());
 
@@ -230,9 +227,9 @@ public class AlexaServiceImpl implements AlexaService {
 
             String value = deviceStateBean.getValue();
 
-            //因为开关类的状态值最终json数据需要的value值并不是0和1，而是ON/OFF所以这里转换一下
+            //因为开关类的状态值最终json数据需要的value值并不是true和false，而是ON/OFF所以这里转换一下
             if (ALEXA_STATE_NAME_POWER_STATE.equals(deviceStateBean.getAlexaStateName())) {
-                value = YUNTUN_POWER_STATE_ON.equals(value) ? ALEXA_POWER_STATE_ON : ALEXA_POWER_STATE_OFF;
+                value = POWER_STATE_ON.equals(value) ? ALEXA_POWER_STATE_ON : ALEXA_POWER_STATE_OFF;
             }
 
             this.setProperty(
@@ -314,7 +311,7 @@ public class AlexaServiceImpl implements AlexaService {
         //组装执行命令json
 
         //查询开关的data key
-        List<DeviceKey> deviceKeys = appVoiceActionService.getDeviceKeys(
+        List<DeviceKey> deviceKeys = appVoiceActionService.getDeviceKeyList(
                 DeviceKeyVoiceDto.of()
                         .setAlexaStateName(ALEXA_STATE_NAME_POWER_STATE)
         );
@@ -344,7 +341,7 @@ public class AlexaServiceImpl implements AlexaService {
         JSONObject stateJson = new JSONObject();
 
         //查询灯光的data key
-        List<DeviceKey> deviceKeys = appVoiceActionService.getDeviceKeys(
+        List<DeviceKey> deviceKeys = appVoiceActionService.getDeviceKeyList(
                 DeviceKeyVoiceDto.of()
                         .setAlexaStateName(AppVoiceConstant.ALEXA_STATE_NAME_BRIGHTNESS)
         );
