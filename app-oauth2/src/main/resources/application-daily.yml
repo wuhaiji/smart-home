@@ -5,16 +5,15 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
-#        server-addr: 192.168.0.108:8848
+        server-addr: 192.168.0.108:8848
 
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
   #热部署配置
-  devtools:
-    restart:
-      additional-paths: classpath:/resources/templates/**,classpath:/resources/static/**,
+#  devtools:
+#    restart:
+#      additional-paths: classpath:/resources/templates/**,classpath:/resources/static/**,
   datasource:
     username: root
     password: 123456
@@ -37,10 +36,7 @@ server:
   port: 11111
 
 
-logging:
-  level:
-    spring:
-      framework: debug
-
-
-
+#logging:
+#  level:
+#    spring:
+#      framework: debug
