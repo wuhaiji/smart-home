@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * @author wujihong
  */
-@FeignClient(name = "smart-home-service", contextId = "inviteService")
+@FeignClient(name = "smart-home-service", contextId = "inviteService", path = "/invite")
 public interface InviteService {
 
-    @RequestMapping("/invite/send/invite")
+    @RequestMapping("/send/invite")
     Result sendInvite(@RequestBody InviteRecordDto inviteRecordDto);
 
-    @RequestMapping("/invite/accept/invite")
+    @RequestMapping("/accept/invite")
     Result acceptInvite(@RequestParam Long id);
 
-    @RequestMapping("/invite/refuse/invite")
+    @RequestMapping("/refuse/invite")
     Result refuseInvite(@RequestParam Long id);
 }
