@@ -15,12 +15,13 @@ import com.ecoeler.core.deliver.Deliver;
 import com.ecoeler.app.msg.*;
 import com.ecoeler.core.resolver.KeyResolver;
 import com.ecoeler.core.resolver.ResolveResult;
+import com.ecoeler.core.type.BooleanType;
 import com.ecoeler.core.type.EnumType;
 import com.ecoeler.core.type.IType;
 import com.ecoeler.core.type.IntegerType;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.Date;
@@ -47,6 +48,8 @@ public class DeviceEvent {
 
     private IDeviceKeyService deviceKeyService;
 
+
+
     /**
      * 获得键信息中的 键Type 信息
      * @param deviceKey
@@ -60,6 +63,9 @@ public class DeviceEvent {
         }
         if (IType.TYPE_INTEGER.equals(keyType)) {
             type = JSONObject.parseObject(deviceKey.getKeyInfo(), IntegerType.class);
+        }
+        if(IType.TYPE_BOOLEAN.equals(keyType)){
+            type= JSONObject.parseObject(deviceKey.getKeyInfo(), BooleanType.class);
         }
         return type;
     }

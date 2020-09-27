@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @author tang
  * @since 2020-09-10
  */
-
+@Mapper
 public interface AppUserMapper extends BaseMapper<AppUser> {
 
 }

@@ -13,6 +13,7 @@ import com.ecoeler.app.dto.v1.voice.DeviceVoiceDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.app.entity.Device;
+import com.ecoeler.app.entity.DeviceSwitch;
 import com.ecoeler.app.entity.DeviceType;
 import com.ecoeler.app.mapper.AppUserMapper;
 import com.ecoeler.app.msg.OrderInfo;
@@ -56,6 +57,9 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
 
     @Autowired
     Oauth2ClientService oauth2ClientService;
+
+    @Autowired
+    AppUserMapper appUserMapper;
 
     /**
      * bean初始化后，注入googleApi密匙
@@ -144,12 +148,6 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
 
                 deviceStates.put(device.id, states);
 
-                //开关量1/0转换成google需要的boolean
-                if (states.containsKey(GOOGLE_ON_OFF_KEY)) {
-                    String on = (String) states.get(GOOGLE_ON_OFF_KEY);
-                    states.put(GOOGLE_ON_OFF_KEY, !on.equals(YUNTUN_POWER_STATE_OFF));
-                }
-
             } catch (ServiceException e) {
                 e.printStackTrace();
                 log.error("QUERY FAILED");
@@ -168,9 +166,6 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
         return res;
     }
 
-    @Autowired
-    AppUserMapper appUserMapper;
-
     @Override
     public void onDisconnect(@NotNull DisconnectRequest disconnectRequest, @Nullable Map<?, ?> map) {
         assert map != null;
@@ -179,6 +174,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
 
         //更新appUser的googleLinkStatus
         Long userId = Long.valueOf((String) map.get(DTO_KEY_USER_ID));
+
         appUserMapper.updateById(
                 new AppUser()
                         .setGoogleLinkStatus(GOOGLE_LINK_STATUS_IS_NOT)
@@ -276,27 +272,16 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
 
                 case GOOGLE_COMMAND_ON_OFF:
 
-                    boolean onOffValue = (boolean) Objects.requireNonNull(execution.getParams()).get(GOOGLE_ON_OFF_KEY);
+                    boolean onOffValue = (boolean) Objects.requireNonNull(execution.getParams()).get(GOOGLE_POWER_STATE_KEY);
 
-                    DeviceInfo deviceStates = appVoiceActionService.getDeviceStatesByDeviceId(deviceId);
+                    //查询该设备的所有开关量
+                    List<DeviceSwitch> deviceSwitches = appVoiceActionService.getDeviceSwitchListByDeviceId(deviceId);
 
-                    List<DeviceStateBean> deviceStateBeans = deviceStates.getDeviceStateBeans();
-
-                    log.info("设备状态信息集合：{}", JSON.toJSONString(deviceStateBeans));
-
-                    //这里因为google "on" 的key对应的指令device key有多个(多路开关)，我只能查出所有on对应的data key执行统一命令
-                    deviceStateBeans.parallelStream()
-
-                            .filter(i -> i.getGoogleStateName().equals(AppVoiceConstant.GOOGLE_ON_OFF_KEY))
-
-                            .map(DeviceStateBean::getDataKey)
-
-                            .collect(Collectors.toList())
-
-                            .forEach(i -> jobJson.put(i, onOffValue ? YUNTUN_POWER_STATE_ON : YUNTUN_POWER_STATE_OFF));
-
-                    states.put(GOOGLE_ON_OFF_KEY, onOffValue);
-
+                    //只能控制一路开关，多路就统一开关
+                    deviceSwitches.parallelStream().forEach(deviceSwitch ->
+                            jobJson.put(deviceSwitch.getDataKey(), onOffValue ? deviceSwitch.getDeviceOn() : deviceSwitch.getDeviceOff())
+                    );
+                    states.put(GOOGLE_POWER_STATE_KEY, onOffValue);
                     break;
             }
         }
@@ -309,10 +294,11 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
         String eventClass = deviceType.getEventClass();
 
         DeviceEvent deviceEvent = SpringUtils.getBean(eventClass);
-        deviceEvent.order(OrderInfo.of()
-                .setDeviceId(deviceId)
-                .setMsg(jobJson)
-                .setProductId(deviceType.getProductId())
+        deviceEvent.order(
+                OrderInfo.of()
+                        .setDeviceId(deviceId)
+                        .setMsg(jobJson)
+                        .setProductId(deviceType.getProductId())
         );
         log.info("states:" + states);
         return states;
@@ -326,20 +312,57 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
      * @return
      */
     @NotNull
-    private Map<String, Object> getDeviceStatesMap(String deviceId) {
+    public Map<String, Object> getDeviceStatesMap(String deviceId) {
 
         DeviceInfo deviceInfo = appVoiceActionService.getDeviceStatesByDeviceId(deviceId);
 
         List<DeviceStateBean> deviceStateBeans = deviceInfo.getDeviceStateBeans();
 
-        Map<String, Object> states = deviceStateBeans.parallelStream()
-                .collect(Collectors.toMap(
-                        DeviceStateBean::getGoogleStateName,
-                        DeviceStateBean::getValue
-                        )
-                );
+        Map<String, List<DeviceStateBean>> listMap = deviceStateBeans.parallelStream().collect(Collectors.groupingBy(DeviceStateBean::getGoogleStateName));
 
+        Map<String, Object> states = new HashMap<>();
+
+        for (Map.Entry<String, List<DeviceStateBean>> entry : listMap.entrySet()) {
+
+            List<DeviceStateBean> list = entry.getValue();
+            if (!entry.getKey().equals(GOOGLE_POWER_STATE_KEY)) {
+                states.put(entry.getKey(), entry.getValue());
+                continue;
+            }
+
+            //默认设备是关闭的
+            boolean flag = false;
+            for (DeviceStateBean deviceStateBean : list) {
+                //因为多路设备不止一个开关量
+                if (deviceStateBean.getValue().equals(POWER_STATE_ON)) {
+                    //只要一个开关是开的就认为该设备是开着的
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                states.put(entry.getKey(), POWER_STATE_ON);
+            }else{
+                states.put(entry.getKey(), POWER_STATE_OFF);
+            }
+
+        }
+
+        // Map<String, Object> states = deviceStateBeans.parallelStream()
+        //         .collect(Collectors.toMap(
+        //                 DeviceStateBean::getGoogleStateName,
+        //                 DeviceStateBean::getValue
+        //                 )
+        //         );
         states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
+
+
+        //开关量1/0转换成google需要的boolean
+        if (states.containsKey(GOOGLE_POWER_STATE_KEY)) {
+            String onOffValue = (String) states.get(GOOGLE_POWER_STATE_KEY);
+            states.put(GOOGLE_POWER_STATE_KEY, onOffValue.equals(POWER_STATE_ON));
+        }
+
         return states;
     }
 

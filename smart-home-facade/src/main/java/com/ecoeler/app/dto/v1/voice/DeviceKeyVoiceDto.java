@@ -14,6 +14,11 @@ public class DeviceKeyVoiceDto {
      */
     private String productId;
 
+    /**
+     * productId
+     */
+    private List<String> productIds;
+
 
     /**
      * alexaInterface ，alexa设备接口

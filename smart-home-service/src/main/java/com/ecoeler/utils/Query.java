@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 /**
  * <p>
- *
+ *  QueryWrapper工具类
  * </p>
  *
  * @author whj

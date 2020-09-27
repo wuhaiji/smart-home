@@ -3,6 +3,7 @@ package com.ecoeler.app.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ecoeler.app.entity.WebPermission;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -12,6 +13,7 @@ import com.ecoeler.app.entity.WebPermission;
  * @author tang
  * @since 2020-09-10
  */
+@Mapper
 public interface WebPermissionMapper extends BaseMapper<WebPermission> {
 
 }

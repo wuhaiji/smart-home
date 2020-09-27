@@ -18,4 +18,16 @@ public class TimerJobConst {
     public static final int TIMING=1;
 
 
+    /**
+     * 暂停
+     */
+    public static final  int PAUSE=0;
+
+    /**
+     * 运行
+     */
+    public static final int RUN=1;
+
+
+
 }

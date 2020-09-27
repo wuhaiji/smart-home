@@ -43,7 +43,7 @@ public interface AppVoiceConstant {
 
 
     String GOOGLE_NET_STATE_KEY = "online";
-    String GOOGLE_ON_OFF_KEY = "on";
+    String GOOGLE_POWER_STATE_KEY = "on";
     String GOOGLE_COMMAND_BRIGHTNESS = "action.devices.commands.BrightnessAbsolute";
     String GOOGLE_COMMAND_ON_OFF = "action.devices.commands.OnOff";
     String GOOGLE_BRIGHTNESS_KEY = "brightness";
@@ -70,6 +70,9 @@ public interface AppVoiceConstant {
     String ALEXA_DISCOVER_RESPONSE = "Discover.Response";
 
     String ALEXA_STATE_NAME_BRIGHTNESS = "brightness";
+
+    String POWER_STATE_ON = "true";
+    String POWER_STATE_OFF = "false";
 
 
 }

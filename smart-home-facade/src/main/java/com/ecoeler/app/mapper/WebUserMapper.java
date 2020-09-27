@@ -6,6 +6,7 @@ import com.ecoeler.app.bean.v1.WebRoleBean;
 import com.ecoeler.app.bean.v1.WebUserBean;
 import com.ecoeler.app.dto.v1.WebUserDto;
 import com.ecoeler.app.entity.WebUser;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author tang
  * @since 2020-09-10
  */
+@Mapper
 public interface WebUserMapper extends BaseMapper<WebUser> {
     /**
      * 查询角色对应的用户数量

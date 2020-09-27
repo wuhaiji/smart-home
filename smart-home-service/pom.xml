@@ -119,6 +119,13 @@
             <artifactId>protobuf-java</artifactId>
             <version>3.10.0</version>
         </dependency>
+        <!--org json-->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20200518</version>
+        </dependency>
+
         <dependency>
             <groupId>com.ecoeler</groupId>
             <artifactId>app-oauth2-client</artifactId>
@@ -126,15 +133,7 @@
             <scope>compile</scope>
         </dependency>
 
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-
     </dependencies>
-
 
 
 </project>

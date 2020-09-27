@@ -5,6 +5,7 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +48,7 @@ public class HutoolCaptchaUtil {
 
         //无论验证成功失败，都删除验证码
         redisUtil.delete("APP_CAPTCHA:" + username);
-        if(realCode==null){
+        if(StringUtils.isBlank(realCode)){
             return false;
         }
 

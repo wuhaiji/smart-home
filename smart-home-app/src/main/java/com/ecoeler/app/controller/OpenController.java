@@ -41,7 +41,10 @@ public class OpenController {
         ExceptionUtil.notBlank(email, TangCode.CODE_EMAIL_EMPTY_ERROR);
         ExceptionUtil.notBlank(password, TangCode.CODE_PASSWORD_EMPTY_ERROR);
         ExceptionUtil.notBlank(code, TangCode.CODE_CODE_EMPTY_ERROR);
-        appUserService.verify(email, code);
+        Result res = appUserService.verify(email, code);
+        if(!res.success()){
+            return res;
+        }
         return Result.ok(oauth2ClientService.getToken(appResourceProperties.getClientId(), appResourceProperties.getClientSecret(), email, password));
     }
 
@@ -52,7 +55,7 @@ public class OpenController {
     }
 
     @RequestMapping("/captcha")
-    public String captcha(String email) {
+    public Result captcha(String email) {
         ExceptionUtil.notBlank(email, TangCode.CODE_EMAIL_EMPTY_ERROR);
         return appUserService.captcha(email);
     }

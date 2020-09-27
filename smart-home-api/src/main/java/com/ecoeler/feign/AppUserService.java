@@ -21,7 +21,7 @@ public interface AppUserService {
      * @return
      */
     @PostMapping("/captcha")
-    String captcha(@RequestParam String email) ;
+    Result captcha(@RequestParam String email) ;
 
     /**
      * 登录验证码验证
