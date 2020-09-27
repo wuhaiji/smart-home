@@ -84,7 +84,7 @@ public class TimerJobController {
      * @return
      */
     @RequestMapping("/update/cron")
-    public Result updateCron(@RequestParam Long id, @RequestParam String jobCron){
+    public Result updateCron(Long id, String jobCron){
         ExceptionUtil.notNull(id,TangCode.CODE_TIMER_JOB_ID_NULL_ERROR);
         ExceptionUtil.notBlank(jobCron,TangCode.CODE_CRON_EMPTY_ERROR);
         return timerJobService.updateCron(id,jobCron);
@@ -96,9 +96,42 @@ public class TimerJobController {
      * @return
      */
     @RequestMapping("/delete")
-    public Result delete(@RequestParam Long id){
+    public Result delete(Long id){
+        ExceptionUtil.notNull(id,TangCode.CODE_TIMER_JOB_ID_NULL_ERROR);
         return  timerJobService.delete(id);
     }
 
+
+    @RequestMapping("/stop")
+    public Result stop(Long id){
+        ExceptionUtil.notNull(id,TangCode.CODE_TIMER_JOB_ID_NULL_ERROR);
+        return timerJobService.stop(id);
+    }
+
+    @RequestMapping("/start")
+    public Result start(Long id){
+        ExceptionUtil.notNull(id,TangCode.CODE_TIMER_JOB_ID_NULL_ERROR);
+        return timerJobService.start(id);
+    }
+
+
+
+    @RequestMapping("/list/countdown")
+    public Result listCountdown(String deviceId){
+        ExceptionUtil.notBlank(deviceId,TangCode.CODE_DEVICE_ID_EMPTY_ERROR);
+        return timerJobService.listCountdown(deviceId);
+    }
+
+    @RequestMapping("/list/timer")
+    public Result listTimer(String deviceId){
+        ExceptionUtil.notBlank(deviceId,TangCode.CODE_DEVICE_ID_EMPTY_ERROR);
+        return timerJobService.listTimer(deviceId);
+    }
+
+    @RequestMapping("/list/axis")
+    public Result listAxis(Long familyId){
+        ExceptionUtil.notNull(familyId,TangCode.CODE_FAMILY_ID_NULL_ERROR);
+        return timerJobService.listAxis(familyId);
+    }
 
 }

@@ -33,4 +33,16 @@ public interface ITimerJobService extends IService<TimerJob> {
      */
     void deleteJob(Long id);
 
+    /**
+     * 暂停任务
+     * @param id
+     */
+    void stop(Long id);
+
+    /**
+     * 开启任务
+     * @param id
+     */
+    void start(Long id);
+
 }

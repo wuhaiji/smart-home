@@ -69,4 +69,14 @@ public class TimerJob implements Serializable {
      */
     private String positionName;
 
+    /**
+     * 定时器状态
+     */
+    private Integer status;
+
+    /**
+     * 家庭ID
+     */
+    private Long familyId;
+
 }
