@@ -39,8 +39,8 @@ public class AppUserController {
      * @return
      */
     @PostMapping("/captcha")
-    public String captcha(@RequestParam String email) {
-        return hutoolCaptchaUtil.getCaptchaImage(email);
+    public Result captcha(@RequestParam String email) {
+        return Result.ok(hutoolCaptchaUtil.getCaptchaImage(email));
     }
 
     /**

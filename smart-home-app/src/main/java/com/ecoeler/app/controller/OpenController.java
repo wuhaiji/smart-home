@@ -55,7 +55,7 @@ public class OpenController {
     }
 
     @RequestMapping("/captcha")
-    public String captcha(String email) {
+    public Result captcha(String email) {
         ExceptionUtil.notBlank(email, TangCode.CODE_EMAIL_EMPTY_ERROR);
         return appUserService.captcha(email);
     }
