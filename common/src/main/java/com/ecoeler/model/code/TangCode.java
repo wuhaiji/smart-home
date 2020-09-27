@@ -51,6 +51,9 @@ public enum  TangCode implements ResultCode {
     CODE_FAMILY_NOT_VILLA("20012","当前家庭应该为别墅!"),
     CODE_UPLOAD_FILE_FAIL("20013","文件上传失败!"),
     CODE_ROLE_TO_USER_NOT_EMPTY("20014","该角色还有用户使用,不能删除"),
+    XXL_JOB_UPDATE_ERROR("20015","定时任务修改失败!"),
+    JOB_NOT_EXISTS_ERROR("20016","任务不存在!"),
+    DEVICE_NOT_EXISTS_ERROR("20017","设备不存在!"),
 
     //TOKEN
     CODE_TOKEN_ERROR("30005","无效TOKEN,TOKEN超时或异常!"),

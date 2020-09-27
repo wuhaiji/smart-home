@@ -35,6 +35,10 @@ public class Result<T> {
         this.message = message;
     }
 
+    public boolean success(){
+        return CommonCode.SUCCESS.getCode().equals(code);
+    }
+
     public Result(String code, String message) {
         this.code = code;
         this.message = message;
@@ -52,6 +56,7 @@ public class Result<T> {
     public static Result<String> ok() {
         return new Result<>(CommonCode.SUCCESS.getCode(), CommonCode.SUCCESS.getMsg());
     }
+
 
     /**
      * 返回成功

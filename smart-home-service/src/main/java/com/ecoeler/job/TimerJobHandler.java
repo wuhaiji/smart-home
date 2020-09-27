@@ -1,6 +1,7 @@
 package com.ecoeler.job;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.TimerJob;
 import com.ecoeler.app.msg.OrderInfo;
@@ -46,7 +47,9 @@ public class TimerJobHandler {
         Long timerJobId=Long.parseLong(param);
         TimerJob timerJob = timerJobService.getById(timerJobId);
         //找到设备，及其处理 类
-        Device device = deviceService.getById(timerJob.getDeviceId());
+        QueryWrapper<Device> q=new QueryWrapper<>();
+        q.eq("device_id",timerJob.getDeviceId());
+        Device device = deviceService.getOne(q);
         if(device==null){
             log.warn("---- timer job，device not find!");
             return ReturnT.SUCCESS;
@@ -60,7 +63,6 @@ public class TimerJobHandler {
         deviceEvent.order(orderInfo);
 
         if(timerJob.getType() == TimerJobConst.COUNTDOWN){
-            jobTool.remove(timerJob.getJobId());
             timerJobService.deleteJob(timerJobId);
             return ReturnT.SUCCESS;
         }

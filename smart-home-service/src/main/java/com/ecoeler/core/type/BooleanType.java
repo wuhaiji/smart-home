@@ -9,23 +9,19 @@ import lombok.Data;
  * @since 2020/9/24
  */
 @Data
-public class BooleanType implements IType {
-
-    private String zhTrue;
-
-    private String zhFalse;
-
-    private String enTrue;
-
-    private String enFalse;
+public class BooleanType extends NormalTypeAdapter {
 
     @Override
-    public Object checkout(Object value) {
-        return null;
+    public Object match(Object value) {
+        if(value instanceof Integer){
+            return ((Integer) value) == 1;
+        }
+
+        if(value instanceof String){
+            return Boolean.parseBoolean((String) value);
+        }
+
+        return value;
     }
 
-    @Override
-    public Object checkin(Object value) {
-        return null;
-    }
 }
