@@ -51,5 +51,10 @@ public class DeviceSwitch implements Serializable {
      */
     private String deviceOff;
 
+    /**
+     * 对应device_key表的id
+     */
+
+    private Long deviceKeyId;
 
 }
