@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -41,7 +42,18 @@ public class WebStatistics implements Serializable {
     /**
      * 日期
      */
-    private Date date;
+    private String  date;
 
+    public WebStatistics() {
+    }
 
+    public WebStatistics(String date) {
+        this.date = date;
+    }
+
+    public WebStatistics(Integer userNumber, Integer deviceNumber, String date) {
+        this.userNumber = userNumber;
+        this.deviceNumber = deviceNumber;
+        this.date = date;
+    }
 }

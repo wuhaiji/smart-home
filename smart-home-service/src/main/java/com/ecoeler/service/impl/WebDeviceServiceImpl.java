@@ -4,22 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.bean.v1.PageBean;
-import com.ecoeler.app.bean.v1.WebDeviceDataBean;
 import com.ecoeler.app.dto.v1.WebDeviceDto;
 import com.ecoeler.app.dto.v1.WebDeviceTypeDto;
 import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.service.*;
 
-import com.ecoeler.util.OverviewUtil;
-import com.ecoeler.util.RatioUtil;
-import com.ecoeler.util.TimeUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**

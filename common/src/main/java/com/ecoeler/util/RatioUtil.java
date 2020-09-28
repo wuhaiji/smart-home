@@ -1,6 +1,7 @@
 package com.ecoeler.util;
 
 import java.text.DecimalFormat;
+import java.util.Optional;
 
 /**
  * 比率工具
@@ -15,8 +16,10 @@ public class RatioUtil {
      * @param now
      * @return
      */
-    public static float getCompareRatio(int last,int now){
-        if (last==now){
+    public static float getCompareRatio(Integer last,Integer now){
+        last= Optional.ofNullable(last).orElse(0);
+        now=Optional.ofNullable(now).orElse(0);
+        if (last.equals(now)){
             return 0.0f;
         }
         if(last==0){

@@ -42,7 +42,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
     public static final int GATEWAY_LIKE_NOT = 0;
 
 
-    @Resource
+    @Autowired
     UserFamilyMapper userFamilyMapper;
 
     @Autowired
@@ -443,8 +443,9 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
             throw new ServiceException(ACTION_SELECT_DEVICE_TYPE_ERROR);
         }
 
-        if (deviceType == null)
+        if (deviceType == null) {
             throw new ServiceException(ACTION_DEVICE_TYPE_NOT_EXIST);
+        }
 
         return deviceType;
 
@@ -478,8 +479,9 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
         }
 
         //如果为空，抛出异常
-        if (device == null)
+        if (device == null) {
             throw new ServiceException(ACTION_DEVICE_NOT_EXIST);
+        }
 
         return device;
     }

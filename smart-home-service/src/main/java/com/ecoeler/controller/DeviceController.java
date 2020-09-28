@@ -56,11 +56,11 @@ public class DeviceController {
     }
     @PostMapping("/delete")
     public Result delete(@RequestParam Long id){
-        //deviceService.delete(id);
+        deviceService.deleteDevice(id);
         return Result.ok();
     }
     @PostMapping("/save")
-    public Result save( Device device){
+    public Result save( @RequestBody Device device){
         Long id=deviceService.addDevice(device);
         return Result.ok(id);
     }

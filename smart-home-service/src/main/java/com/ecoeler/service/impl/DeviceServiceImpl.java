@@ -8,15 +8,19 @@ import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.IDeviceService;
+import com.ecoeler.app.service.ITimerJobService;
 import com.ecoeler.core.DeviceEvent;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.util.ExceptionUtil;
 import com.ecoeler.utils.SpringUtil;
+import com.ecoeler.utils.WebStatisticsUtil;
+import kotlin.jvm.internal.Lambda;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.misc.CRC16;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +51,19 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     private DeviceDataMapper deviceDataMapper;
     @Autowired
     private DeviceMapper deviceMapper;
+
+    @Autowired
+    private WebStatisticsUtil webStatisticsUtil;
+
+    @Autowired
+    private SceneActionMapper sceneActionMapper;
+
+    @Autowired
+    private TimerJobMapper timerJobMapper;
+
+    @Autowired
+    private ITimerJobService iTimerJobService;
+
     @Override
     public void control(OrderInfo orderInfo) {
         QueryWrapper<DeviceType> q = new QueryWrapper<>();
@@ -98,13 +115,6 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
      */
     @Override
     public Long addDevice(Device device) {
-        ExceptionUtil.notBlank(device.getDeviceId(), TangCode.CODE_DEVICE_ID_EMPTY_ERROR);
-        ExceptionUtil.notBlank(device.getProductId(), TangCode.CODE_PRODUCT_ID_EMPTY_ERROR);
-        ExceptionUtil.notBlank(device.getDeviceName(), TangCode.CODE_PRODUCT_NAME_EMPTY_ERROR);
-        //ExceptionUtil.notNull(device.getRoomId(), TangCode.CODE_ROOM_ID_NULL_ERROR);
-        ExceptionUtil.notNull(device.getFamilyId(), TangCode.CODE_FAMILY_ID_NULL_ERROR);
-        ExceptionUtil.notNull(device.getGatewayLike(), TangCode.CODE_GATEWAY_LIKE_NULL_ERROR);
-        ExceptionUtil.notBlank(device.getPositionName(), TangCode.CODE_POSITION_NAME_EMPTY_ERROR);
         String deviceId = device.getDeviceId();
         //查询设备是否存在
         Device queryDeviceExit = baseMapper.selectOne(new LambdaQueryWrapper<Device>().eq(Device::getDeviceId, deviceId));
@@ -117,14 +127,20 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         String productId = device.getProductId();
         DeviceType deviceType = deviceTypeMapper.selectOne(
                 new LambdaQueryWrapper<DeviceType>()
-                        .select(DeviceType::getEventClass, DeviceType::getEnTypeName, DeviceType::getZhTypeName, DeviceType::getDefaultIcon)
+                        .select(DeviceType::getEventClass,
+                                DeviceType::getEnTypeName,
+                                DeviceType::getZhTypeName,
+                                DeviceType::getDefaultIcon,
+                                DeviceType::getGatewayLike
+                        )
                         .eq(DeviceType::getProductId, productId)
         );
         device.setEnTypeName(deviceType.getEnTypeName());
         device.setEventClass(deviceType.getEventClass());
         device.setZhTypeName(deviceType.getZhTypeName());
+        device.setGatewayLike(deviceType.getGatewayLike());
         //没有选择图标则为默认图标
-        if (device.getDeviceIcon() == null || "".equals(device.getDeviceIcon().trim())){
+        if (device.getDeviceIcon() == null || "".equals(device.getDeviceIcon().trim())) {
             device.setDeviceIcon(deviceType.getDefaultIcon());
         }
         //没有选择设备状态 默认在线
@@ -132,7 +148,6 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
             device.setNetState(1);
         }
         baseMapper.insert(device);
-
         List<DeviceKey> deviceKeys = deviceKeyMapper.selectList(new LambdaQueryWrapper<DeviceKey>()
                 .eq(DeviceKey::getProductId, productId)
                 .select(DeviceKey::getDataKey)
@@ -149,9 +164,11 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
             ).collect(Collectors.toList());
             deviceDataMapper.insertBatch(deviceDataList);
         }
-
+        //更加统计表数据
+        webStatisticsUtil.updateStatistics(Device.class);
         return device.getId();
     }
+
 
 //    @Override
 //    public Boolean removeDevice(List<Long> roomIdList, Boolean removeFamilyBool) {
@@ -206,5 +223,30 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
             }
         }
         return result;
+    }
+        deviceUpdateWrapper.in("room_id", roomIdList);
+        if (deviceMapper.update(device, deviceUpdateWrapper) > 0) {
+            result = true;
+
+    /**
+     * 删除设备
+     *
+     * @param id
+     */
+    @Override
+    public void deleteDevice(Long id) {
+        //将家庭id更改为0
+        Device device = new Device();
+        device.setId(id);
+        device.setFamilyId(0L);
+        baseMapper.updateById(device);
+        Device exit = baseMapper.selectById(id);
+        String deviceId = exit.getDeviceId();
+        //删除scene_action
+        sceneActionMapper.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getDeviceId, deviceId));
+        //删除time_job
+        TimerJob timerJob = timerJobMapper.selectOne(new LambdaQueryWrapper<TimerJob>().eq(TimerJob::getDeviceId, deviceId)
+                .select(TimerJob::getId));
+        iTimerJobService.deleteJob(timerJob.getId());
     }
 }

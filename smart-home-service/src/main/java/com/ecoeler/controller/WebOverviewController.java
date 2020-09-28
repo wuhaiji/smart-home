@@ -1,6 +1,5 @@
 package com.ecoeler.controller;
 
-import com.ecoeler.app.bean.v1.CountOfDateBean;
 import com.ecoeler.app.bean.v1.WebOverviewDataStatisticsBean;
 
 
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author tangcx
@@ -49,8 +46,7 @@ public class WebOverviewController {
     @RequestMapping("query/device/echarts")
     public Result queryOverviewDeviceDataStatistics(@RequestBody QueryDateDto queryDateDto) {
         log.info("smart-home-service->WebOverviewController->begin query device echarts");
-       // List<CountOfDateBean> result = webOverviewDataService.getDeviceEcharts(queryDateDto);
-        return Result.ok();
+        return Result.ok(webOverviewDataService.getDeviceEcharts(queryDateDto));
     }
 
     /**
@@ -62,7 +58,6 @@ public class WebOverviewController {
     @RequestMapping("query/app/user/echarts")
     public Result queryAppUserOverviewDeviceDataStatistics(@RequestBody QueryDateDto queryDateDto) {
         log.info("smart-home-service->WebOverviewController->begin query appUser echarts");
-        //List<CountOfDateBean> result = webOverviewDataService.getAppUserEcharts(queryDateDto);
-        return Result.ok();
+        return Result.ok(webOverviewDataService.getAppUserEcharts(queryDateDto));
     }
 }
