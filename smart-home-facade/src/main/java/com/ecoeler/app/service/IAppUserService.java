@@ -2,6 +2,7 @@ package com.ecoeler.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ecoeler.app.bean.v1.DeviceVoiceBean;
+import com.ecoeler.app.dto.v1.UserFamilyDto;
 import com.ecoeler.app.dto.v1.voice.UserVoiceDto;
 import com.ecoeler.app.entity.AppUser;
 
@@ -24,4 +25,7 @@ public interface IAppUserService extends IService<AppUser> {
      */
     Long createUser(AppUser user);
 
+    Boolean leaveFamily(UserFamilyDto userFamilyDto);
+
+    Boolean dissolveFamily(UserFamilyDto userFamilyDto);
 }

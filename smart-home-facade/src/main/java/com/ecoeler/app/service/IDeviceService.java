@@ -31,5 +31,6 @@ public interface IDeviceService extends IService<Device> {
     DeviceSpace getDeviceSpace(String deviceId);
 
     Long addDevice(Device device);
-    Boolean removeDevice(List<Long> roomIdList);
+
+    Boolean removeDevice(List<Long> roomIdList, Long familyId, Boolean removeFamilyBool);
 }

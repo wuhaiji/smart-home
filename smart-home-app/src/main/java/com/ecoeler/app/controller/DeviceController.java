@@ -3,7 +3,9 @@ package com.ecoeler.app.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.app.aspect.GoogleRequestSync;
+import com.ecoeler.app.dto.v1.FloorDto;
 import com.ecoeler.app.msg.OrderInfo;
+import com.ecoeler.common.NullContentJudge;
 import com.ecoeler.feign.DeviceService;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.model.code.WJHCode;
@@ -11,6 +13,7 @@ import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -61,15 +64,17 @@ public class DeviceController {
     }
 
     /**
-     * 软删除房间下的设备（将roomId重置为0）
+     * 软删除房间下的设备（将roomId重置为0,是否将familyId重置为0）
      * @author wujihong
-     * @param roomIdList
+     * @param roomIdList,removeFamilyBool
      * @since 18:23 2020-09-27
      */
     @RequestMapping("/remove/device")
-    public Result removeDevice(List<Long> roomIdList){
-        ExceptionUtil.notNull(roomIdList, WJHCode.ROOM_ID_EMPTY_ERROR);
-        return deviceService.removeDevice(roomIdList);
+    public Result removeDevice(@RequestParam(value = "roomIdList") List<Long> roomIdList, Long familyId, Boolean removeFamilyBool){
+        ExceptionUtil.notNull(roomIdList.size() == 0, WJHCode.ROOM_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(removeFamilyBool == null, WJHCode.REMOVE_FAMILY_BOOL_EMPTY_ERROR);
+        ExceptionUtil.notNull(removeFamilyBool == true && familyId == null, WJHCode.FAMILY_ID_EMPTY_ERROR);
+        return deviceService.removeDevice(roomIdList, familyId, removeFamilyBool);
     }
 
 }

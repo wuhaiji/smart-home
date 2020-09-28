@@ -66,9 +66,11 @@ public class DeviceController {
     }
 
     @PostMapping("/remove/device")
-    public Result removeDevice(@RequestBody List<Long> roomIdList) {
-        ExceptionUtil.notNull(roomIdList, WJHCode.ROOM_ID_EMPTY_ERROR);
-        return Result.ok(deviceService.removeDevice(roomIdList));
+    public Result removeDevice(@RequestBody List<Long> roomIdList, @RequestParam Long familyId, @RequestParam Boolean removeFamilyBool) {
+        ExceptionUtil.notNull(roomIdList.size() == 0, WJHCode.ROOM_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(removeFamilyBool == null, WJHCode.REMOVE_FAMILY_BOOL_EMPTY_ERROR);
+        ExceptionUtil.notNull(removeFamilyBool == true && familyId == null, WJHCode.FAMILY_ID_EMPTY_ERROR);
+        return Result.ok(deviceService.removeDevice(roomIdList, familyId, removeFamilyBool));
     }
 
 }

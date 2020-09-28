@@ -157,6 +157,7 @@ public class DeviceSwitchServiceImpl extends ServiceImpl<DeviceSwitchMapper, Dev
     public Map<String,List<DeviceSwitch>> getDeviceSwitchMap(List<String> productIdList){
         QueryWrapper<DeviceSwitch> deviceSwitchQueryWrapper = new QueryWrapper<>();
         deviceSwitchQueryWrapper.in("product_id",productIdList);
+        // 空值处理（当查询结果为空时，会自动空值处理）
         return deviceSwitchMapper.selectList(deviceSwitchQueryWrapper).stream().collect(Collectors.groupingBy(DeviceSwitch::getProductId));
     }
 }

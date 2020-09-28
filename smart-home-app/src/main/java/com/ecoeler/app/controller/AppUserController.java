@@ -1,8 +1,12 @@
 package com.ecoeler.app.controller;
 
 
+import com.ecoeler.app.dto.v1.UserFamilyDto;
+import com.ecoeler.common.NullContentJudge;
 import com.ecoeler.feign.AppUserService;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
+import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +38,11 @@ public class AppUserController {
      * @since 17:34 2020-09-27
      */
     @RequestMapping("/leave/family")
-    public Result leaveFamily() {
-        return null;
+    public Result leaveFamily(UserFamilyDto userFamilyDto) {
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(UserFamilyDto.class, userFamilyDto), WJHCode.PARAM_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getFamilyId(), WJHCode.FAMILY_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getAppUserId(), WJHCode.APP_USER_ID_EMPTY_ERROR);
+        return appUserService.leaveFamily(userFamilyDto);
     }
 
     /**
@@ -45,8 +52,11 @@ public class AppUserController {
      * @since 17:37 2020-09-27
      */
     @RequestMapping("/dissolve/family")
-    public Result dissolveFamily() {
-        return null;
+    public Result dissolveFamily(UserFamilyDto userFamilyDto) {
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(UserFamilyDto.class, userFamilyDto), WJHCode.PARAM_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getFamilyId(), WJHCode.FAMILY_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getAppUserId(), WJHCode.APP_USER_ID_EMPTY_ERROR);
+        return appUserService.dissolveFamily(userFamilyDto);
     }
 
 }

@@ -42,15 +42,15 @@ public class ListUtil {
     }
 
 
-    public static void main(String[] args) {
-       /* List<Student> students = CollUtil.toList(
-                new Student("张", 1),
-                new Student("李", 2),
-                new Student("东", 3)
-        );
-        Map<Object, Student> studentMap = toMap("name", students);
-        System.out.println(JSON.toJSON(studentMap));
-        Student student = studentMap.get("张");
-        System.out.println(student);*/
-    }
+//    public static void main(String[] args) {
+//        List<Student> students = CollUtil.toList(
+//                new Student("张", 1),
+//                new Student("李", 2),
+//                new Student("东", 3)
+//        );
+//        Map<Object, Student> studentMap = toMap("name", students);
+//        System.out.println(JSON.toJSON(studentMap));
+//        Student student = studentMap.get("张");
+//        System.out.println(student);
+//    }
 }

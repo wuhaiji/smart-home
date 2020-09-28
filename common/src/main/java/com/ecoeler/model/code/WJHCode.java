@@ -12,6 +12,9 @@ public enum WJHCode implements ResultCode{
     FLOOR_ID_EMPTY_ERROR("10003", "楼层id不能为空！"),
     FLOOR_NAME_EMPTY_ERROR("100031", "楼层名不能为空！"),
     FAMILY_ID_EMPTY_ERROR("10004", "家庭id不能为空！"),
+    REMOVE_FAMILY_BOOL_EMPTY_ERROR("10005", "removeFamilyBool参数不能为空！"),
+    APP_USER_ID_EMPTY_ERROR("10006", "APP的用户id不能为空！"),
+    NEW_APP_USER_ID_EMPTY_ERROR("100061", "不能指派空的APP用户id！"),
 
     // 业务错误
     SEND_INVITE_SERVICE_ERROR("20001", "发送邀请失败！"),
@@ -22,7 +25,8 @@ public enum WJHCode implements ResultCode{
     // 其他错误
     INVITE_LOSE_EFFECT("30001", "当前邀请失效（过了有效期）！"),
     INVALID_REFUSE_INVITE("30002", "拒绝邀请无效（因为：该用户已加入到家庭）！"),
-    EXIST_FAMILY_USER("30003", "被邀请用户已出现在家庭中！")
+    EXIST_FAMILY_USER("30003", "被邀请用户已出现在家庭中！"),
+    NO_PERMISSION_ERROR("30004", "权限不足，导致的错误！")
     ;
 
     private String code;

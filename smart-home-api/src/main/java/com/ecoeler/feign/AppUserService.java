@@ -1,5 +1,6 @@
 package com.ecoeler.feign;
 
+import com.ecoeler.app.dto.v1.UserFamilyDto;
 import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.model.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -58,5 +59,9 @@ public interface AppUserService {
     @PostMapping("/register")
     Result register(@RequestBody AppUser appUser, @RequestParam String emailCode);
 
+    @PostMapping("/leave/family")
+    Result dissolveFamily(@RequestBody UserFamilyDto userFamilyDto);
 
+    @PostMapping("/dissolve/family")
+    Result leaveFamily(@RequestBody UserFamilyDto userFamilyDto);
 }

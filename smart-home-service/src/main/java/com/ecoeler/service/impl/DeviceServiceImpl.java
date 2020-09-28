@@ -152,16 +152,58 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
         return device.getId();
     }
+
+//    @Override
+//    public Boolean removeDevice(List<Long> roomIdList, Boolean removeFamilyBool) {
+//        Boolean result = false;
+//        QueryWrapper<Room> roomQueryWrapper = new QueryWrapper<>();
+//        UpdateWrapper<Device> deviceUpdateWrapper = new UpdateWrapper<>();
+//        Long familyId;
+//        Device device = new Device();
+//        // 将房间id置为0
+//        device.setRoomId(0L);
+//
+//        // 判断是否将家庭id置为0
+//        if (removeFamilyBool) {
+//            device.setFamilyId(0L);
+//            roomQueryWrapper.select("family_id");
+//            roomQueryWrapper.eq("id", roomIdList.get(0));
+//            // 通过房间id--查询家庭id
+//            familyId = roomMapper.selectOne(roomQueryWrapper).getFamilyId();
+//            deviceUpdateWrapper.eq("family_id", familyId);
+//            if (deviceMapper.update(device, deviceUpdateWrapper) > 0) {
+//                result = true;
+//            }
+//        } else {
+//            deviceUpdateWrapper.in("room_id", roomIdList);
+//            if(deviceMapper.update(device, deviceUpdateWrapper) > 0) {
+//                result = true;
+//            }
+//        }
+//        return result;
+//    }
+
     @Override
-    public Boolean removeDevice(List<Long> roomIdList) {
+    public Boolean removeDevice(List<Long> roomIdList, Long familyId, Boolean removeFamilyBool) {
         Boolean result = false;
+        QueryWrapper<Room> roomQueryWrapper = new QueryWrapper<>();
         UpdateWrapper<Device> deviceUpdateWrapper = new UpdateWrapper<>();
         Device device = new Device();
-
+        // 将房间id置为0
         device.setRoomId(0L);
-        deviceUpdateWrapper.in("room_id", roomIdList);
-        if(deviceMapper.update(device, deviceUpdateWrapper) > 0) {
-            result = true;
+
+        // 判断是否将家庭id置为0
+        if (removeFamilyBool) {
+            device.setFamilyId(0L);
+            deviceUpdateWrapper.eq("family_id", familyId);
+            if (deviceMapper.update(device, deviceUpdateWrapper) > 0) {
+                result = true;
+            }
+        } else {
+            deviceUpdateWrapper.in("room_id", roomIdList);
+            if(deviceMapper.update(device, deviceUpdateWrapper) > 0) {
+                result = true;
+            }
         }
         return result;
     }

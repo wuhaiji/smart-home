@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -20,24 +21,43 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class FloorDto {
+public class FamilyDto {
 
     private Long id;
 
     /**
-     * 楼层名称
+     * 家庭名称
      */
-    private String floorName;
+    private String familyName;
 
     /**
-     * 家庭ID
+     * APP首页家庭图片
      */
-    private Long familyId;
+    private String familyImage;
 
     /**
-     * true:表示删除家庭
-     * false:表示不删除家庭
+     * 家庭类型：0别墅，1住宅
      */
-    private Boolean removeFamilyBool;
+    private Integer familyType;
+
+    /**
+     * 位置名称
+     */
+    private String positionName;
+
+    /**
+     * 坐标
+     */
+    private String coordinate;
+
+    /**
+     * 坐标类型
+     */
+    private String coordinateType;
+
+    private LocalDateTime updateTime;
+
+    private LocalDateTime createTime;
+
 
 }

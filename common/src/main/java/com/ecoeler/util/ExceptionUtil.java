@@ -5,6 +5,7 @@ import com.ecoeler.model.code.ResultCode;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * 异常工具
@@ -40,7 +41,8 @@ public class ExceptionUtil {
      * @since 16:41 2020-09-27
      */
     public static void notNull(Boolean condition, ResultCode code) {
-        if (condition) {
+        // 防止condition为空值
+        if (Optional.ofNullable(condition).orElse(true)) {
             throw new ServiceException(code.getCode(), code.getMsg());
         }
     }

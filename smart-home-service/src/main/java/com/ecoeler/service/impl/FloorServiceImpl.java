@@ -69,11 +69,16 @@ public class FloorServiceImpl extends ServiceImpl<FloorMapper, Floor> implements
 
     @Override
     public Boolean removeFloor(FloorDto floorDto) {
-        Boolean result = false;
+        boolean result = false;
+        boolean removeFamilyBool = false;
         List<Long> floorIdList;
         List<Long> roomIdList;
         QueryWrapper<Floor> floorQueryWrapper = new QueryWrapper<>();
         QueryWrapper<Room> roomQueryWrapper = new QueryWrapper<>();
+
+        if (floorDto.getRemoveFamilyBool() != null) {
+            removeFamilyBool = floorDto.getRemoveFamilyBool();
+        }
 
         if(floorDto.getId() != null) {
             floorQueryWrapper.eq("id", floorDto.getId());
@@ -81,16 +86,22 @@ public class FloorServiceImpl extends ServiceImpl<FloorMapper, Floor> implements
             floorQueryWrapper.eq("family_id", floorDto.getFamilyId());
         }
         floorQueryWrapper.eq(floorDto.getFloorName() != null,"floor_name", floorDto.getFloorName());
+
         // 根据floorDto，查询楼层id(去重)
         floorIdList = floorMapper.selectList(floorQueryWrapper).stream().map(Floor::getId).distinct().collect(Collectors.toList());
 
+        // 判断查询的楼层集合是否为空
+        if (floorIdList.size() == 0) {
+            return false;
+        }
         // 根据floorId，查询房间id
         roomQueryWrapper.in("floor_id", floorIdList);
         roomIdList = roomMapper.selectList(roomQueryWrapper).stream().map(Room::getId).collect(Collectors.toList());
 
-        if (roomIdList != null) {
-            // 1.软删除房间下的设备（将roomId重置为0）
-            deviceService.removeDevice(roomIdList);
+        if (roomIdList.size() != 0) {
+            // 1.软删除房间下的设备（将roomId重置为0，以及是否将家庭id置为0）
+            deviceService.removeDevice(roomIdList, floorDto.getFamilyId(), removeFamilyBool);
+
             // 2.删除房间（根据楼层id集合，去删除房间）
             roomMapper.delete(roomQueryWrapper);
         }

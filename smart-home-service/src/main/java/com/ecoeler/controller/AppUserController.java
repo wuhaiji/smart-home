@@ -2,12 +2,16 @@ package com.ecoeler.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ecoeler.app.dto.v1.UserFamilyDto;
 import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.app.service.IAppUserService;
 import com.ecoeler.app.service.IEmailCodeService;
+import com.ecoeler.common.NullContentJudge;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.exception.ServiceException;
+import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
+import com.ecoeler.util.ExceptionUtil;
 import com.ecoeler.utils.HutoolCaptchaUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +99,34 @@ public class AppUserController {
         QueryWrapper<AppUser> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("email",email);
         return Result.ok(appUserService.getOne(queryWrapper));
+    }
+
+    /**
+     * 用户离开家庭（指定其他用户为家庭拥有者）
+     * @author wujihong
+     * @param
+     * @since 17:34 2020-09-27
+     */
+    @RequestMapping("/leave/family")
+    public Result leaveFamily(@RequestBody UserFamilyDto userFamilyDto) {
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(UserFamilyDto.class, userFamilyDto), WJHCode.PARAM_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getFamilyId(), WJHCode.FAMILY_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getAppUserId(), WJHCode.APP_USER_ID_EMPTY_ERROR);
+        return Result.ok(appUserService.leaveFamily(userFamilyDto));
+    }
+
+    /**
+     * 用户解散家庭（删除家庭）
+     * @author wujihong
+     * @param
+     * @since 17:37 2020-09-27
+     */
+    @RequestMapping("/dissolve/family")
+    public Result dissolveFamily(@RequestBody UserFamilyDto userFamilyDto) {
+        ExceptionUtil.notNull(NullContentJudge.isNullContent(UserFamilyDto.class, userFamilyDto), WJHCode.PARAM_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getFamilyId(), WJHCode.FAMILY_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getAppUserId(), WJHCode.APP_USER_ID_EMPTY_ERROR);
+        return Result.ok(appUserService.dissolveFamily(userFamilyDto));
     }
 
 }
