@@ -35,6 +35,9 @@ public enum  TangCode implements ResultCode {
     CODE_PRODUCT_NAME_EMPTY_ERROR("40024","设备名称不能为空"),
     CODE_GATEWAY_LIKE_NULL_ERROR("40025","未选择是否为网关设备"),
     CODE_POSITION_NAME_EMPTY_ERROR("40026","位置名称不能为空"),
+    CODE_CMD_EMPTY_ERROR("40027","指令不能为空!"),
+    CODE_CRON_EMPTY_ERROR("40028","CRON表达式不能为空!"),
+    CODE_TIMER_JOB_ID_NULL_ERROR("40029","计时任务ID不能为空!"),
 
 
     //业务错误
