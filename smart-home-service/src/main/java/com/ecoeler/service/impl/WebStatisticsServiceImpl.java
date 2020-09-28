@@ -3,14 +3,11 @@ package com.ecoeler.service.impl;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ecoeler.app.bean.v1.CountOfDateBean;
 import com.ecoeler.app.bean.v1.WebOverviewDataStatisticsBean;
 import com.ecoeler.app.dto.v1.WebOverviewEchartsDto;
 import com.ecoeler.app.dto.v1.QueryDateDto;
 import com.ecoeler.app.entity.AppUser;
-import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.WebStatistics;
 import com.ecoeler.app.mapper.AppUserMapper;
 import com.ecoeler.app.mapper.DeviceMapper;
@@ -18,18 +15,16 @@ import com.ecoeler.app.mapper.WebStatisticsMapper;
 import com.ecoeler.app.service.IWebStatisticsService;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.TangCode;
-import com.ecoeler.util.OverviewUtil;
 import com.ecoeler.util.RatioUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -56,19 +51,18 @@ public class WebStatisticsServiceImpl extends ServiceImpl<WebStatisticsMapper,We
      */
     @Override
     public WebOverviewDataStatisticsBean getDataStatistics()  {
-
         WebOverviewDataStatisticsBean bean = new WebOverviewDataStatisticsBean();
+        WebStatistics yesterday=getOneDayCount(LocalDate.now().minusDays(1L).toString());
         int deviceTotal = deviceMapper.selectCount(null);
-        int todayDevice = getOneDayCount(LocalDate.now()).getDeviceNumber();
-        float deviceCompare = RatioUtil.getCompareRatio(getOneDayCount(LocalDate.now().plusDays(1L)).getDeviceNumber(), todayDevice);
-        OverviewUtil<AppUser> appUserOverviewUtil = new OverviewUtil<>();
-        int todayUser = getOneDayCount(LocalDate.now()).getUserNumber();
-        float userCompare = RatioUtil.getCompareRatio(appUserOverviewUtil.getDayCount(
-                LocalDateTime.now(ZoneOffset.UTC).minusDays(1), appUserMapper), todayDevice);
+        int todayDevice = getOneDayCount(LocalDate.now().toString()).getDeviceNumber();
+        float deviceCompare = RatioUtil.getCompareRatio(yesterday.getDeviceNumber(), todayDevice);
+        int userTotal = appUserMapper.selectCount(null);
+        int todayUser = getOneDayCount(LocalDate.now().toString()).getUserNumber();
+        float userCompare = RatioUtil.getCompareRatio(yesterday.getUserNumber(), todayDevice);
         bean.setDeviceTotalCount(deviceTotal);
         bean.setDeviceTodayCount(todayDevice);
         bean.setDeviceDayCompare(deviceCompare);
-      //  bean.setCustomerTodayCount(userTotal);
+        bean.setCustomerTodayCount(userTotal);
         bean.setCustomerTodayCount(todayUser);
         bean.setCustomerDayCompare(userCompare);
         return bean;
@@ -82,7 +76,11 @@ public class WebStatisticsServiceImpl extends ServiceImpl<WebStatisticsMapper,We
      */
     @Override
     public List<WebStatistics> getDeviceEcharts(QueryDateDto queryDateDto) {
-        return getEchartsResult(queryDateDto, Device.class);
+
+        return getEchartsResult(queryDateDto).stream().map(it->{
+            it.setUserNumber(null);
+            return it;
+        }).collect(Collectors.toList());
     }
     /**
      * 查询App用户echarts 默认查询14天
@@ -92,10 +90,13 @@ public class WebStatisticsServiceImpl extends ServiceImpl<WebStatisticsMapper,We
      */
     @Override
     public List<WebStatistics> getAppUserEcharts(QueryDateDto queryDateDto) {
-        return getEchartsResult(queryDateDto, AppUser.class);
+        return getEchartsResult(queryDateDto).stream().map(it->{
+            it.setDeviceNumber(null);
+            return it;
+        }).collect(Collectors.toList());
     }
 
-    private WebStatistics getOneDayCount(LocalDate queryTime){
+    private WebStatistics getOneDayCount(String queryTime){
         return webStatisticsMapper.selectOne(
                 new LambdaQueryWrapper<WebStatistics>().select(WebStatistics::getDeviceNumber,WebStatistics::getUserNumber)
                         .eq(WebStatistics::getDate,queryTime)
@@ -105,38 +106,37 @@ public class WebStatisticsServiceImpl extends ServiceImpl<WebStatisticsMapper,We
     /**
      * 封装查询时间段中每天不管数据库中是否有数据的总数
      * @param queryDateDto 查询条件
-     * @param tableEntity 查询的表格
      * @return 查询时间段中每天对应的数量列表
      */
-    private List<WebStatistics> getEchartsResult(QueryDateDto queryDateDto, Class tableEntity) {
-       /* WebOverviewEchartsDto dto = getWebOverviewEchartsDto(queryDateDto);
-        dto.setTableName(((TableName) tableEntity.getAnnotation(TableName.class)).value());
-        List<CountOfDateBean> beans = webOverviewMapper.selectEcharsData(dto);
+    private List<WebStatistics> getEchartsResult(QueryDateDto queryDateDto) {
+        WebOverviewEchartsDto dto = getWebOverviewEchartsDto(queryDateDto);
+        List<WebStatistics> beans = webStatisticsMapper.selectList(new LambdaQueryWrapper<WebStatistics>()
+                .between(WebStatistics::getDate,dto.getStartDate(),dto.getEndDate().plusDays(1)));
         LocalDate start = dto.getStartDate();
         LocalDate end = dto.getEndDate();
         //每天都有数据
         if (beans != null && beans.size() == (start.toEpochDay() - end.toEpochDay() + 1)) {
             return beans;
         }
-        List<CountOfDateBean> result = new ArrayList<>();
+        List<WebStatistics> result = new ArrayList<>();
         for (; start.isBefore(end.plusDays(1)); ) {
-            String date = start.toString();
             //定义Date
-            CountOfDateBean countOfDateBean = new CountOfDateBean(date);
+            WebStatistics webStatistics= new WebStatistics(0,0,start.toString());
             //查询到的有结果
             if (beans != null && beans.size() != 0) {
-                for (CountOfDateBean bean : beans) {
+                for (WebStatistics bean : beans) {
                     //说明这天有数据
-                    if (date.replace("-", "").equals(bean.getDate())) {
-                        countOfDateBean.setCount(bean.getCount());
+                    if ((start.toString()).equals(bean.getDate())) {
+                       webStatistics.setDeviceNumber(bean.getDeviceNumber());
+                       webStatistics.setUserNumber(bean.getUserNumber());
                     }
                 }
             }
-            result.add(countOfDateBean);
+            result.add(webStatistics);
             start = start.plusDays(1L);
         }
-        return result;*/
-       return null;
+        return result;
+
     }
 
     /**
@@ -188,6 +188,5 @@ public class WebStatisticsServiceImpl extends ServiceImpl<WebStatisticsMapper,We
         webOverviewEchartsDto.setStartDate(startDate);
         webOverviewEchartsDto.setEndDate(endDate);
         return webOverviewEchartsDto;
-
     }
 }

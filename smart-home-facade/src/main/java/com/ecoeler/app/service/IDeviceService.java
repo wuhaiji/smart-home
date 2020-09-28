@@ -30,6 +30,23 @@ public interface IDeviceService extends IService<Device> {
      */
     DeviceSpace getDeviceSpace(String deviceId);
 
+    /**
+     * 新增设备
+     * @param device
+     * @return
+     */
     Long addDevice(Device device);
+
+    /**
+     * 移除设备
+     * @param roomIdList
+     * @return
+     */
     Boolean removeDevice(List<Long> roomIdList);
+
+    /**
+     * 删除设备
+     * @param id
+     */
+    void deleteDevice(Long id);
 }

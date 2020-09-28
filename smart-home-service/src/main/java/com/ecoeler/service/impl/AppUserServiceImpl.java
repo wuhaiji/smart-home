@@ -7,6 +7,7 @@ import com.ecoeler.app.mapper.AppUserMapper;
 import com.ecoeler.app.service.IAppUserService;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.exception.ServiceException;
+import com.ecoeler.utils.WebStatisticsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private WebStatisticsUtil webStatisticsUtil;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -39,6 +42,8 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
         //新增用户
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         baseMapper.insert(user);
+        //修改统计表中的数据
+        webStatisticsUtil.updateStatistics(AppUser.class);
 
         return user.getId();
     }
