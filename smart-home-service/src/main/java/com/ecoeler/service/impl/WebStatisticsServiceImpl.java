@@ -2,16 +2,20 @@ package com.ecoeler.service.impl;
 
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.bean.v1.CountOfDateBean;
 import com.ecoeler.app.bean.v1.WebOverviewDataStatisticsBean;
 import com.ecoeler.app.dto.v1.WebOverviewEchartsDto;
 import com.ecoeler.app.dto.v1.QueryDateDto;
 import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.app.entity.Device;
+import com.ecoeler.app.entity.WebStatistics;
 import com.ecoeler.app.mapper.AppUserMapper;
 import com.ecoeler.app.mapper.DeviceMapper;
-import com.ecoeler.app.mapper.WebOverviewMapper;
-import com.ecoeler.app.service.WebOverviewDataService;
+import com.ecoeler.app.mapper.WebStatisticsMapper;
+import com.ecoeler.app.service.IWebStatisticsService;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.util.OverviewUtil;
@@ -19,11 +23,9 @@ import com.ecoeler.util.RatioUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +41,14 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-public class WebOverviewServiceImpl implements WebOverviewDataService {
+public class WebStatisticsServiceImpl extends ServiceImpl<WebStatisticsMapper,WebStatistics> implements IWebStatisticsService{
     @Autowired
     private AppUserMapper appUserMapper;
 
     @Autowired
     private DeviceMapper deviceMapper;
     @Autowired
-    private WebOverviewMapper webOverviewMapper;
+    private WebStatisticsMapper webStatisticsMapper;
 
     /**
      * 查询统计数据
@@ -57,19 +59,16 @@ public class WebOverviewServiceImpl implements WebOverviewDataService {
 
         WebOverviewDataStatisticsBean bean = new WebOverviewDataStatisticsBean();
         int deviceTotal = deviceMapper.selectCount(null);
-        OverviewUtil<Device> deviceOverviewUtil = new OverviewUtil<>();
-        int todayDevice = deviceOverviewUtil.getDayCount(LocalDateTime.now(), deviceMapper);
-        float deviceCompare = RatioUtil.getCompareRatio(deviceOverviewUtil.getDayCount(
-                LocalDateTime.now().minusDays(1), deviceMapper), todayDevice);
-        int userTotal = appUserMapper.selectCount(null);
+        int todayDevice = getOneDayCount(LocalDate.now()).getDeviceNumber();
+        float deviceCompare = RatioUtil.getCompareRatio(getOneDayCount(LocalDate.now().plusDays(1L)).getDeviceNumber(), todayDevice);
         OverviewUtil<AppUser> appUserOverviewUtil = new OverviewUtil<>();
-        int todayUser = appUserOverviewUtil.getDayCount(LocalDateTime.now(), appUserMapper);
+        int todayUser = getOneDayCount(LocalDate.now()).getUserNumber();
         float userCompare = RatioUtil.getCompareRatio(appUserOverviewUtil.getDayCount(
-                LocalDateTime.now().minusDays(1), appUserMapper), todayDevice);
+                LocalDateTime.now(ZoneOffset.UTC).minusDays(1), appUserMapper), todayDevice);
         bean.setDeviceTotalCount(deviceTotal);
         bean.setDeviceTodayCount(todayDevice);
         bean.setDeviceDayCompare(deviceCompare);
-        bean.setCustomerTodayCount(userTotal);
+      //  bean.setCustomerTodayCount(userTotal);
         bean.setCustomerTodayCount(todayUser);
         bean.setCustomerDayCompare(userCompare);
         return bean;
@@ -82,7 +81,7 @@ public class WebOverviewServiceImpl implements WebOverviewDataService {
      * @return 查询时间段中每天对应新增注册设备数量列表
      */
     @Override
-    public List<CountOfDateBean> getDeviceEcharts(QueryDateDto queryDateDto) {
+    public List<WebStatistics> getDeviceEcharts(QueryDateDto queryDateDto) {
         return getEchartsResult(queryDateDto, Device.class);
     }
     /**
@@ -92,8 +91,15 @@ public class WebOverviewServiceImpl implements WebOverviewDataService {
      * @return 查询时间段中每天对应新增注册人员数量列表
      */
     @Override
-    public List<CountOfDateBean> getAppUserEcharts(QueryDateDto queryDateDto) {
+    public List<WebStatistics> getAppUserEcharts(QueryDateDto queryDateDto) {
         return getEchartsResult(queryDateDto, AppUser.class);
+    }
+
+    private WebStatistics getOneDayCount(LocalDate queryTime){
+        return webStatisticsMapper.selectOne(
+                new LambdaQueryWrapper<WebStatistics>().select(WebStatistics::getDeviceNumber,WebStatistics::getUserNumber)
+                        .eq(WebStatistics::getDate,queryTime)
+        );
     }
 
     /**
@@ -102,8 +108,8 @@ public class WebOverviewServiceImpl implements WebOverviewDataService {
      * @param tableEntity 查询的表格
      * @return 查询时间段中每天对应的数量列表
      */
-    private List<CountOfDateBean> getEchartsResult(QueryDateDto queryDateDto, Class tableEntity) {
-        WebOverviewEchartsDto dto = getWebOverviewEchartsDto(queryDateDto);
+    private List<WebStatistics> getEchartsResult(QueryDateDto queryDateDto, Class tableEntity) {
+       /* WebOverviewEchartsDto dto = getWebOverviewEchartsDto(queryDateDto);
         dto.setTableName(((TableName) tableEntity.getAnnotation(TableName.class)).value());
         List<CountOfDateBean> beans = webOverviewMapper.selectEcharsData(dto);
         LocalDate start = dto.getStartDate();
@@ -129,7 +135,8 @@ public class WebOverviewServiceImpl implements WebOverviewDataService {
             result.add(countOfDateBean);
             start = start.plusDays(1L);
         }
-        return result;
+        return result;*/
+       return null;
     }
 
     /**

@@ -9,6 +9,7 @@ import com.ecoeler.feign.WebRoleService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,6 +39,7 @@ public class RoleController {
      * @param webRole 角色信息
      * @return
      */
+    @PreAuthorize("hasAuthority('role:AddRole')")
     @RequestMapping("save")
     public Result saveRole(WebRole webRole) {
         log.info("smart-home-web->RoleController->begin save role");
@@ -50,6 +52,7 @@ public class RoleController {
      * @param webRole
      * @return
      */
+    @PreAuthorize("hasAuthority('role:Update')")
     @RequestMapping("update")
     public Result updateRole(WebRole webRole) {
         log.info("smart-home-web->RoleController->begin update role");
@@ -62,6 +65,7 @@ public class RoleController {
      * @param id
      * @return
      */
+    @PreAuthorize("hasAuthority('role:Delete')")
     @RequestMapping("delete")
     public Result deleteRole(Long id) {
         log.info("smart-home-web->RoleController->begin delete role");
@@ -73,6 +77,7 @@ public class RoleController {
      *
      * @return
      */
+    @PreAuthorize("hasAuthority('RoleManagement')")
     @RequestMapping("query/list")
     public Result queryRoleList(BasePageDto basePageDto) {
         log.info("smart-home-web->RoleController->begin query all roles");
@@ -82,6 +87,7 @@ public class RoleController {
      * 查询所有权限
      * @return
      */
+    @PreAuthorize("hasAuthority('role:SetPermission')")
     @RequestMapping("/query/all/permission")
     public Result queryAllMenuPermission() {
         log.info("smart-home-web->RoleController->begin query all permissions");
@@ -92,6 +98,7 @@ public class RoleController {
      * 根据用户信息获取权限
      * @return
      */
+    @PreAuthorize("hasAuthority('role:AddRole')")
     @RequestMapping("/query/web/permission")
     public Result queryWebPermission(Principal principal) {
         log.info("smart-home-web->RoleController->begin query permissions for login webUser");
@@ -102,6 +109,7 @@ public class RoleController {
      * 根据roleId获取回显权限
      * @return
      */
+    @PreAuthorize("hasAuthority('role:SetPermission')")
     @RequestMapping("/query/echo/by/role/id")
     public Result queryEchoPermissionByRoleId(Long roleId) {
         log.info("smart-home-web->RoleController->begin query echo permissions for role");
@@ -114,6 +122,7 @@ public class RoleController {
      /* @param customizationPermissionDto 定制的权限 及角色id
      * @return
      */
+    @PreAuthorize("hasAuthority('role:SetPermission')")
     @RequestMapping("customization")
     public Result customizationPermission(Long roleId,@RequestParam("permissions[]") List<Long> permissions) {
         CustomizationPermissionDto customizationPermissionDto =new CustomizationPermissionDto();
@@ -128,6 +137,7 @@ public class RoleController {
      *
      * @return
      */
+    @PreAuthorize("hasAuthority('UserManagement') or hasAuthority('role:SetPermission')")
     @RequestMapping("query/combo/box/role/list")
     public Result queryRoleListExceptById() {
         log.info("smart-home-web->RoleController->begin query all combo box role list");

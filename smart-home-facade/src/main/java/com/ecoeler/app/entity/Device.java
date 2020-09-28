@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -63,9 +64,9 @@ public class Device implements Serializable {
 
     private LocalDateTime offlineTime;
 
-    private LocalDateTime createTime;
+    private Date createTime;
 
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
     /**
      * 设备所属房间ID，没有的房间默认为0

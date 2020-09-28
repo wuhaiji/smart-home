@@ -5,13 +5,9 @@ import com.ecoeler.app.bean.v1.WebOverviewDataStatisticsBean;
 
 
 import com.ecoeler.app.dto.v1.QueryDateDto;
-import com.ecoeler.app.dto.v1.QueryTimeDto;
-import com.ecoeler.app.service.IWebCustomerService;
-import com.ecoeler.app.service.IWebDeviceService;
-import com.ecoeler.app.service.WebOverviewDataService;
+import com.ecoeler.app.service.IWebStatisticsService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +26,7 @@ import java.util.List;
 public class WebOverviewController {
 
     @Autowired
-    private WebOverviewDataService webOverviewDataService;
+    private IWebStatisticsService webOverviewDataService;
 
     /**
      * 查询数据统计
@@ -53,8 +49,8 @@ public class WebOverviewController {
     @RequestMapping("query/device/echarts")
     public Result queryOverviewDeviceDataStatistics(@RequestBody QueryDateDto queryDateDto) {
         log.info("smart-home-service->WebOverviewController->begin query device echarts");
-        List<CountOfDateBean> result = webOverviewDataService.getDeviceEcharts(queryDateDto);
-        return Result.ok(result);
+       // List<CountOfDateBean> result = webOverviewDataService.getDeviceEcharts(queryDateDto);
+        return Result.ok();
     }
 
     /**
@@ -66,7 +62,7 @@ public class WebOverviewController {
     @RequestMapping("query/app/user/echarts")
     public Result queryAppUserOverviewDeviceDataStatistics(@RequestBody QueryDateDto queryDateDto) {
         log.info("smart-home-service->WebOverviewController->begin query appUser echarts");
-        List<CountOfDateBean> result = webOverviewDataService.getAppUserEcharts(queryDateDto);
-        return Result.ok(result);
+        //List<CountOfDateBean> result = webOverviewDataService.getAppUserEcharts(queryDateDto);
+        return Result.ok();
     }
 }

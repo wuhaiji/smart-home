@@ -54,6 +54,16 @@ public class DeviceController {
         deviceService.control(orderInfo);
         return Result.ok();
     }
+    @PostMapping("/delete")
+    public Result delete(@RequestParam Long id){
+        //deviceService.delete(id);
+        return Result.ok();
+    }
+    @PostMapping("/save")
+    public Result save( Device device){
+        Long id=deviceService.addDevice(device);
+        return Result.ok(id);
+    }
 
     @PostMapping("/remove/device")
     public Result removeDevice(@RequestBody List<Long> roomIdList) {

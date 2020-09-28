@@ -24,10 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * <p>
@@ -73,8 +70,8 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         ExceptionUtil.notInRange(webUser.getPassword(), 6, 16, TangCode.PASSWORD_NOT_IN_RANGE_ERROR);
         //校验用户是否存在
         verifyWebUserExit(webUser);
-        webUser.setCreateTime(LocalDateTime.now());
-        webUser.setUpdateTime(LocalDateTime.now());
+        //webUser.setCreateTime(LocalDateTime.now());
+       // webUser.setUpdateTime(LocalDateTime.now());
         baseMapper.insert(webUser);
         return webUser.getId();
     }
@@ -113,7 +110,7 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      */
     @Override
     public void updateWebUser(WebUser webUser) {
-        webUser.setUpdateTime(LocalDateTime.now());
+       // webUser.setUpdateTime(LocalDateTime.now());
         verifyWebUserExit(webUser);
         baseMapper.updateById(webUser);
     }
@@ -154,8 +151,8 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
         page.setCurrent(webUserDto.getCurrent());
         //获取查询时间
         Map<String, LocalDateTime> stringLocalDateTimeMap = TimeUtil.verifyQueryTime(webUserDto);
-        LocalDateTime startTime = stringLocalDateTimeMap.get(TimeUtil.START);
-        LocalDateTime endTime = stringLocalDateTimeMap.get(TimeUtil.END);
+        Date startTime = webUserDto.getStartTime();
+        Date endTime = webUserDto.getEndTime();
         //0-->create_time  1-->update_time
         String timeLine;
         if (timeType == 1) {

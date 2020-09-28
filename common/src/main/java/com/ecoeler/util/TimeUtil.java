@@ -34,16 +34,18 @@ public class TimeUtil {
      */
     public static Map<String, LocalDateTime> verifyQueryTime(QueryTimeDto queryTimeDto) {
         Map<String, LocalDateTime> result=new HashMap<>(4);
-        String start = Optional.ofNullable(queryTimeDto.getStartTime()).orElse("");
-        String end = Optional.ofNullable(queryTimeDto.getEndTime()).orElse("");
+        //String start = Optional.ofNullable(queryTimeDto.getStartTime()).orElse("");
+        //String end = Optional.ofNullable(queryTimeDto.getEndTime()).orElse("");
         LocalDateTime startTime = null;
         LocalDateTime endTime = null;
-        if (!"".equals(start)) {
+
+
+       /* if (!"".equals(start)) {
             startTime = TimeUtil.timeFormat(start);
         }
         if (!"".equals(end)) {
             endTime = TimeUtil.timeFormat(end);
-        }
+        }*/
         if (startTime != null && endTime != null) {
             ExceptionUtil.startIsAfterEnd(startTime, endTime, TangCode.START_TIME_AFTER_END_TIME);
         }

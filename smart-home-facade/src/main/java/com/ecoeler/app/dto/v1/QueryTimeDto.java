@@ -1,10 +1,17 @@
 package com.ecoeler.app.dto.v1;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 查询时间
+ *
  * @author tcx
  */
 @Data
@@ -16,10 +23,14 @@ public class QueryTimeDto {
     /**
      * 开始时间
      */
-    private String startTime;
+    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private Date startTime;
     /**
      * 结束时间
      */
-    private String endTime;
+    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private Date endTime;
 
 }

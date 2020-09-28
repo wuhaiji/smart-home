@@ -18,11 +18,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * <p>
@@ -68,9 +66,8 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         //时间段字段  3-online_time 2-offline_time 0-create_time 1-update_time
         Integer timeType = Optional.ofNullable(webDeviceDto.getTimeType()).orElse(0);
         //获取查询时间
-        Map<String, LocalDateTime> stringLocalDateTimeMap = TimeUtil.verifyQueryTime(webDeviceDto);
-        LocalDateTime startTime = stringLocalDateTimeMap.get(TimeUtil.START);
-        LocalDateTime endTime = stringLocalDateTimeMap.get(TimeUtil.END);
+        Date startTime = webDeviceDto.getStartTime();
+        Date endTime =webDeviceDto.getEndTime();
         String timeLine;
         switch (timeType) {
             case 3:

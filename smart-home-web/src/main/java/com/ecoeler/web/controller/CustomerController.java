@@ -10,6 +10,7 @@ import com.ecoeler.feign.WebCustomerService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/web/customer")
 public class CustomerController {
+
     @Autowired
     private WebCustomerService webCustomerService;
 
@@ -35,6 +37,7 @@ public class CustomerController {
      * @param webCustomerDto 条件
      * @return
      */
+    @PreAuthorize("hasAuthority('CustomerFamily')")
     @RequestMapping("/query/family/list")
     public Result queryFamily(WebCustomerDto webCustomerDto) {
         log.info("smart-home-web->CustomerController->begin query family list");
@@ -46,6 +49,7 @@ public class CustomerController {
      * @param id 家庭 id
      * @return
      */
+    @PreAuthorize("hasAuthority('cus:Member')")
     @RequestMapping("/query/member")
     public Result queryFamilyMember( Long id) {
         log.info("smart-home-web->CustomerController->begin query family member");
@@ -57,6 +61,7 @@ public class CustomerController {
      * @param id 家庭 id
      * @return
      */
+    @PreAuthorize("hasAuthority('cus:Room')")
     @RequestMapping("/query/room")
     public Result queryFamilyRoom(Long id) {
         log.info("smart-home-web->CustomerController->begin query family room");
@@ -67,6 +72,7 @@ public class CustomerController {
      * @param id 家庭 id
      * @return
      */
+    @PreAuthorize("hasAuthority('cus:AllDevice')")
     @RequestMapping("/query/device")
     public Result queryFamilyDevice(Long id) {
         log.info("smart-home-web->CustomerController->begin query family device");

@@ -1,5 +1,6 @@
 package com.ecoeler.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,6 +15,7 @@ import com.ecoeler.app.service.*;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.util.OverviewUtil;
 import com.ecoeler.util.TimeUtil;
+import kotlin.jvm.internal.Lambda;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,17 +58,18 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
         QueryWrapper<Family> queryWrapper = new QueryWrapper<>();
         String familyName = Optional.ofNullable(webCustomerDto.getFamilyName()).orElse("");
         String positionName = Optional.ofNullable(webCustomerDto.getPositionName()).orElse("");
-        Integer familyType=Optional.ofNullable(webCustomerDto.getFamilyType()).orElse(-1);
+        Integer familyType = Optional.ofNullable(webCustomerDto.getFamilyType()).orElse(-1);
         //获取查询时间
         Map<String, LocalDateTime> stringLocalDateTimeMap = TimeUtil.verifyQueryTime(webCustomerDto);
         LocalDateTime startTime = stringLocalDateTimeMap.get(TimeUtil.START);
         LocalDateTime endTime = stringLocalDateTimeMap.get(TimeUtil.END);
         //查询条件
-        queryWrapper.eq(!"".equals(familyName.trim()), "family_name", familyName);
-        queryWrapper.eq(!"".equals(positionName.trim()), "position_name", positionName);
-        queryWrapper.eq(familyType!=-1,"family_type",familyType);
-        queryWrapper.ge(startTime != null, "create_time", startTime);
-        queryWrapper.le(endTime != null, "create_time", endTime);
+        queryWrapper.lambda()
+                .eq(!"".equals(familyName.trim()), Family::getFamilyName, familyName)
+                .eq(!"".equals(positionName.trim()), Family::getPositionName, positionName)
+                .eq(familyType != -1, Family::getFamilyType, familyType)
+                .ge(startTime != null, Family::getCreateTime, startTime)
+                .le(endTime != null, Family::getCreateTime, endTime);
         Page<Family> page = new Page<>();
         page.setSize(webCustomerDto.getSize());
         page.setCurrent(webCustomerDto.getCurrent());
@@ -87,9 +90,13 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
     @Override
     public List<WebCustomerFamilyMemberBean> selectFamilyMember(Long id) {
         List<WebCustomerFamilyMemberBean> result = new ArrayList<>();
-        QueryWrapper<UserFamily> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "app_user_id", "nick_name", "family_id", "role");
-        queryWrapper.eq("family_id", id);
+        LambdaQueryWrapper<UserFamily> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(UserFamily::getId,
+                UserFamily::getAppUserId,
+                UserFamily::getNickName,
+                UserFamily::getFamilyId,
+                UserFamily::getRole)
+                .eq(UserFamily::getFamilyId, id);
         List<UserFamily> families = userFamilyMapper.selectList(queryWrapper);
         if (families != null && families.size() != 0) {
             for (UserFamily family : families) {
@@ -117,8 +124,9 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
     public List<WebCustomerFamilyRoomBean> selectFamilyRoom(Long id) {
         List<WebCustomerFamilyRoomBean> result = new ArrayList<>();
         QueryWrapper<Room> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "room_name", "floor_id");
-        queryWrapper.eq("family_id", id);
+        queryWrapper.lambda()
+                .select(Room::getId,Room::getRoomName,Room::getRoomType,Room::getFloorId)
+                .eq(Room::getFamilyId,id);
         List<Room> list = roomMapper.selectList(queryWrapper);
         if (list != null && list.size() != 0) {
             for (Room room : list) {
@@ -136,6 +144,7 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
         }
         return result;
     }
+
     /**
      * 查询家庭设备
      *
@@ -146,7 +155,8 @@ public class WebCustomerServiceImpl extends ServiceImpl<FamilyMapper, Family> im
     public List<WebCustomerFamilyDeviceBean> selectFamilyDevice(Long id) {
         List<WebCustomerFamilyDeviceBean> result = new ArrayList<>();
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("family_id", id);
+        queryWrapper.lambda()
+                .eq(Device::getFamilyId, id);
         List<Device> list = deviceMapper.selectList(queryWrapper);
         if (list != null && list.size() != 0) {
             for (Device device : list) {

@@ -14,12 +14,9 @@ spring:
     token-url: http://web-oauth2/oauth/token
 
   jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
     default-property-inclusion: non_null
     generator:
       write_numbers_as_strings: true
-
 
 management:
   endpoints:

@@ -2,4 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ecoeler.app.mapper.DeviceDataMapper">
 
+    <insert id="insertBatch" parameterType="com.ecoeler.app.entity.DeviceData">
+        insert into sh_device_data (device_id,data_key) values
+        <foreach collection="list" item="item" separator="," close=";">
+            (#{item.deviceId},#{item.dataKey})
+        </foreach>
+    </insert>
+
 </mapper>
