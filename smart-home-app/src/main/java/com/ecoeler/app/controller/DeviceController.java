@@ -72,7 +72,7 @@ public class DeviceController {
         ExceptionUtil.notBlank(device.getDeviceName(), TangCode.CODE_PRODUCT_NAME_EMPTY_ERROR);
         //ExceptionUtil.notNull(device.getRoomId(), TangCode.CODE_ROOM_ID_NULL_ERROR);
         ExceptionUtil.notNull(device.getFamilyId(), TangCode.CODE_FAMILY_ID_NULL_ERROR);
-        ExceptionUtil.notNull(device.getGatewayLike(), TangCode.CODE_GATEWAY_LIKE_NULL_ERROR);
+
         ExceptionUtil.notBlank(device.getPositionName(), TangCode.CODE_POSITION_NAME_EMPTY_ERROR);
         return deviceService.save(device);
     }

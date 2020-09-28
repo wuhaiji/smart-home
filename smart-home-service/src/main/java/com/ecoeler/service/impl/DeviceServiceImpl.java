@@ -124,12 +124,18 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         String productId = device.getProductId();
         DeviceType deviceType = deviceTypeMapper.selectOne(
                 new LambdaQueryWrapper<DeviceType>()
-                        .select(DeviceType::getEventClass, DeviceType::getEnTypeName, DeviceType::getZhTypeName, DeviceType::getDefaultIcon)
+                        .select(DeviceType::getEventClass,
+                                DeviceType::getEnTypeName,
+                                DeviceType::getZhTypeName,
+                                DeviceType::getDefaultIcon,
+                                DeviceType::getGatewayLike
+                        )
                         .eq(DeviceType::getProductId, productId)
         );
         device.setEnTypeName(deviceType.getEnTypeName());
         device.setEventClass(deviceType.getEventClass());
         device.setZhTypeName(deviceType.getZhTypeName());
+        device.setGatewayLike(deviceType.getGatewayLike());
         //没有选择图标则为默认图标
         if (device.getDeviceIcon() == null || "".equals(device.getDeviceIcon().trim())) {
             device.setDeviceIcon(deviceType.getDefaultIcon());
@@ -176,20 +182,21 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
     /**
      * 删除设备
+     *
      * @param id
      */
     @Override
     public void deleteDevice(Long id) {
         //将家庭id更改为0
-        Device device=new Device();
+        Device device = new Device();
         device.setId(id);
         device.setFamilyId(0L);
         baseMapper.updateById(device);
         Device exit = baseMapper.selectById(id);
-        String deviceId=exit.getDeviceId();
+        String deviceId = exit.getDeviceId();
         //删除scene_action
-        sceneActionMapper.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getDeviceId,deviceId));
+        sceneActionMapper.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getDeviceId, deviceId));
         //删除time_job
-        timerJobMapper.delete(new LambdaQueryWrapper<TimerJob>().eq(TimerJob::getDeviceId,deviceId));
+        timerJobMapper.delete(new LambdaQueryWrapper<TimerJob>().eq(TimerJob::getDeviceId, deviceId));
     }
 }

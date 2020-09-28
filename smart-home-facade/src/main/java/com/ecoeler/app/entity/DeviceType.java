@@ -39,7 +39,7 @@ public class DeviceType implements Serializable {
     /**
      * 网关类型：0否，显示在首页，1是，不显示在首页
      */
-    private Boolean gatewayLike;
+    private Integer gatewayLike;
 
     /**
      * 产品ID
