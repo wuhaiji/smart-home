@@ -8,6 +8,7 @@ import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.IDeviceService;
+import com.ecoeler.app.service.ITimerJobService;
 import com.ecoeler.core.DeviceEvent;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.util.ExceptionUtil;
@@ -59,6 +60,9 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
     @Autowired
     private TimerJobMapper timerJobMapper;
+
+    @Autowired
+    private ITimerJobService iTimerJobService;
 
     @Override
     public void control(OrderInfo orderInfo) {
@@ -196,6 +200,8 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         //删除scene_action
         sceneActionMapper.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getDeviceId, deviceId));
         //删除time_job
-        timerJobMapper.delete(new LambdaQueryWrapper<TimerJob>().eq(TimerJob::getDeviceId, deviceId));
+        TimerJob timerJob = timerJobMapper.selectOne(new LambdaQueryWrapper<TimerJob>().eq(TimerJob::getDeviceId, deviceId)
+                .select(TimerJob::getId));
+        iTimerJobService.deleteJob(timerJob.getId());
     }
 }
