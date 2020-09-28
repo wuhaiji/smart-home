@@ -111,7 +111,6 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
      */
     @Override
     public Long addDevice(Device device) {
-
         String deviceId = device.getDeviceId();
         //查询设备是否存在
         Device queryDeviceExit = baseMapper.selectOne(new LambdaQueryWrapper<Device>().eq(Device::getDeviceId, deviceId));
