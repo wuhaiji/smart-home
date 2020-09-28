@@ -111,13 +111,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
      */
     @Override
     public Long addDevice(Device device) {
-        ExceptionUtil.notBlank(device.getDeviceId(), TangCode.CODE_DEVICE_ID_EMPTY_ERROR);
-        ExceptionUtil.notBlank(device.getProductId(), TangCode.CODE_PRODUCT_ID_EMPTY_ERROR);
-        ExceptionUtil.notBlank(device.getDeviceName(), TangCode.CODE_PRODUCT_NAME_EMPTY_ERROR);
-        //ExceptionUtil.notNull(device.getRoomId(), TangCode.CODE_ROOM_ID_NULL_ERROR);
-        ExceptionUtil.notNull(device.getFamilyId(), TangCode.CODE_FAMILY_ID_NULL_ERROR);
-        ExceptionUtil.notNull(device.getGatewayLike(), TangCode.CODE_GATEWAY_LIKE_NULL_ERROR);
-        ExceptionUtil.notBlank(device.getPositionName(), TangCode.CODE_POSITION_NAME_EMPTY_ERROR);
+
         String deviceId = device.getDeviceId();
         //查询设备是否存在
         Device queryDeviceExit = baseMapper.selectOne(new LambdaQueryWrapper<Device>().eq(Device::getDeviceId, deviceId));

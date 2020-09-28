@@ -60,7 +60,7 @@ public class DeviceController {
         return Result.ok();
     }
     @PostMapping("/save")
-    public Result save( Device device){
+    public Result save( @RequestBody Device device){
         Long id=deviceService.addDevice(device);
         return Result.ok(id);
     }

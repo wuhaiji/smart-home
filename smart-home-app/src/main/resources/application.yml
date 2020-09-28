@@ -4,4 +4,4 @@ spring:
   cloud:
     nacos:
       discovery:
-        namespace: whj
+        namespace: tangcx

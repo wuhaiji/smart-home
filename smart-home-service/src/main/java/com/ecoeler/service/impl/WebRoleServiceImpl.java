@@ -49,8 +49,6 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public Long addRole(WebRole webRole) {
-        webRole.setCreateTime(LocalDateTime.now());
-        webRole.setUpdateTime(LocalDateTime.now());
         baseMapper.insert(webRole);
         return webRole.getId();
     }
@@ -62,7 +60,6 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @Override
     public void updateRole(WebRole webRole) {
-        webRole.setUpdateTime(LocalDateTime.now());
         baseMapper.updateById(webRole);
     }
 

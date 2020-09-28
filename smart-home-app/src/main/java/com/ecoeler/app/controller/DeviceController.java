@@ -3,6 +3,7 @@ package com.ecoeler.app.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.app.aspect.GoogleRequestSync;
+import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.feign.DeviceService;
 import com.ecoeler.model.code.TangCode;
@@ -10,8 +11,7 @@ import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -58,6 +58,23 @@ public class DeviceController {
         ExceptionUtil.notBlank(orderInfo.getProductId(),TangCode.CODE_PRODUCT_ID_EMPTY_ERROR);
         ExceptionUtil.notNull(orderInfo.getMsg(),TangCode.CODE_ORDER_MSG_NULL_ERROR);
         return deviceService.control(orderInfo);
+    }
+
+    @PostMapping("/delete")
+    public Result delete(Long id){
+
+        return deviceService.delete(id);
+    }
+    @PostMapping("/save")
+    public Result save( Device device){
+        ExceptionUtil.notBlank(device.getDeviceId(), TangCode.CODE_DEVICE_ID_EMPTY_ERROR);
+        ExceptionUtil.notBlank(device.getProductId(), TangCode.CODE_PRODUCT_ID_EMPTY_ERROR);
+        ExceptionUtil.notBlank(device.getDeviceName(), TangCode.CODE_PRODUCT_NAME_EMPTY_ERROR);
+        //ExceptionUtil.notNull(device.getRoomId(), TangCode.CODE_ROOM_ID_NULL_ERROR);
+        ExceptionUtil.notNull(device.getFamilyId(), TangCode.CODE_FAMILY_ID_NULL_ERROR);
+        ExceptionUtil.notNull(device.getGatewayLike(), TangCode.CODE_GATEWAY_LIKE_NULL_ERROR);
+        ExceptionUtil.notBlank(device.getPositionName(), TangCode.CODE_POSITION_NAME_EMPTY_ERROR);
+        return deviceService.save(device);
     }
 
     /**
