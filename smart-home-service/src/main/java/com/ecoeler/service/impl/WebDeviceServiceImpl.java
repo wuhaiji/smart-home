@@ -1,5 +1,6 @@
 package com.ecoeler.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,6 +11,7 @@ import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.service.*;
 
+import kotlin.jvm.internal.Lambda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +42,7 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
     @Override
     public List<Family> selectMap() {
         QueryWrapper<Family> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "coordinate", "coordinate_type");
+        queryWrapper.lambda().select(Family::getId,Family::getCoordinate,Family::getCoordinateType);
         return familyMapper.selectList(queryWrapper);
     }
 
@@ -60,7 +62,7 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         Integer timeType = Optional.ofNullable(webDeviceDto.getTimeType()).orElse(0);
         //获取查询时间
         Date startTime = webDeviceDto.getStartTime();
-        Date endTime =webDeviceDto.getEndTime();
+        Date endTime = webDeviceDto.getEndTime();
         String timeLine;
         switch (timeType) {
             case 3:
@@ -80,12 +82,12 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
                 break;
         }
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
-        queryWrapper
-                .eq(!"".equals(deviceId.trim()), "device_id", deviceId)
-                .eq(!"".equals(deviceName.trim()), "device_name", deviceName)
-                .eq(!"".equals(productId.trim()), "product_id", productId)
-                .eq(netState != -1, "net_state", netState)
-                .ge(timeType != -1 && startTime != null, timeLine, startTime)
+        queryWrapper.lambda()
+                .eq(!"".equals(deviceId.trim()), Device::getDeviceId, deviceId)
+                .eq(!"".equals(deviceName.trim()), Device::getDeviceName, deviceName)
+                .eq(!"".equals(productId.trim()), Device::getProductId, productId)
+                .eq(netState != -1, Device::getNetState, netState);
+        queryWrapper.ge(timeType != -1 && startTime != null, timeLine, startTime)
                 .le(timeType != -1 && endTime != null, timeLine, endTime);
         Page<Device> page = new Page<>();
         page.setCurrent(webDeviceDto.getCurrent());
@@ -110,12 +112,20 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         String typeName = Optional.ofNullable(webDeviceTypeDto.getTypeName()).orElse("");
         String productId = Optional.ofNullable(webDeviceTypeDto.getProductId()).orElse("");
         QueryWrapper<DeviceType> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("zh_type_name", "en_type_name", "id", "product_id", "image", "default_icon", "create_time", "update_time")
-                .eq(!"".equals(typeName.trim()), "zh_type_name", typeName)
-                .eq(!"".equals(productId.trim()), "product_id", productId)
+        queryWrapper.lambda().
+                select(DeviceType::getEnTypeName,
+                        DeviceType::getZhTypeName,
+                        DeviceType::getId,
+                        DeviceType::getProductId,
+                        DeviceType::getImage,
+                        DeviceType::getDefaultIcon,
+                        DeviceType::getCreateTime,
+                        DeviceType::getUpdateTime)
+                .eq(!"".equals(typeName.trim()), DeviceType::getZhTypeName, typeName)
+                .eq(!"".equals(productId.trim()), DeviceType::getProductId, productId)
                 .or()
-                .eq(!"".equals(typeName.trim()), "en_type_name", typeName)
-                .eq(!"".equals(productId.trim()), "product_id", productId);
+                .eq(!"".equals(typeName.trim()), DeviceType::getEnTypeName, typeName)
+                .eq(!"".equals(productId.trim()), DeviceType::getProductId, productId);
         Page<DeviceType> page = new Page<>();
         page.setCurrent(webDeviceTypeDto.getCurrent());
         page.setSize(webDeviceTypeDto.getSize());
@@ -130,16 +140,14 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
     /**
      * 查询所有设备类型 下拉框
      *
-     * @return
+     * @return 所有设备类型
      */
     @Override
     public List<DeviceType> selectAllDeviceType() {
-        QueryWrapper<DeviceType> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("product_id", "zh_type_name", "en_type_name");
+        LambdaQueryWrapper<DeviceType> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(DeviceType::getProductId,DeviceType::getEnTypeName,DeviceType::getZhTypeName);
         return deviceTypeMapper.selectList(queryWrapper);
     }
-
-
 
 
 }

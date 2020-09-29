@@ -68,17 +68,16 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      *
      * @param id
      */
-    @ClearCache(value = {"PER#${id}","PER_BACK#${id}"})
+    @ClearCache(value = {"PER#${id}", "PER_BACK#${id}"})
     @Override
     public void deleteRole(Long id) {
-        QueryWrapper<WebUser> webUserQueryWrapper=new QueryWrapper<>();
+        QueryWrapper<WebUser> webUserQueryWrapper = new QueryWrapper<>();
         webUserQueryWrapper.select("id")
-                .eq("role_id",id);
+                .eq("role_id", id);
         List<WebUser> webUsers = webUserMapper.selectList(webUserQueryWrapper);
-        if (webUsers.size()!=0){
+        if (webUsers.size() != 0) {
             log.error("还有用户是当前角色,不能删除");
             throw new ServiceException(TangCode.CODE_ROLE_TO_USER_NOT_EMPTY);
-
         }
         QueryWrapper<WebRolePermission> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("role_id", id);
@@ -91,19 +90,19 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
     /**
      * 查询所有角色
      *
-     * @return
      * @param basePageDto 分页
+     * @return
      */
     @Override
     public PageBean<WebRoleBean> selectRoleList(BasePageDto basePageDto) {
         List<WebRoleBean> beanResult = new ArrayList<>();
         QueryWrapper<WebRole> queryWrapper = new QueryWrapper<>();
-        Page<WebRole> page=new Page<>();
+        Page<WebRole> page = new Page<>();
         page.setCurrent(basePageDto.getCurrent());
         page.setSize(basePageDto.getSize());
         Page<WebRole> webRolePage = baseMapper.selectPage(page, queryWrapper);
         List<WebRole> webRoles = webRolePage.getRecords();
-        PageBean<WebRoleBean> result=new PageBean<>();
+        PageBean<WebRoleBean> result = new PageBean<>();
         result.setPages(webRolePage.getPages());
         result.setTotal(webRolePage.getTotal());
         if (webRoles != null && webRoles.size() != 0) {
@@ -118,7 +117,7 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
                         webRoleBean.setCount(roleBean.getCount());
                     }
                 }
-                if (webRoleBean.getCount()==null){
+                if (webRoleBean.getCount() == null) {
                     webRoleBean.setCount(0);
                 }
                 beanResult.add(webRoleBean);
@@ -128,6 +127,7 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
         result.setList(beanResult);
         return result;
     }
+
     /**
      * 查询所有角色下拉选择框
      *
