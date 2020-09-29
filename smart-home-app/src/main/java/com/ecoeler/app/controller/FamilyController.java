@@ -8,7 +8,7 @@ import com.ecoeler.model.code.TangCode;
 import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
-import org.aspectj.lang.annotation.Pointcut;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +35,7 @@ public class FamilyController {
     public Result addFamily( Family family, String nickname ,Principal principal){
         ExceptionUtil.notBlank(family.getFamilyName(), TangCode.CODE_FAMILY_NAME_EMPTY_ERROR);
         ExceptionUtil.notNull(family.getFamilyType(), TangCode.CODE_FAMILY_TYPE_NULL_ERROR);
+        if(StringUtils.isEmpty(nickname)){nickname="master";}
         return familyService.addFamily(family, PrincipalUtil.getUserId(principal),nickname);
     }
 

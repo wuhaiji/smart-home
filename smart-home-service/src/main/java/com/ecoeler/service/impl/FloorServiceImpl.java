@@ -46,7 +46,7 @@ public class FloorServiceImpl extends ServiceImpl<FloorMapper, Floor> implements
 
     private void familyCheck(Long familyId){
         Family family = familyMapper.selectById(familyId);
-        if(FamilyTypeConst.VILLA !=family.getFamilyType()){
+        if(family==null || FamilyTypeConst.VILLA !=family.getFamilyType()){
             throw new ServiceException(TangCode.CODE_FAMILY_NOT_VILLA);
         }
     }

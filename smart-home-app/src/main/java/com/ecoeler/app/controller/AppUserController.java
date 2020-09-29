@@ -2,6 +2,7 @@ package com.ecoeler.app.controller;
 
 
 import com.ecoeler.app.dto.v1.UserFamilyDto;
+import com.ecoeler.app.utils.PrincipalUtil;
 import com.ecoeler.common.NullContentJudge;
 import com.ecoeler.feign.AppUserService;
 import com.ecoeler.model.code.WJHCode;
@@ -39,10 +40,10 @@ public class AppUserController {
      */
     @RequestMapping("/leave/family")
     public Result leaveFamily(UserFamilyDto userFamilyDto) {
+        userFamilyDto.setAppUserId(PrincipalUtil.getUserId());
         ExceptionUtil.notNull(NullContentJudge.isNullContent(UserFamilyDto.class, userFamilyDto), WJHCode.PARAM_EMPTY_ERROR);
         ExceptionUtil.notNull(userFamilyDto.getFamilyId(), WJHCode.FAMILY_ID_EMPTY_ERROR);
-        ExceptionUtil.notNull(userFamilyDto.getAppUserId(), WJHCode.APP_USER_ID_EMPTY_ERROR);
-        ExceptionUtil.notNull(userFamilyDto.getAppUserId() == userFamilyDto.getNewAppUserOwnerId(), WJHCode.BAN_APPOINT_USER_IS_SELF_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getAppUserId() .equals( userFamilyDto.getNewAppUserOwnerId()), WJHCode.BAN_APPOINT_USER_IS_SELF_ERROR);
         return appUserService.leaveFamily(userFamilyDto);
     }
 
@@ -54,9 +55,9 @@ public class AppUserController {
      */
     @RequestMapping("/dissolve/family")
     public Result dissolveFamily(UserFamilyDto userFamilyDto) {
+        userFamilyDto.setAppUserId(PrincipalUtil.getUserId());
         ExceptionUtil.notNull(NullContentJudge.isNullContent(UserFamilyDto.class, userFamilyDto), WJHCode.PARAM_EMPTY_ERROR);
         ExceptionUtil.notNull(userFamilyDto.getFamilyId(), WJHCode.FAMILY_ID_EMPTY_ERROR);
-        ExceptionUtil.notNull(userFamilyDto.getAppUserId(), WJHCode.APP_USER_ID_EMPTY_ERROR);
         return appUserService.dissolveFamily(userFamilyDto);
     }
 
