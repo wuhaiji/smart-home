@@ -1,5 +1,6 @@
 package com.ecoeler.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ecoeler.app.dto.v1.InviteRecordDto;
@@ -17,10 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author wujihong
@@ -40,110 +44,131 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
     @Autowired
     private AliMailUtil aliMailUtil;
 
+    @Value("${invite.effective.time}")
+    private String effectiveTime;
+
     public static Logger logger = LoggerFactory.getLogger(InviteServiceImpl.class);
 
     @Override
-    public Boolean sendInvite(InviteRecordDto inviteRecordDto) {
-        Integer result;
-        // 保证邀请人的邮箱已经注册
-        // 通过邮箱去查询用户id是否存在
-        getAppUserInfo(inviteRecordDto.getReceiverEmail());
-
-        // 查询邀请信息
+    public void sendInvite(InviteRecordDto inviteRecordDto) {
+        // UTC时间
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        String receiverEmail = inviteRecordDto.getReceiverEmail();
+        Long familyId = inviteRecordDto.getFamilyId();
         QueryWrapper<InviteRecord> inviteRecordQueryWrapper = new QueryWrapper<>();
-        inviteRecordQueryWrapper.eq(inviteRecordDto.getInviterEmail() != null,"inviter_email", inviteRecordDto.getInviterEmail());
+
+        // 保证被邀请人的邮箱已经注册
+        // 1.检验被邀请人是否已注册账号
+        AppUser appUserInfo = getAppUserInfo(receiverEmail);
+        if(appUserInfo==null){
+            throw new ServiceException(WJHCode.USER_UNREGISTERED_SERVICE_ERROR);
+        }
+
+        // 2.查询被邀请人是否已经出现在邀请家庭中
+        if(userFamilyMapper.selectCount(new LambdaQueryWrapper<UserFamily>()
+                .eq(UserFamily::getFamilyId,inviteRecordDto.getFamilyId())
+                .eq(UserFamily::getAppUserId,appUserInfo.getId())) != 0){
+            throw new ServiceException(WJHCode.USER_EXIST_FAMILY_ERROR);
+        }
+
+        // 通过inviterId->查询邀请人名字
+        QueryWrapper<AppUser> appUserQueryWrapper = new QueryWrapper<>();
+        appUserQueryWrapper.eq("id", inviteRecordDto.getInviterId());
+        appUserQueryWrapper.select("username");
+        inviteRecordDto.setInviterName(appUserMapper.selectOne(appUserQueryWrapper).getUsername());
+
+        // 查询邀请记录
+        inviteRecordQueryWrapper.eq(inviteRecordDto.getInviterId() != null,"inviter_id", inviteRecordDto.getInviterId());
         inviteRecordQueryWrapper.eq(inviteRecordDto.getReceiverEmail() != null,"receiver_email", inviteRecordDto.getReceiverEmail());
         inviteRecordQueryWrapper.eq(inviteRecordDto.getFamilyId() != null,"family_id", inviteRecordDto.getFamilyId());
         InviteRecord queryResult = inviteRecordMapper.selectOne(inviteRecordQueryWrapper);
         InviteRecord inviteRecord = new InviteRecord();
 
-        // 当不存在邀请记录时
+        // 3.查询邀请记录是否存在
         if (queryResult == null) {
             // 存储邀请记录
             BeanUtils.copyProperties(inviteRecordDto, inviteRecord);
-            result = inviteRecordMapper.insert(inviteRecord);
-            if(result <= 0) {
+            if(inviteRecordMapper.insert(inviteRecord) <= 0) {
                 throw new ServiceException(WJHCode.INSERT_INVITE_RECORD_SERVICE_ERROR);
             }
             inviteRecordDto.setId(inviteRecord.getId());
-        }
-        // 存在邀请记录时
-        else {
-            // 修改邀请记录
-            inviteRecordDto.setId(queryResult.getId());
-            BeanUtils.copyProperties(inviteRecordDto, inviteRecord);
-            result = inviteRecordMapper.updateById(inviteRecord);
-            if(result <= 0) {
-                throw new ServiceException(WJHCode.UPDATE_INVITE_RECORD_SERVICE_ERROR);
+        } else {
+            // 查看上一次邀请距现在是否已过有效期（effectiveTime）
+            long interval = Duration.between(queryResult.getInviteTime(), now).toDays();
+            // 什么情况下发送邮件？1.当被邀请人响应后；2.当用户未响应，间隔x（x：配置好的有效时间）天后；
+            if (queryResult.getStatus() != 0 || interval >= Long.valueOf(effectiveTime)) {
+                // 4.修改邀请记录-发送邮件
+                inviteRecordDto.setId(queryResult.getId());
+                BeanUtils.copyProperties(inviteRecordDto, inviteRecord);
+                if(inviteRecordMapper.updateById(inviteRecord) <= 0) {
+                    throw new ServiceException(WJHCode.UPDATE_INVITE_RECORD_SERVICE_ERROR);
+                }
+            } else {
+                logger.info("发送邀请失败！原因：上一次的邀请还未失效！");
+                throw new ServiceException(WJHCode.INVITE_NO_EFFECTIVE_ERROR);
             }
         }
         // 发送邀请邮件
         aliMailUtil.sendInvite(inviteRecordDto);
-        return result!=null?true:false;
     }
 
     @Override
-    public String acceptInvite(Long id) {
+    public String acceptInvite(Long id, String inviteTime) {
         String result = null;
-        LocalDateTime now = LocalDateTime.now();
-
-        // 1.判断邀请人是否已在所邀请家庭中（防止重复插入）
+        LocalDateTime inviterTime;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         QueryWrapper<InviteRecord> inviteRecordQueryWrapper = new QueryWrapper<>();
         inviteRecordQueryWrapper.eq("id", id);
-        // 查询当前邀请信息
-        InviteRecord inviteRecord = inviteRecordMapper.selectOne(inviteRecordQueryWrapper);
+        // 查询邀请记录
+        InviteRecord queryInviteRecord = inviteRecordMapper.selectOne(inviteRecordQueryWrapper);
+        // 1.检查当前邀请是否过期
+        inviterTime = LocalDateTime.parse(inviteTime, formatter);
+        checkInviteLoseEffect(inviterTime);
 
-        if (inviteRecord != null) {
-            // 2.判断邀请是否失效
-            checkInviteLoseEffect(inviteRecord.getInviteTime());
-            // 通过邮箱去查询用户信息
-            AppUser appUser = getAppUserInfo(inviteRecord.getReceiverEmail());
-            // 通过用户app_user_id、family_id去查询当前用户是否在家庭中
-            QueryWrapper<UserFamily> userFamilyQueryWrapper = new QueryWrapper<>();
-            userFamilyQueryWrapper.eq("app_user_id", appUser.getId());
-            userFamilyQueryWrapper.eq("family_id", inviteRecord.getFamilyId());
-            Integer queryResult = userFamilyMapper.selectCount(userFamilyQueryWrapper);
-            // 当前用户不在家庭中
-            if (queryResult <= 0) {
-                UserFamily userFamily = new UserFamily();
-                userFamily.setAppUserId(appUser.getId());
-                userFamily.setFamilyId(inviteRecord.getFamilyId());
-                userFamily.setNickName(inviteRecord.getNickName());
-                userFamily.setRole(inviteRecord.getRole());
-                // 将被邀请的用户加入到家庭中
-                if (userFamilyMapper.insert(userFamily) > 0) {
-                    // 修改邀请记录中的邀请状态和响应时间
-                    inviteRecord.setStatus(1);
-                    inviteRecord.setResponseTime(LocalDateTime.now());
-                    inviteRecordMapper.updateById(inviteRecord);
+        // 2.检验被邀请用户是否已在家庭中
+        UserFamily userFamily = getUserFamily(queryInviteRecord.getReceiverEmail(), queryInviteRecord.getFamilyId());
+        if (userFamily == null) {
+            // 3.通过被邀请人邮箱查询其用户信息
+            AppUser appUserInfo = getAppUserInfo(queryInviteRecord.getReceiverEmail());
+
+            UserFamily newUserFamily = new UserFamily();
+            newUserFamily.setAppUserId(appUserInfo.getId());
+            newUserFamily.setFamilyId(queryInviteRecord.getFamilyId());
+            newUserFamily.setNickName(queryInviteRecord.getNickName());
+            newUserFamily.setRole(queryInviteRecord.getRole());
+
+            // 将被邀请用户加入到家庭
+            if (userFamilyMapper.insert(newUserFamily) > 0) {
+                queryInviteRecord.setStatus(1);
+                queryInviteRecord.setResponseTime(LocalDateTime.now());
+                // 修改邀请记录的状态
+                if (inviteRecordMapper.updateById(queryInviteRecord) > 0) {
                     logger.info("被邀请用户加入家庭成功！");
                     result = "被邀请用户加入家庭成功！";
                 }
             }
-            // 当前用户在家庭中
-            else {
-                logger.warn("警告，被邀请用户已出现在家庭中！");
-                throw new ServiceException(WJHCode.EXIST_FAMILY_USER);
-            }
-
         } else {
-            throw new ServiceException(WJHCode.INVITE_LOSE_EFFECT);
+            logger.warn("警告，被邀请用户已出现在家庭中！");
+            throw new ServiceException(WJHCode.EXIST_FAMILY_USER);
         }
-
         return result;
     }
 
     @Override
-    public String refuseInvite(Long id) {
+    public String refuseInvite(Long id, String inviteTime) {
         String result = null;
+        LocalDateTime inviterTime;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         QueryWrapper<InviteRecord> inviteRecordQueryWrapper = new QueryWrapper<>();
         inviteRecordQueryWrapper.eq("id", id);
-        inviteRecordQueryWrapper.select("invite_time", "status");
         InviteRecord queryInviteRecord = inviteRecordMapper.selectOne(inviteRecordQueryWrapper);
-        // 检查当前邀请是否过期
-        checkInviteLoseEffect(queryInviteRecord.getInviteTime());
-        // 判断当前邀请是否已经接受
-        if (queryInviteRecord.getStatus() != 1) {
+        // 1.检查当前邀请是否过期
+        inviterTime = LocalDateTime.parse(inviteTime, formatter);
+        checkInviteLoseEffect(inviterTime);
+
+        // 2.检验被邀请用户是否已在家庭中
+        UserFamily userFamily = getUserFamily(queryInviteRecord.getReceiverEmail(), queryInviteRecord.getFamilyId());
+        if (userFamily == null) {
             InviteRecord inviteRecord = new InviteRecord();
             inviteRecord.setId(id);
             inviteRecord.setStatus(2);
@@ -153,11 +178,10 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
                 logger.info("该用户拒绝加入家庭！");
                 result = "你已拒绝加入家庭!";
             }
-        }else {
+        } else {
             logger.warn("警告，拒绝邀请无效（因为：该用户已加入到家庭）！");
             throw new ServiceException(WJHCode.INVALID_REFUSE_INVITE);
         }
-
         return result;
     }
 
@@ -168,14 +192,24 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
      * @since 14:52 2020-09-23
      */
     public AppUser getAppUserInfo(String email) {
-        AppUser appUser;
         QueryWrapper<AppUser> appUserQueryWrapper = new QueryWrapper<>();
         appUserQueryWrapper.eq("email", email);
-        appUser = appUserMapper.selectOne(appUserQueryWrapper);
-        if (appUser == null) {
-            throw new ServiceException(WJHCode.USER_UNREGISTERED_SERVICE_ERROR);
-        }
-        return appUser;
+        return appUserMapper.selectOne(appUserQueryWrapper);
+    }
+
+    /**
+     * 通过被邀请人邮箱、家庭id去查询用户-家庭信息
+     * @author wujihong
+     * @param email,familyId
+     * @since 15:45 2020-09-29
+     */
+    public UserFamily getUserFamily(String email, Long familyId) {
+        QueryWrapper<UserFamily> userFamilyQueryWrapper = new QueryWrapper<>();
+        // 通过邮箱查询用户信息
+        AppUser appUserInfo = getAppUserInfo(email);
+        userFamilyQueryWrapper.eq("app_user_id", appUserInfo.getId());
+        userFamilyQueryWrapper.eq("family_id", familyId);
+        return userFamilyMapper.selectOne(userFamilyQueryWrapper);
     }
 
     /**
@@ -187,7 +221,7 @@ public class InviteServiceImpl extends ServiceImpl<InviteRecordMapper, InviteRec
     public void checkInviteLoseEffect(LocalDateTime before) {
         // now-before
         Duration between = Duration.between(before, LocalDateTime.now());
-        if (between.toDays() >= 7L) {
+        if (between.toDays() >= Long.valueOf(effectiveTime)) {
             logger.warn("邀请至今已有{}天了！", between.toDays());
             throw new ServiceException(WJHCode.INVITE_LOSE_EFFECT);
         }

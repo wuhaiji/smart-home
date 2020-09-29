@@ -17,8 +17,8 @@ public interface InviteService {
     Result sendInvite(@RequestBody InviteRecordDto inviteRecordDto);
 
     @RequestMapping("/accept/invite")
-    Result acceptInvite(@RequestParam Long id);
+    Result acceptInvite(@RequestParam Long id, @RequestParam String inviteTime);
 
     @RequestMapping("/refuse/invite")
-    Result refuseInvite(@RequestParam Long id);
+    Result refuseInvite(@RequestParam Long id, @RequestParam String inviteTime);
 }

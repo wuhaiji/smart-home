@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * 阿里邮箱
  * @author tang
@@ -33,10 +35,10 @@ public class AliMailUtil {
     @Value("${ali.account.secret}")
     private String secret;
 
-    // @Value("${invite.host.accept}")
+     @Value("${invite.host.accept}")
     private String acceptInviteAddress;
 
-    // @Value("${invite.host.refuse}")
+     @Value("${invite.host.refuse}")
     private String refuseInviteAddress;
 
     public static Logger logger = LoggerFactory.getLogger(AliMailUtil.class);
@@ -94,6 +96,8 @@ public class AliMailUtil {
 
     @Async
     public void sendInvite(InviteRecordDto inviteRecordDto){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String inviteTime = inviteRecordDto.getInviteTime().format(formatter);
         // 如果是除杭州region外的其它region（如新加坡、澳洲Region），需要将下面的"cn-hangzhou"替换为"ap-southeast-1"、或"ap-southeast-2"。
         IClientProfile profile = DefaultProfile.getProfile(
                 "ap-southeast-1",
@@ -123,7 +127,7 @@ public class AliMailUtil {
                     "\t\t\t\t\t<p>Hi there,</p>\n" +
                     "\t\t\t\t\t<p>${name} invites you to join their ${family} family, please decide whether to join?</p>\n" +
                     "\t\t\t\t\t<p>\n" +
-                    "\t\t\t\t\t\t<a href=\"${acceptInviteAddress}?id=${inviteId}\" style=\"\n" +
+                    "\t\t\t\t\t\t<a href=\"${acceptInviteAddress}?id=${id}&inviteTime=${inviteTime}\" style=\"\n" +
                     "\t\t\t\t\t\ttext-decoration: none;\n" +
                     "\t\t\t\t\t\tcolor:#fff;\n" +
                     "\t\t\t\t\t\tbackground-color:rgb(31,143,235);\n" +
@@ -133,7 +137,7 @@ public class AliMailUtil {
                     "\t\t\t\t\t\tborder-radius: 8px;\n" +
                     "\t\t\t\t\t\tdisplay: inline-block;\n" +
                     "\t\t\t\t\t\tfont-size: 20px;\">I'd like to</a>\n" +
-                    "\t\t\t\t\t\t<a href=\"${refuseInviteAddress}?id=${inviteId}\" style=\"\n" +
+                    "\t\t\t\t\t\t<a href=\"${refuseInviteAddress}?id=${id}&inviteTime=${inviteTime}\" style=\"\n" +
                     "\t\t\t\t\t\ttext-decoration: none;\n" +
                     "\t\t\t\t\t\tcolor:#fff;\n" +
                     "\t\t\t\t\t\tbackground-color:rgb(230,76,79);\n" +
@@ -157,7 +161,8 @@ public class AliMailUtil {
                     .replace("${refuseInviteAddress}", refuseInviteAddress)
                     .replace("${name}", inviteRecordDto.getInviterName())
                     .replace("${family}", inviteRecordDto.getFamilyName())
-                    .replace("${inviteId}", inviteRecordDto.getId().toString());
+                    .replace("${id}", inviteRecordDto.getId().toString())
+                    .replace("${inviteTime}", inviteTime);
             request.setHtmlBody(body);
             SingleSendMailResponse response = client.getAcsResponse(request);
 

@@ -15,7 +15,7 @@ public class InviteRecordDto implements Serializable {
 
     private Long id;
 
-    private String inviterEmail;
+    private Long inviterId;
 
     private String inviterName;
 

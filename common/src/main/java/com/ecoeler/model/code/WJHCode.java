@@ -17,9 +17,13 @@ public enum WJHCode implements ResultCode{
     NEW_APP_USER_ID_EMPTY_ERROR("100061", "不能指派空的APP用户id！"),
     APPOINT_USER_NOT_IN_FAMILY("10007", "指派的用户未出现在家庭中！"),
     BAN_APPOINT_USER_IS_SELF_ERROR("100071", "禁止指派的用户是自己！"),
+    USER_EXIST_FAMILY_ERROR("10008", "被邀请的用户已出现在家庭中，禁止重复插入！"),
+    INVITE_RECORD_ID_EMPTY_ERROR("10009", "邀请记录的id不能为空！"),
+    INVITE_RECORD_TIME_EMPTY_ERROR("100091", "邀请时间不能为空！"),
 
     // 业务错误
     SEND_INVITE_SERVICE_ERROR("20001", "发送邀请失败！"),
+    INVITE_NO_EFFECTIVE_ERROR("200011", "发送邀请失败！原因：上一次邀请未失效！"),
     INSERT_INVITE_RECORD_SERVICE_ERROR("20002", "记录邀请信息失败！"),
     UPDATE_INVITE_RECORD_SERVICE_ERROR("20003", "修改邀请信息失败！"),
     USER_UNREGISTERED_SERVICE_ERROR("20004", "该用户的邮箱未注册！"),

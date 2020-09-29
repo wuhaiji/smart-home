@@ -2,6 +2,7 @@ package com.ecoeler.app.controller;
 
 import com.ecoeler.app.dto.v1.FloorDto;
 import com.ecoeler.app.dto.v1.InviteRecordDto;
+import com.ecoeler.app.utils.PrincipalUtil;
 import com.ecoeler.common.NullContentJudge;
 import com.ecoeler.feign.InviteService;
 import com.ecoeler.model.code.WJHCode;
@@ -55,6 +56,7 @@ public class InviteController {
     @RequestMapping("/smart/home/send/invite")
     public Result sendInvite(InviteRecordDto inviteRecordDto) {
         ExceptionUtil.notNull(NullContentJudge.isNullContent(InviteRecordDto.class, inviteRecordDto), WJHCode.PARAM_EMPTY_ERROR);
+        inviteRecordDto.setInviterId(PrincipalUtil.getUserId());
         return inviteService.sendInvite(inviteRecordDto);
     }
 
@@ -66,9 +68,10 @@ public class InviteController {
      */
     @ResponseBody
     @RequestMapping("/open/smart/home/accept/invite")
-    public String acceptInvite(Long id, HttpServletResponse response) {
-        ExceptionUtil.notNull(id, WJHCode.PARAM_EMPTY_ERROR);
-        Result result = inviteService.acceptInvite(id);
+    public String acceptInvite(Long id, String inviteTime, HttpServletResponse response) {
+        ExceptionUtil.notNull(id, WJHCode.INVITE_RECORD_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(inviteTime, WJHCode.INVITE_RECORD_TIME_EMPTY_ERROR);
+        Result result = inviteService.acceptInvite(id, inviteTime);
         String body = bodyString;
         if (result.getData() != null) {
 //            body = body.replace("${message}", JSONObject.toJSONString(result.getData()));
@@ -89,9 +92,10 @@ public class InviteController {
      */
     @ResponseBody
     @RequestMapping("/open/smart/home/refuse/invite")
-    public String refuseInvite(Long id, HttpServletResponse response) {
-        ExceptionUtil.notNull(id, WJHCode.PARAM_EMPTY_ERROR);
-        Result result = inviteService.refuseInvite(id);
+    public String refuseInvite(Long id, String inviteTime, HttpServletResponse response) {
+        ExceptionUtil.notNull(id, WJHCode.INVITE_RECORD_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(inviteTime, WJHCode.INVITE_RECORD_TIME_EMPTY_ERROR);
+        Result result = inviteService.refuseInvite(id, inviteTime);
         String body = bodyString;
         if (result.getData() != null) {
 //            body = body.replace("${message}", JSONObject.toJSONString(result.getData()));

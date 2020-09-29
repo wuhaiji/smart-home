@@ -22,7 +22,7 @@ public class InviteRecord implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private String inviterEmail;
+    private Long inviterId;
 
     private String inviterName;
 

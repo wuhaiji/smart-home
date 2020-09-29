@@ -24,19 +24,22 @@ public class InviteController {
     @RequestMapping("/send/invite")
     public Result sendInvite(@RequestBody InviteRecordDto inviteRecordDto) {
         ExceptionUtil.notNull(inviteRecordDto, WJHCode.SEND_INVITE_SERVICE_ERROR);
-        return Result.ok(iInviteService.sendInvite(inviteRecordDto));
+        iInviteService.sendInvite(inviteRecordDto);
+        return Result.ok();
     }
 
     @RequestMapping("/accept/invite")
-    public Result acceptInvite(@RequestParam Long id) {
-        ExceptionUtil.notNull(id, WJHCode.PARAM_EMPTY_ERROR);
-        return Result.ok(iInviteService.acceptInvite(id));
+    public Result acceptInvite(@RequestParam Long id, @RequestParam String inviteTime) {
+        ExceptionUtil.notNull(id, WJHCode.INVITE_RECORD_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(inviteTime, WJHCode.INVITE_RECORD_TIME_EMPTY_ERROR);
+        return Result.ok(iInviteService.acceptInvite(id, inviteTime));
     }
 
     @RequestMapping("/refuse/invite")
-    public Result refuseInvite(@RequestParam Long id) {
-        ExceptionUtil.notNull(id, WJHCode.PARAM_EMPTY_ERROR);
-        return Result.ok(iInviteService.refuseInvite(id));
+    public Result refuseInvite(@RequestParam Long id, @RequestParam String inviteTime) {
+        ExceptionUtil.notNull(id, WJHCode.INVITE_RECORD_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(inviteTime, WJHCode.INVITE_RECORD_TIME_EMPTY_ERROR);
+        return Result.ok(iInviteService.refuseInvite(id, inviteTime));
     }
 
 }

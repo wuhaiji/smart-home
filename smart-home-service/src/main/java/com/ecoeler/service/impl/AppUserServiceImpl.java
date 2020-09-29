@@ -73,7 +73,6 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean leaveFamily(UserFamilyDto userFamilyDto) {
-        System.out.println("*************");
         for (FamilyEventObserver familyEventObserver : familyEventObserverList) {
             familyEventObserver.whenUserLeaveFamily(userFamilyDto);
         }

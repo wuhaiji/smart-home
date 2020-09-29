@@ -8,9 +8,9 @@ import com.ecoeler.app.entity.InviteRecord;
  * @author wujihong
  */
 public interface IInviteService extends IService<InviteRecord> {
-    Boolean sendInvite(InviteRecordDto inviteRecordDto);
+    void sendInvite(InviteRecordDto inviteRecordDto);
 
-    String acceptInvite(Long id);
+    String acceptInvite(Long id, String inviteTime);
 
-    String refuseInvite(Long id);
+    String refuseInvite(Long id, String inviteTime);
 }
