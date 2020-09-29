@@ -112,6 +112,7 @@ public class AppUserController {
         ExceptionUtil.notNull(NullContentJudge.isNullContent(UserFamilyDto.class, userFamilyDto), WJHCode.PARAM_EMPTY_ERROR);
         ExceptionUtil.notNull(userFamilyDto.getFamilyId(), WJHCode.FAMILY_ID_EMPTY_ERROR);
         ExceptionUtil.notNull(userFamilyDto.getAppUserId(), WJHCode.APP_USER_ID_EMPTY_ERROR);
+        ExceptionUtil.notNull(userFamilyDto.getAppUserId() == userFamilyDto.getNewAppUserOwnerId(), WJHCode.BAN_APPOINT_USER_IS_SELF_ERROR);
         return Result.ok(appUserService.leaveFamily(userFamilyDto));
     }
 

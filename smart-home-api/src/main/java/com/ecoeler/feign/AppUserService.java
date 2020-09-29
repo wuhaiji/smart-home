@@ -60,8 +60,8 @@ public interface AppUserService {
     Result register(@RequestBody AppUser appUser, @RequestParam String emailCode);
 
     @PostMapping("/leave/family")
-    Result dissolveFamily(@RequestBody UserFamilyDto userFamilyDto);
+    Result leaveFamily(@RequestBody UserFamilyDto userFamilyDto);
 
     @PostMapping("/dissolve/family")
-    Result leaveFamily(@RequestBody UserFamilyDto userFamilyDto);
+    Result dissolveFamily(@RequestBody UserFamilyDto userFamilyDto);
 }

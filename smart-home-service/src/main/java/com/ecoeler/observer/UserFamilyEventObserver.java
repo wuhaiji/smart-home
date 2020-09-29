@@ -58,6 +58,9 @@ public class UserFamilyEventObserver implements FamilyEventObserver{
                 throw new ServiceException(WJHCode.NEW_APP_USER_ID_EMPTY_ERROR);
             }
             // 指派新的用户
+            if (userFamilyMapper.selectOne(userFamilyUpdateWrapper) == null) {
+                throw new ServiceException(WJHCode.APPOINT_USER_NOT_IN_FAMILY);
+            }
             userFamilyMapper.update(new UserFamily().setRole(0), userFamilyUpdateWrapper);
         }
         // 删除app用户

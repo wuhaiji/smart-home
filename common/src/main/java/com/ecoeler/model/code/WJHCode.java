@@ -15,6 +15,8 @@ public enum WJHCode implements ResultCode{
     REMOVE_FAMILY_BOOL_EMPTY_ERROR("10005", "removeFamilyBool参数不能为空！"),
     APP_USER_ID_EMPTY_ERROR("10006", "APP的用户id不能为空！"),
     NEW_APP_USER_ID_EMPTY_ERROR("100061", "不能指派空的APP用户id！"),
+    APPOINT_USER_NOT_IN_FAMILY("10007", "指派的用户未出现在家庭中！"),
+    BAN_APPOINT_USER_IS_SELF_ERROR("100071", "禁止指派的用户是自己！"),
 
     // 业务错误
     SEND_INVITE_SERVICE_ERROR("20001", "发送邀请失败！"),

@@ -224,9 +224,6 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         }
         return result;
     }
-        deviceUpdateWrapper.in("room_id", roomIdList);
-        if (deviceMapper.update(device, deviceUpdateWrapper) > 0) {
-            result = true;
 
     /**
      * 删除设备

@@ -13,12 +13,15 @@ import com.ecoeler.app.service.IFamilyService;
 import com.ecoeler.constant.FamilyRoleConst;
 import com.ecoeler.model.code.TangCode;
 import com.ecoeler.exception.ServiceException;
+import com.ecoeler.observer.FamilyEventObserver;
 import com.ecoeler.utils.WebStatisticsUtil;
 import com.ecoeler.model.code.WJHCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * <p>
@@ -45,6 +48,9 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
     @Autowired
     private UserFamilyMapper userFamilyMapper;
 
+    @Autowired
+    private List<FamilyEventObserver> familyEventObserverList;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Long createUser(AppUser user) {
@@ -67,6 +73,10 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean leaveFamily(UserFamilyDto userFamilyDto) {
+        System.out.println("*************");
+        for (FamilyEventObserver familyEventObserver : familyEventObserverList) {
+            familyEventObserver.whenUserLeaveFamily(userFamilyDto);
+        }
         return true;
     }
 
