@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 
 /**
  * 用户
@@ -26,11 +25,6 @@ public class AppUserController {
     @Autowired
     private AppUserService appUserService;
 
-    @RequestMapping("/init")
-    public Result init(Principal principal){
-
-        return Result.ok();
-    }
 
     /**
      * 用户离开家庭（指定其他用户为家庭拥有者）

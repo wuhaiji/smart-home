@@ -58,7 +58,4 @@ public class AppUser implements Serializable {
      */
     private Integer googleLinkStatus;
 
-
-
-
 }

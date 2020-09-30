@@ -110,7 +110,7 @@ public class DeviceEvent {
             updateWrapper.eq("device_id",keyMsg.getDeviceId())
                     .eq("data_key",keyMsg.getDataKey())
                     .lt("seq",keyMsg.getSeq())
-                    .set("data_value",keyMsg.getDataValue());
+                    .set("data_value",keyMsg.getDataValue().toString());
 
             deviceDataService.update(updateWrapper);
 
@@ -129,6 +129,7 @@ public class DeviceEvent {
         String deviceId = res.getDeviceId();
         UpdateWrapper<Device> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("device_id", deviceId)
+                    .eq("net_state",DeviceStatusConst.OFFLINE)
                 .set("net_state", DeviceStatusConst.ONLINE)
                 .set("online_time", new Date());
         boolean updated = deviceService.update(updateWrapper);

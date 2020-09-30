@@ -14,7 +14,7 @@ public class BooleanType extends NormalTypeAdapter {
     @Override
     public Object match(Object value) {
         if(value instanceof Integer){
-            return ((Integer) value) == 1;
+            return ((Integer) value) == 1?Boolean.TRUE:Boolean.FALSE;
         }
 
         if(value instanceof String){

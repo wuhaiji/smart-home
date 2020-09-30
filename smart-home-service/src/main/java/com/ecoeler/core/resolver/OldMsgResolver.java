@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.service.IDeviceService;
 import com.ecoeler.app.msg.KeyMsg;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import java.util.Map;
  * @author tang
  * @since 2020/9/15
  */
+@Slf4j
 @Component
 public class OldMsgResolver implements KeyResolver<JSONObject> {
 
@@ -33,7 +35,9 @@ public class OldMsgResolver implements KeyResolver<JSONObject> {
         QueryWrapper<Device> q=new QueryWrapper<>();
         q.eq("device_id",deviceId)
                 .select("product_id");
-        res.setProductId(deviceService.getOne(q).getProductId());
+        log.info("----deviceId:{}",deviceId);
+        Device one = deviceService.getOne(q);
+        res.setProductId(one.getProductId());
         res.setDeviceId(deviceId);
         res.setKeyMsgList(getKeyList(msg));
         return res;

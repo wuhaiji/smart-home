@@ -6,7 +6,6 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.0.108:8848
-#        server-addr: localhost:8848
     sentinel:
       transport:
         dashboard: 192.168.0.108:8858
@@ -63,8 +62,8 @@ mybatis-plus:
 # 邀请返回地址
 invite:
   host:
-    accept: http://192.168.0.117:11031/open/smart/home/accept/invite
-    refuse: http://192.168.0.117:11031/open/smart/home/refuse/invite
+    accept: http://192.168.0.119:11031/open/smart/home/accept/invite
+    refuse: http://192.168.0.119:11031/open/smart/home/refuse/invite
   # 发送邮件的有效时间
   effective:
     time: 7

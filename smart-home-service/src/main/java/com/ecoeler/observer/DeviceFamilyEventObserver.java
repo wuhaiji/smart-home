@@ -1,8 +1,6 @@
 package com.ecoeler.observer;
 
-import com.ecoeler.app.dto.v1.FamilyDto;
 import com.ecoeler.app.dto.v1.UserFamilyDto;
-import com.ecoeler.app.entity.Family;
 import org.springframework.stereotype.Component;
 
 /**

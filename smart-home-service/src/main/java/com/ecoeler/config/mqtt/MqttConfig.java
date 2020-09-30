@@ -99,9 +99,9 @@ public class MqttConfig {
                         mqttClientFactory()
                 );
         adapter.addTopics(new String[]{
-                MqttTopicConst.V1_HEART_CHANNEL,
-                MqttTopicConst.V1_LWT_CHANNEL,
-                MqttTopicConst.V2_ALIVE_CHANNEL
+                MqttTopicConst.SHARED_PROTOCOL+MqttTopicConst.V1_HEART_CHANNEL,
+                MqttTopicConst.SHARED_PROTOCOL+MqttTopicConst.V1_LWT_CHANNEL,
+                MqttTopicConst.SHARED_PROTOCOL+MqttTopicConst.V2_ALIVE_CHANNEL
         } , new int[]{1,1,1});
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
