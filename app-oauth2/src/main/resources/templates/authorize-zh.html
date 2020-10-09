@@ -18,14 +18,14 @@
         <img src="/static/img/app-icon.png" class="img-circle img-responsive ava center-block app-icon" alt="icon">
 
         <div class="top" th:switch="${session.authorizationRequest.clientId}">
-            <div th:case="'c1'" class="operation-information">
-               将您的Yoti智能帐户与Google帐户关联
+            <div th:case="'google_client'" class="operation-information">
+                将您的Yoti智能帐户与Google帐户连接
             </div>
-            <div th:case="'c2'" class="operation-information">
-               将您的Yoti智能帐户与Amazon帐户关联
+            <div th:case="'alexa_client'" class="operation-information">
+                将您的Yoti智能帐户与Amazon帐户连接
             </div>
-            <div th:case="'*'" class="operation-information">
-                连接您的Yoti智能帐户
+            <div th:case="'*'" class="operation-information"
+                 th:text="将您的Yoti智能帐户与${session.authorizationRequest.clientId}帐户关联">
             </div>
         </div>
 
@@ -51,7 +51,7 @@
 </body>
 <script>
     let language = navigator.language;
-    console.log("浏览器语言2："+language)
+    console.log("浏览器语言2：" + language)
 </script>
 <style>
     .app-icon {

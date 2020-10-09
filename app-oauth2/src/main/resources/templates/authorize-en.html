@@ -19,13 +19,12 @@
 
         <div class="top" th:switch="${session.authorizationRequest.clientId}">
             <div th:case="'c1'" class="operation-information">
-                Connect your Yoti smart account with Google account
+                Link your Yoti smart account with Google account
             </div>
             <div th:case="'c2'" class="operation-information">
-                Connect your Yoti smart account with Amazon account
+                Link your Yoti smart account with Amazon account
             </div>
-            <div th:case="'*'" class="operation-information">
-                Connect your Yoti smart account
+            <div th:case="'*'" class="operation-information" th:text="Link your Yoti smart account with ${session.authorizationRequest.clientId} account">
             </div>
         </div>
 
