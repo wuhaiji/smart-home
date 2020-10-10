@@ -20,6 +20,7 @@ import com.ecoeler.model.code.TangCode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class WebRoleServiceImpl extends ServiceImpl<WebRoleMapper, WebRole> impl
      */
     @ClearCache(value = {"PER#${id}", "PER_BACK#${id}"})
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteRole(Long id) {
         QueryWrapper<WebUser> webUserQueryWrapper = new QueryWrapper<>();
         webUserQueryWrapper.select("id")

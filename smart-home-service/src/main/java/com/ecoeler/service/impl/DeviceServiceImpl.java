@@ -19,6 +19,7 @@ import kotlin.jvm.internal.Lambda;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sun.misc.CRC16;
 
 import java.time.LocalDate;
@@ -115,6 +116,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long addDevice(Device device) {
         String deviceId = device.getDeviceId();
         //查询设备是否存在
@@ -232,6 +234,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
      * @param id
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDevice(Long id) {
         //将家庭id更改为0
         Device device = new Device();
