@@ -61,14 +61,6 @@ public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, WebUser> impl
      */
     @Override
     public Long addWebUser(WebUser webUser) {
-        log.error(webUser.toString());
-        ExceptionUtil.notBlank(webUser.getUserName(), TangCode.CODE_USERNAME_EMPTY_ERROR);
-        ExceptionUtil.notBlank(webUser.getPassword(), TangCode.CODE_PASSWORD_EMPTY_ERROR);
-        if (webUser.getEmail() != null) {
-            ExceptionUtil.notMatch(webUser.getEmail(), "^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$", TangCode.EMAIL_NOT_MATCH_ERROR);
-        }
-        ExceptionUtil.notBlank(webUser.getPhoneNumber(), TangCode.BLANK_PHONE_NUMBER_EMPTY_ERROR);
-        ExceptionUtil.notInRange(webUser.getPassword(), 6, 16, TangCode.PASSWORD_NOT_IN_RANGE_ERROR);
         //校验用户是否存在
         verifyWebUserExit(webUser);
         //webUser.setCreateTime(LocalDateTime.now());

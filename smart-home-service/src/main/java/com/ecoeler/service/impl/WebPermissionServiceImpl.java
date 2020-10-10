@@ -183,6 +183,7 @@ public class WebPermissionServiceImpl extends ServiceImpl<WebPermissionMapper, W
      */
     @ClearCache(value = {"PER_WEB#${customizationPermissionDto.roleId}", "PER_BACK#${customizationPermissionDto.roleId}", "ROLE_PER_IDS#${customizationPermissionDto.roleId}"})
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void customizationPermission(CustomizationPermissionDto customizationPermissionDto) {
         ExceptionUtil.notNull(customizationPermissionDto.getRoleId(), TangCode.NULL_ROLE_ID_EMPTY_ERROR);
         Long roleId = customizationPermissionDto.getRoleId();

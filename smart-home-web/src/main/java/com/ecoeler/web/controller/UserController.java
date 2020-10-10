@@ -5,7 +5,9 @@ import com.ecoeler.app.dto.v1.AllocationRoleDto;
 import com.ecoeler.app.dto.v1.WebUserDto;
 import com.ecoeler.app.entity.WebUser;
 import com.ecoeler.feign.WebUserService;
+import com.ecoeler.model.code.TangCode;
 import com.ecoeler.model.response.Result;
+import com.ecoeler.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,6 +46,13 @@ public class UserController {
     @RequestMapping("/save")
     public Result saveWebUser(WebUser webUser) {
         log.info("smart-home-web->UserController->begin save webUser");
+        ExceptionUtil.notBlank(webUser.getUserName(), TangCode.CODE_USERNAME_EMPTY_ERROR);
+        ExceptionUtil.notBlank(webUser.getPassword(), TangCode.CODE_PASSWORD_EMPTY_ERROR);
+        if (webUser.getEmail() != null) {
+            ExceptionUtil.notMatch(webUser.getEmail(), "^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$", TangCode.EMAIL_NOT_MATCH_ERROR);
+        }
+        ExceptionUtil.notBlank(webUser.getPhoneNumber(), TangCode.BLANK_PHONE_NUMBER_EMPTY_ERROR);
+        ExceptionUtil.notInRange(webUser.getPassword(), 6, 16, TangCode.PASSWORD_NOT_IN_RANGE_ERROR);
         return webUserService.saveWebUser(webUser);
     }
 
