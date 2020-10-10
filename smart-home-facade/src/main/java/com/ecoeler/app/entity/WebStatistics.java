@@ -51,6 +51,11 @@ public class WebStatistics implements Serializable {
         this.date = date;
     }
 
+    public WebStatistics(Integer userNumber, Integer deviceNumber) {
+        this.userNumber = userNumber;
+        this.deviceNumber = deviceNumber;
+    }
+
     public WebStatistics(Integer userNumber, Integer deviceNumber, String date) {
         this.userNumber = userNumber;
         this.deviceNumber = deviceNumber;

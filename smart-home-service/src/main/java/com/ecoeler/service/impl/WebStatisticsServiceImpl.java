@@ -60,7 +60,7 @@ public class WebStatisticsServiceImpl extends ServiceImpl<WebStatisticsMapper, W
         float deviceCompare = RatioUtil.getCompareRatio(yesterday.getDeviceNumber(), todayDevice);
         int userTotal = appUserMapper.selectCount(null);
         int todayUser = getOneDayCount(LocalDate.now().toString()).getUserNumber();
-        float userCompare = RatioUtil.getCompareRatio(yesterday.getUserNumber(), todayDevice);
+        float userCompare = RatioUtil.getCompareRatio(yesterday.getUserNumber(), todayUser);
         bean.setDeviceTotalCount(deviceTotal);
         bean.setDeviceTodayCount(todayDevice);
         bean.setDeviceDayCompare(deviceCompare);
@@ -99,10 +99,13 @@ public class WebStatisticsServiceImpl extends ServiceImpl<WebStatisticsMapper, W
      * @return
      */
     private WebStatistics getOneDayCount(String queryTime) {
-        return webStatisticsMapper.selectOne(
+        WebStatistics webStatistics = webStatisticsMapper.selectOne(
                 new LambdaQueryWrapper<WebStatistics>().select(WebStatistics::getDeviceNumber, WebStatistics::getUserNumber)
-                        .eq(WebStatistics::getDate, queryTime)
-        );
+                        .eq(WebStatistics::getDate, queryTime));
+        if (webStatistics==null){
+            return new WebStatistics(0,0);
+        }
+        return webStatistics;
     }
 
     /**
