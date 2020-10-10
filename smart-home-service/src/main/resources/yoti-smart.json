@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "yoti-smart",
+  "private_key_id": "9d052ae7ca965704b4b377c4778a093a158a13c2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDgTlvl+qSbjdfk\nyDOugeJdh4vqrv4AeZooN7j1R0aOalPpr3KObhzHKPNrJE15mc2VdZtTBTJog/rS\n7MzYLVAYop+X+fKCCQFlTZkqWfaBGy0SK5zXUi7IG675hSN0Mz0y1+fuOw2OcHeT\noK3tmXBLOV+tXcSqsKX7hAKwpKT98MLyRubsAKRWd2DkNXS7eqNZth076u6cfLxX\no54CbvCtU1Q6hrLxNtJ1v8T57WDmuK5Bqr5q03kd2dwcuv+y6Po0UmSZroJjeTf2\n9v7pW5R238irZ3w5mdpgO2b18Lv7iegP4iBWSGqiqcZaQQD7vQREQLijTmbFhPcP\nl9aqVKD5AgMBAAECggEACwOzXeIxG2sGMHenmLNLvIBaSF5qc6HaW4ziRLfIyQKD\nTK+EW7vK0aQlpoZkVYsjaL+bLnhMBuIq5W5NCsqC1eAvymSIL4bQrjr2wU558ny1\nTwtG4DNAFSx4KvbfjFEIeXWCWpTvb/tUK9173PXSvqblF1wfkFWB+Q1SR9P16Xrw\nYk8NEgEFxwJWsJi2qCoOqMFtqGKME4CL5Bsz95RCB2/TLjQ55Cs8yh8VGqgp5tft\nQuXiLUO7SDS3xT/Ku/4E876BYEdYfMRDgqIu9qFBY5guiwk+Wy3BbqXsWMjD8ucO\nus3bhorrvRSxbdrmIKMIrkkQruK5BGVZil/rrf1e7wKBgQD91sBYuL9D+Kux0rC7\nC1kROzMIpQ8lZE7/q0gge/jrcjf6SQI5ZRR4ydlwVAxW8w7mZxtB3UwePkF3ywgI\nP6pzsBT5YaiOMnHu9Tl2MNEEDhP0VptFGwd9krQ4tmM1u/cKMkfoP7O6OQ3ZiHqN\nMDnYX5ZJB1LlZIaFGOjtP1t8CwKBgQDiNz15LoqXc31n2ev8SwISBXlNiMaCiWoR\n2B1iOx/BPcUjWCs6J9pqUlM9sUXgBBcf97CxKY6TsG+0aeqm27lhDgjNHs1SHbEE\n+X3f11lPEoHP2/RDY6nz+p3x9eiaH0ABqQAv6nm58ehN0yrvxK9V18XKNKFKvwfd\nC15xuy41iwKBgQDs7K7noLjVRptrBI50ZukhTjIaFYYHjpK1zDcsKspxaFCbSd3L\nmG79Ntm/IJPL7F2x6/bjCRzs9YrBtz2uBU6hYG6TPfXHk4oIUdbqXDIbKNCzNMsE\nO3BIYs/YR1ReaSzx1XCMdDjazjoBGoPYmHTFYqKxUyaqeaOdQ1zVZFeNdQKBgG9v\nftzfTG5m+fPaqiFSYea2w5aqNf+/6Xx41aC6N15eK2rJ2CGB2Fpfy5msZhuAaFPb\nFDNxoUant59MPceMnbltzHAfKE23SqiErrlBwEDvgPsAA0ffJK2HW58B4F9r3X/z\n3J++BdDPlfwgdho+7ZCABnMhkgLcL+d33kJwTscZAoGBANk7DTTWEDarEX2xaWCk\n4qqaa0I9OqTFV6E9rmxWF9Po0onVMdWQvqtqZqxWnODviyo2qZGMkNRekhwu+nWW\n3PanRMKQn1G3SJrQMkAslLidcve3z8lEJluar//yrY+D52Jky8rXsl84ciixMTrk\nTUuS4lBOUTQlMFasI+OyG8iT\n-----END PRIVATE KEY-----\n",
+  "client_email": "yoti-316@yoti-smart.iam.gserviceaccount.com",
+  "client_id": "100690768380639110111",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/yoti-316%40yoti-smart.iam.gserviceaccount.com"
+}
