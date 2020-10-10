@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ecoeler.app.dto.v1.DeviceDto;
 import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
 import com.ecoeler.app.msg.OrderInfo;
@@ -245,5 +246,17 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         TimerJob timerJob = timerJobMapper.selectOne(new LambdaQueryWrapper<TimerJob>().eq(TimerJob::getDeviceId, deviceId)
                 .select(TimerJob::getId));
         iTimerJobService.deleteJob(timerJob.getId());
+    }
+
+    /**
+     * 修改设备
+     * @param deviceDto 只修改设备的名称
+     */
+    @Override
+    public void updateDevice(DeviceDto deviceDto) {
+        Device device=new Device();
+        device.setId(deviceDto.getId());
+        device.setDeviceName(deviceDto.getDeviceName());
+        baseMapper.updateById(device);
     }
 }

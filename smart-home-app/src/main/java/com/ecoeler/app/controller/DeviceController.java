@@ -3,6 +3,7 @@ package com.ecoeler.app.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.app.aspect.GoogleRequestSync;
+import com.ecoeler.app.dto.v1.DeviceDto;
 import com.ecoeler.app.dto.v1.FloorDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.msg.OrderInfo;
@@ -69,6 +70,7 @@ public class DeviceController {
     public Result delete(Long id){
         return deviceService.delete(id);
     }
+
     @PostMapping("/save")
     public Result save( Device device){
         ExceptionUtil.notBlank(device.getDeviceId(), TangCode.CODE_DEVICE_ID_EMPTY_ERROR);
@@ -78,6 +80,12 @@ public class DeviceController {
         ExceptionUtil.notNull(device.getFamilyId(), TangCode.CODE_FAMILY_ID_NULL_ERROR);
         ExceptionUtil.notBlank(device.getPositionName(), TangCode.CODE_POSITION_NAME_EMPTY_ERROR);
         return deviceService.save(device);
+    }
+    @PostMapping("/update")
+    public Result update( DeviceDto deviceDto){
+        ExceptionUtil.notNull(deviceDto.getId(), TangCode.CODE_ID_NULL_ERROR);
+        ExceptionUtil.notBlank(deviceDto.getDeviceName(), TangCode.CODE_PRODUCT_NAME_EMPTY_ERROR);
+        return deviceService.update(deviceDto);
     }
 
     /**

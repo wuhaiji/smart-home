@@ -1,6 +1,7 @@
 package com.ecoeler.app.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ecoeler.app.dto.v1.DeviceDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceSpace;
 import com.ecoeler.app.msg.OrderInfo;
@@ -44,4 +45,6 @@ public interface IDeviceService extends IService<Device> {
      * @param id
      */
     void deleteDevice(Long id);
+
+    void updateDevice(DeviceDto deviceDto);
 }

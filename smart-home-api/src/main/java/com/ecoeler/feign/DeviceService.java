@@ -1,6 +1,7 @@
 package com.ecoeler.feign;
 
 
+import com.ecoeler.app.dto.v1.DeviceDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.model.response.Result;
@@ -31,6 +32,13 @@ public interface DeviceService {
 
     @PostMapping("/save")
     Result save(@RequestBody Device device);
+
+    /**
+     * 修改设备
+     * @param deviceDto 只修改设备的名称
+     */
+    @PostMapping("/update")
+    Result update( @RequestBody DeviceDto deviceDto);
 
     @PostMapping("/remove/device")
     Result removeDevice(@RequestBody List<Long> roomIdList, @RequestParam Long familyId, @RequestParam Boolean removeFamilyBool);

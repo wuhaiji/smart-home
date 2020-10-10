@@ -3,6 +3,7 @@ package com.ecoeler.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.ecoeler.app.dto.v1.DeviceDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.IDeviceService;
@@ -63,6 +64,15 @@ public class DeviceController {
     public Result save( @RequestBody Device device){
         Long id=deviceService.addDevice(device);
         return Result.ok(id);
+    }
+    /**
+     * 修改设备
+     * @param deviceDto 只修改设备的名称
+     */
+    @PostMapping("/update")
+    public Result update( @RequestBody DeviceDto deviceDto){
+        deviceService.updateDevice(deviceDto);
+        return Result.ok();
     }
 
     @PostMapping("/remove/device")

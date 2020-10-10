@@ -39,6 +39,7 @@ public enum  TangCode implements ResultCode {
     CODE_CRON_EMPTY_ERROR("40028","CRON表达式不能为空!"),
     CODE_TIMER_JOB_ID_NULL_ERROR("40029","计时任务ID不能为空!"),
     CODE_NICKNAME_EMPTY_ERROR("40030","昵称不能为空!"),
+    CODE_ID_NULL_ERROR("40031","ID不能为空!"),
 
 
     //业务错误
