@@ -71,6 +71,7 @@ public class DeviceController {
         return deviceService.delete(id);
     }
 
+    @GoogleRequestSync
     @PostMapping("/save")
     public Result save( Device device){
         ExceptionUtil.notBlank(device.getDeviceId(), TangCode.CODE_DEVICE_ID_EMPTY_ERROR);
@@ -81,6 +82,7 @@ public class DeviceController {
         ExceptionUtil.notBlank(device.getPositionName(), TangCode.CODE_POSITION_NAME_EMPTY_ERROR);
         return deviceService.save(device);
     }
+    @GoogleRequestSync
     @PostMapping("/update")
     public Result update( DeviceDto deviceDto){
         ExceptionUtil.notNull(deviceDto.getId(), TangCode.CODE_ID_NULL_ERROR);
@@ -94,6 +96,7 @@ public class DeviceController {
      * @param roomIdList,removeFamilyBool
      * @since 18:23 2020-09-27
      */
+    @GoogleRequestSync
     @RequestMapping("/remove/device")
     public Result removeDevice(@RequestParam(value = "roomIdList") List<Long> roomIdList, Long familyId, Boolean removeFamilyBool){
         ExceptionUtil.notNull(roomIdList.size() == 0, WJHCode.ROOM_ID_EMPTY_ERROR);
