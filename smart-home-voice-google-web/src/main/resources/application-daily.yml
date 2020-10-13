@@ -33,4 +33,18 @@ logging:
       alibaba:
         nacos:
           client: warn
+feign:
+  hystrix:
+    enabled: true
+  httpclient:
+    enabled: false # 关闭 ApacheHttpClient
+  client:
+    config:
+      default: # 服务名，填写 default 为所有服务，或者指定某服务，例如：annoroad-beta
+        connectTimeout: 10000 # 连接超时，10秒
+        readTimeout: 20000 # 读取超时，20秒
+  okhttp:
+    enabled: true # 开启 okhttp
+
+
 

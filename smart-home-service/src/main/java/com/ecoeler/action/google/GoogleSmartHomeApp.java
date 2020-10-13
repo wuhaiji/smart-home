@@ -68,12 +68,15 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
     public void afterPropertiesSet() throws Exception {
 
         try {
-            InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("yoti-mart.json");
-            assert resourceAsStream != null;
-            GoogleCredentials credentials = GoogleCredentials.fromStream(resourceAsStream);
-            this.setCredentials(credentials);
+            InputStream resourceAsStream = GoogleSmartHomeApp.class.getClassLoader().getResourceAsStream("yoti-mart.json");
+            if (resourceAsStream != null) {
+                GoogleCredentials credentials = GoogleCredentials.fromStream(resourceAsStream);
+                this.setCredentials(credentials);
+            } else {
+                log.error("couldn't load google credentials");
+            }
         } catch (Exception e) {
-            log.error("couldn't load credentials");
+            log.error("couldn't load google credentials");
         }
     }
 
@@ -86,8 +89,9 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
 
         Long userId = Long.valueOf((String) map.get(AppVoiceConstant.DTO_KEY_USER_ID));
 
-        UserVoiceDto userVoiceDto = UserVoiceDto.of().setUserId(userId);
-        List<DeviceVoiceBean> deviceVoiceBeans = appVoiceActionService.getDeviceVoiceBeans(userVoiceDto);
+        List<DeviceVoiceBean> deviceVoiceBeans = appVoiceActionService.getDeviceVoiceBeans(
+                UserVoiceDto.of().setUserId(userId)
+        );
 
         SyncResponse response = new SyncResponse();
         response.setRequestId(syncRequest.requestId);
@@ -134,7 +138,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
         if (map == null)
             throw new ServiceException("params map can not be empty");
 
-        Long userId = Long.valueOf((String) map.get(DTO_KEY_USER_ID));
+        // Long userId = Long.valueOf((String) map.get(DTO_KEY_USER_ID));
 
         QueryRequest.Inputs.Payload.Device[] devices = ((QueryRequest.Inputs) queryRequest.getInputs()[0]).payload.devices;
         Map<String, Map<String, Object>> deviceStates = new HashMap<>();
@@ -250,9 +254,10 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
     private Map<String, Object> execute(String deviceId, ExecuteRequest.Inputs.Payload.Commands.Execution[] executions) {
 
         Map<String, Object> states = this.getDeviceStatesMap(deviceId);
-
-        if (!(Boolean) states.get(GOOGLE_NET_STATE_KEY))
-            throw new ServiceException();
+        Object onlineValue = states.get(GOOGLE_NET_STATE_KEY);
+        if (onlineValue == null || (Boolean) onlineValue) {
+            throw new ServiceException("deviceOffline");
+        }
 
         //下发命令的json内容
         JSONObject jobJson = new JSONObject();
@@ -325,8 +330,9 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
         for (Map.Entry<String, List<DeviceStateBean>> entry : listMap.entrySet()) {
 
             List<DeviceStateBean> list = entry.getValue();
+
             if (!entry.getKey().equals(GOOGLE_POWER_STATE_KEY)) {
-                states.put(entry.getKey(), entry.getValue());
+                states.put(entry.getKey(), list.get(0).getValue());
                 continue;
             }
 
@@ -342,25 +348,17 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
             }
             if (flag) {
                 states.put(entry.getKey(), POWER_STATE_ON);
-            }else{
+            } else {
                 states.put(entry.getKey(), POWER_STATE_OFF);
             }
 
         }
 
-        // Map<String, Object> states = deviceStateBeans.parallelStream()
-        //         .collect(Collectors.toMap(
-        //                 DeviceStateBean::getGoogleStateName,
-        //                 DeviceStateBean::getValue
-        //                 )
-        //         );
         states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
-
 
         //开关量1/0转换成google需要的boolean
         if (states.containsKey(GOOGLE_POWER_STATE_KEY)) {
-            String onOffValue = (String) states.get(GOOGLE_POWER_STATE_KEY);
-            states.put(GOOGLE_POWER_STATE_KEY, onOffValue.equals(POWER_STATE_ON));
+            states.put(GOOGLE_POWER_STATE_KEY, Boolean.valueOf((String) states.get(GOOGLE_POWER_STATE_KEY)));
         }
 
         return states;

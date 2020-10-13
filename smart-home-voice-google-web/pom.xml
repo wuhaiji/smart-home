@@ -65,5 +65,10 @@
             <optional>true</optional>
         </dependency>
 
+        <!--okhttp3-->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+        </dependency>
     </dependencies>
 </project>

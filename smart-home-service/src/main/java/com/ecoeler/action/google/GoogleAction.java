@@ -40,8 +40,10 @@ public class GoogleAction {
 
     @Autowired
     UserFamilyMapper userFamilyMapper;
+
     @Autowired
     DeviceMapper deviceMapper;
+
     @Autowired
     FamilyMapper familyMapper;
 

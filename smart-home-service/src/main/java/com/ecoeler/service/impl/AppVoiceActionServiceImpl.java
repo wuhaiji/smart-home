@@ -174,7 +174,7 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
         //查询设备data
         List<DeviceData> deviceDatas = this.getDeviceDataList(DeviceDataVoiceDto.of().setDeviceId(deviceId));
-        if (CollUtil.isEmpty(deviceDatas)) return DeviceInfo.of().setDeviceStateBeans(CollUtil.list(false));
+        if (CollUtil.isEmpty(deviceDatas)) return deviceInfo.setDeviceStateBeans(CollUtil.list(false));
         List<String> deviceKeyList = deviceDatas.parallelStream().map(DeviceData::getDataKey).collect(Collectors.toList());
 
         //查询设备可控可上传key
