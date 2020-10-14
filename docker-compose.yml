@@ -1,0 +1,142 @@
+version: "3"
+
+services:
+
+  sh-nginx:
+    build:
+      context: ./nginx-docker
+      dockerfile: Dockerfile
+    image: sh-main-nginx
+    container_name: sh-main-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - "sh-net"
+    privileged: true #是否让docker 应用容器 获取宿主机root权限（特殊权限）
+    restart: on-failure #失败重启
+    volumes:
+      - /smar-home/nginx/data:/usr/share/nginx/html
+      - /smar-home/nginx/logs:/var/log/nginx
+
+  sh-redis:
+    build:
+      context: ./redis-docker
+      dockerfile: Dockerfile
+    image: sh-redis
+    container_name: sh_redis
+    expose:
+      - "6379"
+    volumes:
+      - /smar-home/redis/data:/data
+      - /smar-home/redis/logs:/logs
+
+  sh-nacos:
+    build:
+      context: ./nacos-docker
+      dockerfile: Dockerfile
+    image: sh-nacos
+    container_name: sh-nacos
+    ports:
+      - "8848:8848"
+    networks:
+      - "sh-net"
+    environment:
+      - MODE=standalone
+    volumes:
+      - /smar-home/nacos/logs:/home/nacos/logs
+    restart: on-failure
+
+  sh-voice-google-web:
+    build:
+      context: ./smart-home-voice-google-web
+      dockerfile: Dockerfile
+    images: sh-voice-google-web
+    container_name: sh-voice-google-web
+    networks:
+      - "sh-net"
+    expose:
+      - "80"
+    volumes:
+      - /smar-home/sh-voice-google-web/logs:/logs
+
+  sh-voice-alexa-web:
+    build:
+      context: ./smart-home-voice-alexa-web
+      dockerfile: Dockerfile
+    images: sh-voice-alexa-web
+    container_name: sh-voice-alexa-web
+    networks:
+      - "sh-net"
+    expose:
+      - "80"
+    volumes:
+      - /smar-home/sh-voice-alexa-web/logs:/logs
+
+  sh-app-oauth2:
+    build:
+      context: ./app-oauth2
+      dockerfile: Dockerfile
+    images: sh-app-oauth2
+    container_name: sh-app-oauth2
+    networks:
+      - "sh-net"
+    expose:
+      - "80"
+    volumes:
+      - /smar-home/sh-app-oauth2/logs:/logs
+
+  sh-web-oauth2:
+    build:
+      context: ./web-oauth2
+      dockerfile: Dockerfile
+    images: sh-web-oauth2
+    container_name: sh-web-oauth2
+    networks:
+      - "sh-net"
+    expose:
+      - "80"
+    volumes:
+      - /smar-home/sh-web-oauth2/logs:/logs
+
+  sh-app-web:
+    build:
+      context: ./smart-home-app
+      dockerfile: Dockerfile
+    images: sh-app-web
+    container_name: sh-app-web
+    networks:
+      - "sh-net"
+    expose:
+      - "80"
+    volumes:
+      - /smar-home/sh-app-web/logs:/logs
+
+  sh-service:
+    build:
+      context: ./smart-home-service
+      dockerfile: Dockerfile
+    images: sh-service
+    container_name: sh-service
+    networks:
+      - "sh-net"
+    expose:
+      - "80"
+    volumes:
+      - /smar-home/sh-service/logs:/logs
+      -
+  sh-xxl-job-admin:
+    build:
+      context: ./xxl-job-admin
+      dockerfile: Dockerfile
+    images: sh-xxl-job-admin
+    container_name: sh-xxl-job-admin
+    networks:
+      - "sh-net"
+    expose:
+      - "80"
+    volumes:
+      - /smar-home/sh-xxl-job-admin/logs:/logs
+
+networks:
+  sh-net:
