@@ -5,6 +5,7 @@ import com.ecoeler.app.entity.AppUser;
 import com.ecoeler.feign.AppUserService;
 import com.ecoeler.feign.Oauth2ClientService;
 import com.ecoeler.model.code.TangCode;
+import com.ecoeler.model.response.Oauth2Token;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 
 /**
@@ -45,7 +47,16 @@ public class OpenController {
         if(!res.success()){
             return res;
         }
-        return Result.ok(oauth2ClientService.getToken(appResourceProperties.getClientId(), appResourceProperties.getClientSecret(), email, password));
+        Oauth2Token token = oauth2ClientService.getToken(appResourceProperties.getClientId(), appResourceProperties.getClientSecret(), email, password);
+        Result<AppUser> userResult = appUserService.getUser(email);
+        if (userResult!=null){
+            AppUser appUser = userResult.getData();
+            if (appUser!=null){
+                token.setUsername(appUser.getUsername());
+                token.setHeadImage(appUser.getHeadImage());
+            }
+        }
+        return Result.ok(token);
     }
 
     @RequestMapping("/refresh_token")

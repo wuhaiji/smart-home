@@ -25,4 +25,8 @@ public class Oauth2Token {
 
     private String scope;
 
+
+    private String username;
+
+    private String headImage;
 }
