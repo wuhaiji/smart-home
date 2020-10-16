@@ -78,5 +78,20 @@ public class DeviceType implements Serializable {
      */
     private String image;
 
+    /**
+     * 一级中文名称
+     */
+    private String zhPrimaryType;
+
+    /**
+     * 一级英文名称
+     */
+    private String  enPrimaryType;
+
+    /**
+     * 配网类型
+     */
+    private String netType;
+
 
 }
