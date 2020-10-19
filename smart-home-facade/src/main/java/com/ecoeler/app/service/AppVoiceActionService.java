@@ -7,8 +7,8 @@ import com.ecoeler.app.dto.v1.DeviceSwitchVoiceDto;
 import com.ecoeler.app.dto.v1.voice.*;
 import com.ecoeler.app.entity.*;
 
-
 import java.util.List;
+import java.util.Map;
 
 public interface AppVoiceActionService {
     /**
@@ -28,6 +28,13 @@ public interface AppVoiceActionService {
     DeviceInfo getDeviceStatesByDeviceId(String deviceId);
 
     /**
+     * 将deviceInfo转为google需要的states
+     * @param deviceId
+     * @return
+     */
+    Map<String, Object> getDeviceGoogleStatesMap(String deviceId);
+
+    /**
      * 按照设备id查询设备的可控key
      *
      * @param deviceId
@@ -45,6 +52,7 @@ public interface AppVoiceActionService {
 
     /**
      * 查询deviceType 集合
+     *
      * @param dto
      * @return
      */
@@ -77,6 +85,7 @@ public interface AppVoiceActionService {
 
     /**
      * 查询device_switch
+     *
      * @param dto
      * @return
      */
@@ -101,7 +110,8 @@ public interface AppVoiceActionService {
 
 
     /**
-     *  获取设备开关量 集合
+     * 获取设备开关量 集合
+     *
      * @param deviceId
      */
 

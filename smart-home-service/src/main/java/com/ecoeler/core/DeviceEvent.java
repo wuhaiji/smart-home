@@ -4,6 +4,7 @@ package com.ecoeler.core;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.ecoeler.action.google.GoogleAction;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceData;
 import com.ecoeler.app.entity.DeviceKey;
@@ -19,6 +20,8 @@ import com.ecoeler.core.type.BooleanType;
 import com.ecoeler.core.type.EnumType;
 import com.ecoeler.core.type.IType;
 import com.ecoeler.core.type.IntegerType;
+import com.ecoeler.util.SpringUtils;
+import com.ecoeler.utils.SpringUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +116,6 @@ public class DeviceEvent {
                     .set("data_value",keyMsg.getDataValue().toString());
 
             deviceDataService.update(updateWrapper);
-
         }
     }
 
@@ -143,6 +145,9 @@ public class DeviceEvent {
         }
 
         this.record0(keyMsgList);
+
+        //通知google更新设备状态
+        SpringUtils.getBean(GoogleAction.class).reportState(res.getDeviceId());
     }
 
     /**
@@ -159,6 +164,9 @@ public class DeviceEvent {
                 .set("offline_time",new Date())
                 .set("net_state",DeviceStatusConst.OFFLINE);
         deviceService.update(updateWrapper);
+
+        //通知google更新设备状态
+        SpringUtils.getBean(GoogleAction.class).reportState(res.getDeviceId());
     }
 
     /**
@@ -172,6 +180,9 @@ public class DeviceEvent {
         List<KeyMsg> keyMsgList = res.getKeyMsgList();
         this.argCheckWhenIn0(res.getDeviceId(),res.getProductId(), keyMsgList);
         this.record0(keyMsgList);
+
+        //通知google更新设备状态
+        SpringUtils.getBean(GoogleAction.class).reportState(res.getDeviceId());
     }
 
     /**

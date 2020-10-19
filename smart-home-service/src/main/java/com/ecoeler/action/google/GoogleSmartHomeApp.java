@@ -148,8 +148,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
         for (QueryRequest.Inputs.Payload.Device device : devices) {
             try {
 
-                Map<String, Object> states = this.getDeviceStatesMap(device.getId());
-
+                Map<String, Object> states = appVoiceActionService.getDeviceGoogleStatesMap(device.getId());
                 deviceStates.put(device.id, states);
 
             } catch (ServiceException e) {
@@ -253,7 +252,8 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
 
     private Map<String, Object> execute(String deviceId, ExecuteRequest.Inputs.Payload.Commands.Execution[] executions) {
 
-        Map<String, Object> states = this.getDeviceStatesMap(deviceId);
+        Map<String, Object> states = appVoiceActionService.getDeviceGoogleStatesMap(deviceId);
+
         Object onlineValue = states.get(GOOGLE_NET_STATE_KEY);
         if (onlineValue == null || (Boolean) onlineValue) {
             throw new ServiceException("deviceOffline");
@@ -283,9 +283,10 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
                     List<DeviceSwitch> deviceSwitches = appVoiceActionService.getDeviceSwitchListByDeviceId(deviceId);
 
                     //只能控制一路开关，多路就统一开关
-                    deviceSwitches.parallelStream().forEach(deviceSwitch ->
-                            jobJson.put(deviceSwitch.getDataKey(), onOffValue ? deviceSwitch.getDeviceOn() : deviceSwitch.getDeviceOff())
-                    );
+                    for (DeviceSwitch deviceSwitch : deviceSwitches) {
+                        jobJson.put(deviceSwitch.getDataKey(), onOffValue ? deviceSwitch.getDeviceOn() : deviceSwitch.getDeviceOff());
+                    }
+
                     states.put(GOOGLE_POWER_STATE_KEY, onOffValue);
                     break;
             }
@@ -299,6 +300,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
         String eventClass = deviceType.getEventClass();
 
         DeviceEvent deviceEvent = SpringUtils.getBean(eventClass);
+
         deviceEvent.order(
                 OrderInfo.of()
                         .setDeviceId(deviceId)
@@ -308,61 +310,5 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
         log.info("states:" + states);
         return states;
     }
-
-
-    /**
-     * 根据设备ID获取设备的各项语音相关的key状态 map
-     *
-     * @param deviceId
-     * @return
-     */
-    @NotNull
-    public Map<String, Object> getDeviceStatesMap(String deviceId) {
-
-        DeviceInfo deviceInfo = appVoiceActionService.getDeviceStatesByDeviceId(deviceId);
-
-        List<DeviceStateBean> deviceStateBeans = deviceInfo.getDeviceStateBeans();
-
-        Map<String, List<DeviceStateBean>> listMap = deviceStateBeans.parallelStream().collect(Collectors.groupingBy(DeviceStateBean::getGoogleStateName));
-
-        Map<String, Object> states = new HashMap<>();
-
-        for (Map.Entry<String, List<DeviceStateBean>> entry : listMap.entrySet()) {
-
-            List<DeviceStateBean> list = entry.getValue();
-
-            if (!entry.getKey().equals(GOOGLE_POWER_STATE_KEY)) {
-                states.put(entry.getKey(), list.get(0).getValue());
-                continue;
-            }
-
-            //默认设备是关闭的
-            boolean flag = false;
-            for (DeviceStateBean deviceStateBean : list) {
-                //因为多路设备不止一个开关量
-                if (deviceStateBean.getValue().equals(POWER_STATE_ON)) {
-                    //只要一个开关是开的就认为该设备是开着的
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag) {
-                states.put(entry.getKey(), POWER_STATE_ON);
-            } else {
-                states.put(entry.getKey(), POWER_STATE_OFF);
-            }
-
-        }
-
-        states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
-
-        //开关量1/0转换成google需要的boolean
-        if (states.containsKey(GOOGLE_POWER_STATE_KEY)) {
-            states.put(GOOGLE_POWER_STATE_KEY, Boolean.valueOf((String) states.get(GOOGLE_POWER_STATE_KEY)));
-        }
-
-        return states;
-    }
-
 
 }

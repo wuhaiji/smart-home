@@ -3,6 +3,12 @@ version: "3"
 services:
 
   nginx:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./nginx-docker
       dockerfile: Dockerfile
@@ -29,6 +35,12 @@ services:
       - voice-google-web
 
   redis:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./redis-docker
       dockerfile: Dockerfile
@@ -43,6 +55,12 @@ services:
       - redis-data:/data
 
   nacos:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./nacos-docker
       dockerfile: Dockerfile
@@ -57,6 +75,12 @@ services:
       - mynet
 
   app-oauth2:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./app-oauth2
       dockerfile: Dockerfile
@@ -71,8 +95,15 @@ services:
       - /data/smart-home/app-oauth2/logs:/logs
     depends_on:
       - nacos
+      - redis
 
   web-oauth2:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./web-oauth2
       dockerfile: Dockerfile
@@ -87,8 +118,15 @@ services:
       - /data/smart-home/web-oauth2/logs:/logs
     depends_on:
       - nacos
+      - redis
 
   app:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./smart-home-app
       dockerfile: Dockerfile
@@ -105,8 +143,15 @@ services:
       - nacos
       - service
       - app-oauth2
+      - redis
 
   web:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./smart-home-service
       dockerfile: Dockerfile
@@ -123,8 +168,15 @@ services:
       - service
       - nacos
       - web-oauth2
+      - redis
 
   voice-google-web:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./smart-home-voice-google-web
       dockerfile: Dockerfile
@@ -141,8 +193,15 @@ services:
       - service
       - nacos
       - app-oauth2
+      - redis
 
   voice-alexa-web:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./smart-home-voice-alexa-web
       dockerfile: Dockerfile
@@ -159,8 +218,15 @@ services:
       - service
       - nacos
       - app-oauth2
+      - redis
 
   service:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./smart-home-service
       dockerfile: Dockerfile
@@ -177,8 +243,15 @@ services:
       - app-oauth2
       - nacos
       - xxl-job-admin
+      - redis
 
   xxl-job-admin:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
     build:
       context: ./xxl-job-admin
       dockerfile: Dockerfile

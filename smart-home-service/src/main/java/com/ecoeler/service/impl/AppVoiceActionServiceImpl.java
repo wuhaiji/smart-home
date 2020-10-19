@@ -22,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ecoeler.app.constant.v1.AppVoiceConstant.*;
@@ -232,6 +229,42 @@ public class AppVoiceActionServiceImpl implements AppVoiceActionService {
 
 
         return deviceInfo;
+    }
+
+    @Override
+    public Map<String, Object> getDeviceGoogleStatesMap(String deviceId) {
+        DeviceInfo deviceInfo = this.getDeviceStatesByDeviceId(deviceId);
+
+        List<DeviceStateBean> deviceStateBeans = deviceInfo.getDeviceStateBeans();
+
+        Map<String, List<DeviceStateBean>> listMap = deviceStateBeans.parallelStream().collect(Collectors.groupingBy(DeviceStateBean::getGoogleStateName));
+
+        Map<String, Object> states = new HashMap<>();
+
+        states.put(GOOGLE_NET_STATE_KEY, deviceInfo.getOnline());
+
+        for (Map.Entry<String, List<DeviceStateBean>> entry : listMap.entrySet()) {
+
+            List<DeviceStateBean> list = entry.getValue();
+
+            if (!entry.getKey().equals(GOOGLE_POWER_STATE_KEY)) {
+                states.put(entry.getKey(), list.get(0).getValue());
+                continue;
+            }
+
+            //默认设备是关闭的
+            boolean flag = false;
+            for (DeviceStateBean deviceStateBean : list) {
+                //因为多路设备不止一个开关量
+                if (deviceStateBean.getValue().equals(POWER_STATE_ON)) {
+                    //只要一个开关是开的就认为该设备是开着的
+                    flag = true;
+                    break;
+                }
+            }
+            states.put(entry.getKey(), flag);
+        }
+        return states;
     }
 
 
