@@ -1,7 +1,7 @@
 spring:
   profiles:
-    active: daily
-  cloud:
-    nacos:
-      discovery:
-        namespace: tangcx
+    active: prod
+#  cloud:
+#    nacos:
+#      discovery:
+#        namespace: tangcx

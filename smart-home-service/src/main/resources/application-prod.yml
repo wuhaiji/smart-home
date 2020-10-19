@@ -1,0 +1,89 @@
+server:
+  port: 80
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: sh-nacos:8848
+  #    sentinel:
+  #      transport:
+  #        dashboard: sh-sentinel:8858
+  application:
+    name: smart-home-service
+  redis:
+    database: 0
+    host: sh-redis
+    port: 6379
+    timeout: 5000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 8
+        min-idle: 0
+    password:
+  datasource:
+    username: yoti
+    password: Yoti!@#$
+    url: jdbc:mysql://rm-bp1k4o59k68h7c603.mysql.rds.aliyuncs.com:3306/home?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initialSize: 3
+      max-active: 10
+      max-wait: 50000
+      keep-alive-between-time-millis: 50000
+      keep-alive: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+# 阿里邮箱
+ali:
+  account:
+    accessKey: LTAI4FwCUMja2wn74aYAtG2i
+    secret: wYGK907NaHNvK7jDvocLC1v4m7H7vj
+
+# mqtt 配置
+mqtt:
+  host: tcp://106.52.74.193:1883
+  username: tang
+  password: 321456
+
+mybatis-plus:
+  configuration:
+    # 是否将sql打印到控制面板(该配置会将sql语句和查询的结果都打印到控制台)
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 邀请返回地址
+invite:
+  host:
+    accept: sh-service:80/open/smart/home/accept/invite
+    refuse: sh-service:80/open/smart/home/refuse/invite
+  # 发送邮件的有效时间
+  effective:
+    time: 7
+
+# xxl-job
+xxl:
+  job:
+    admin:
+      addresses: sh-xxl-job-admin:80/xxl-job-admin
+    accessToken: # token
+    executor: # 执行器信息
+      appname: ${spring.application.name}
+      address:
+      ip:
+      port: 9999
+      logpath: /smart-home/sh-service/logs/xxl-job
+      logretentiondays: 30
+#文件上传路径
+upload:
+  file:
+    path:
+      prefix: /smar-home/nginx/files
+    url: https://file.ecoeler.com/

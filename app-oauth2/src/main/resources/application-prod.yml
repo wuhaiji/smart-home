@@ -1,0 +1,35 @@
+server:
+  port: 80
+spring:
+  redis:
+    host: reids
+    port: 6379
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos:8848
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
+  datasource:
+    username: yoti
+    password: Yoti!@#$
+    url: jdbc:mysql://rm-bp1k4o59k68h7c603.mysql.rds.aliyuncs.com:3306/home?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    default-property-inclusion: non_null
+  application:
+    name: app-oauth2
+    # 国际化
+  messages:
+    basename: i18n.language
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
