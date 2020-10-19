@@ -11,4 +11,6 @@ public interface FileService {
      * @return 新文件的名称
      */
     String uploadFile(MultipartFile file);
+
+    String goFastDFSUploadFile(MultipartFile file);
 }

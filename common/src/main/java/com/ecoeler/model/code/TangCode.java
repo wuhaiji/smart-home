@@ -40,6 +40,8 @@ public enum  TangCode implements ResultCode {
     CODE_TIMER_JOB_ID_NULL_ERROR("40029","计时任务ID不能为空!"),
     CODE_NICKNAME_EMPTY_ERROR("40030","昵称不能为空!"),
     CODE_ID_NULL_ERROR("40031","ID不能为空!"),
+    CODE_LOCAL_NULL_ERROR("40032","local参数不能为null!"),
+    CODE_LOCAL_EMPTY_ERROR("40032","local参数不能为空!"),
 
 
     //业务错误
@@ -60,6 +62,7 @@ public enum  TangCode implements ResultCode {
     XXL_JOB_UPDATE_ERROR("20015","定时任务修改失败!"),
     JOB_NOT_EXISTS_ERROR("20016","任务不存在!"),
     DEVICE_NOT_EXISTS_ERROR("20017","设备不存在!"),
+    FILE_NOT_EXISTS_ERROR("20018","文件错误!"),
 
     //TOKEN
     CODE_TOKEN_ERROR("30005","无效TOKEN,TOKEN超时或异常!"),

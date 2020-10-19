@@ -1,7 +1,11 @@
 package com.ecoeler.feign;
 
 import com.ecoeler.model.response.Result;
+import feign.codec.Encoder;
+import feign.form.spring.SpringFormEncoder;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +23,15 @@ public interface FileService {
      * @param file 文件
      * @return 文件路径
      */
-    @RequestMapping("/upload")
+    @RequestMapping(value = "/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     Result uploadFile(@RequestBody MultipartFile file);
+
+    @RequestMapping(value = "/go-fastDFS/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    Result goFastDFSUploadFile(@RequestBody MultipartFile file);
+    class MyConfig {
+        @Bean
+        public Encoder feignFormEncoder() {
+            return new SpringFormEncoder();
+        }
+    }
 }

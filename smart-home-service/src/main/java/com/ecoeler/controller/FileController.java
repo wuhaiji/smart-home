@@ -35,6 +35,17 @@ public class FileController {
         String url = fileService.uploadFile(file);
         return Result.ok(url);
     }
-
+    /**
+     * 文件上传
+     *
+     * @param file 文件
+     * @return 文件路径
+     */
+    @RequestMapping("/go-fastDFS/upload")
+    public Result goFastDFSUploadFile(@RequestBody MultipartFile file) {
+        log.info("smart-home-service->FileController->begin go fastDFS upload file");
+        String url = fileService.goFastDFSUploadFile(file);
+        return Result.ok(url);
+    }
 
 }

@@ -7,10 +7,10 @@ import com.ecoeler.app.entity.DeviceType;
 import com.ecoeler.app.service.IDeviceTypeService;
 import com.ecoeler.model.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -30,10 +30,15 @@ public class DeviceTypeController {
         return Result.ok(deviceTypeService.list());
     }
     @PostMapping("/detail/list")
-    public Result detailList(){
-        DeviceTypeBean deviceTypeBean=deviceTypeService.detailList();
-        return Result.ok(deviceTypeBean);
+    public Result detailList(@RequestParam String local){
+        Map<String, List<DeviceType>> result =deviceTypeService.detailList(local);
+        return Result.ok(result);
     }
+    @PostMapping("/app/list")
+    public Result appList(){
+        return Result.ok(deviceTypeService.appList());
+    }
+
     @PostMapping("/update")
     public Result update(@RequestBody DeviceType deviceType){
         deviceTypeService.updateById(deviceType);

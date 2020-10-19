@@ -1,5 +1,8 @@
 package com.ecoeler.service.impl;
 
+import cn.hutool.core.io.resource.InputStreamResource;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.ecoeler.app.service.FileService;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.model.code.TangCode;
@@ -11,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,7 +30,8 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class FileServiceImpl implements FileService {
-
+    @Value("${upload.file.path.goFastDFS}")
+    public String uploadPath  ;
     @Value("${upload.file.path.prefix}")
     public String prefixPath;
     @Value("${upload.file.url}")
@@ -66,6 +72,26 @@ public class FileServiceImpl implements FileService {
         } catch (IOException e) {
             log.error(e.getMessage(), e.getCause());
             throw new ServiceException(TangCode.CODE_UPLOAD_FILE_FAIL);
+        }
+    }
+
+    @Override
+    public String goFastDFSUploadFile(MultipartFile file) {
+        String result = "";
+        try {
+            InputStreamResource isr = new InputStreamResource(file.getInputStream(), file.getOriginalFilename());
+            Map<String, Object> params = new HashMap<>(6);
+            params.put("file", isr);
+            params.put("path", "smartHome");
+            params.put("output", "json");
+            String resp = HttpUtil.post(uploadPath, params);
+            JSONObject jsonObject = JSONObject.parseObject(resp);
+            log.info("resp: {}", resp);
+            result = jsonObject.getString("url");
+            return result+"?download=0";
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new ServiceException(TangCode.FILE_NOT_EXISTS_ERROR);
         }
     }
 }
