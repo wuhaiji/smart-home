@@ -274,7 +274,7 @@ public class GoogleAction {
         try {
             //命名空间
             String intent = inputs1[0].intent;
-            System.out.println("begin================================================================================");
+            log.info("begin================================================================================");
             log.info("intend:" + intent);
             switch (intent) {
                 case "action.devices.SYNC":
@@ -319,7 +319,7 @@ public class GoogleAction {
         responseJson.put("requestId", requestId);
         log.info("responseJson:" + responseJson.toJSONString());
 
-        System.out.println("begin====================================================================================");
+        log.info("begin====================================================================================");
 
         return responseJson.toJSONString();
     }
