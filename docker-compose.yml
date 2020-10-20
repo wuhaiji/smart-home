@@ -24,7 +24,8 @@ services:
     volumes:
       - /data/smart-home/nginx/html:/nginx/html
       - /data/smart-home/nginx/files:/nginx/files
-      - /data/smart-home/nginx/logs:/nginx/logs
+      - /data/smart-home/nginx/logs:/var/log/nginx
+      - /data/smart-home/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - redis
       - nacos
@@ -33,6 +34,25 @@ services:
       - web
       - voice-alexa-web
       - voice-google-web
+      - godfs
+
+  godfs:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: fastdfs:1.0.0         #docker pull sjqzhang/go-fastdfs
+    container_name: godfs
+    privileged: true
+    restart: always
+    volumes:
+      - /data/smart-home/godfs/data:/usr/local/go-fastdfs/data
+    ports:
+      - "8080:8080"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "3"
 
   redis:
     # 配置docker容器日志文件
@@ -46,13 +66,15 @@ services:
       dockerfile: Dockerfile
     image: sh-redis
     container_name: sh-redis
+    privileged: true #是否让docker 应用容器 获取宿主机root权限（特殊权限）
     expose:
       - "6379"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
-      - redis-data:/data
+      - /data/smart-home/redis/data:/data
+      - /data/smart-home/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
 
   nacos:
     # 配置docker容器日志文件
@@ -66,11 +88,12 @@ services:
       dockerfile: Dockerfile
     image: sh-nacos
     container_name: sh-nacos
+    privileged: true
     ports:
       - "8848:8848"
     environment:
       - MODE=standalone
-    restart: on-failure
+    restart: always
     networks:
       - mynet
 
@@ -85,10 +108,11 @@ services:
       context: ./app-oauth2
       dockerfile: Dockerfile
     image: sh-app-oauth2
+    privileged: true
     container_name: sh-app-oauth2
     expose:
       - "80"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
@@ -108,10 +132,11 @@ services:
       context: ./web-oauth2
       dockerfile: Dockerfile
     image: sh-web-oauth2
+    privileged: true
     container_name: sh-web-oauth2
     expose:
       - "80"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
@@ -132,9 +157,10 @@ services:
       dockerfile: Dockerfile
     image: sh-app
     container_name: sh-app
+    privileged: true
     expose:
       - "80"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
@@ -157,9 +183,10 @@ services:
       dockerfile: Dockerfile
     image: sh-web
     container_name: sh-web
+    privileged: true
     expose:
       - "80"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
@@ -182,9 +209,10 @@ services:
       dockerfile: Dockerfile
     image: sh-voice-google-web
     container_name: sh-voice-google-web
+    privileged: true
     expose:
       - "80"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
@@ -207,9 +235,10 @@ services:
       dockerfile: Dockerfile
     image: sh-voice-alexa-web
     container_name: sh-voice-alexa-web
+    privileged: true
     expose:
       - "80"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
@@ -232,9 +261,10 @@ services:
       dockerfile: Dockerfile
     image: sh-service
     container_name: sh-service
+    privileged: true
     expose:
       - "80"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
@@ -244,6 +274,7 @@ services:
       - nacos
       - xxl-job-admin
       - redis
+      - godfs
 
   xxl-job-admin:
     # 配置docker容器日志文件
@@ -257,16 +288,14 @@ services:
       dockerfile: Dockerfile
     image: sh-xxl-job-admin
     container_name: sh-xxl-job-admin
+    privileged: true
     expose:
       - "80"
-    restart: on-failure
+    restart: always
     networks:
       - mynet
     volumes:
       - /data/smart-home/xxl-job-admin/logs:/logs
-
-volumes:
-  redis-data:
 
 networks:
   mynet:
