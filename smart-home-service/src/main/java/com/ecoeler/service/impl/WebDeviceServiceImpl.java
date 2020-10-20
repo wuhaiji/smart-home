@@ -120,7 +120,8 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
                         DeviceType::getImage,
                         DeviceType::getDefaultIcon,
                         DeviceType::getCreateTime,
-                        DeviceType::getUpdateTime)
+                        DeviceType::getUpdateTime,
+                        DeviceType::getGoFastDFSMD5)
                 .eq(!"".equals(typeName.trim()), DeviceType::getZhTypeName, typeName)
                 .eq(!"".equals(productId.trim()), DeviceType::getProductId, productId)
                 .or()

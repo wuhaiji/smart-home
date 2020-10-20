@@ -1,5 +1,6 @@
 package com.ecoeler.app.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -77,6 +78,11 @@ public class DeviceType implements Serializable {
      * 图片地址
      */
     private String image;
+    /**
+     * 存储图片生成的MD5 用于删除图片
+     */
+    @TableField("go_fastDFSMD5")
+    private String goFastDFSMD5;
 
     /**
      * 一级中文名称

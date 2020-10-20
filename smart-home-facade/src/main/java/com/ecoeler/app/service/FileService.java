@@ -1,4 +1,5 @@
 package com.ecoeler.app.service;
+import com.ecoeler.app.bean.v1.FileUploadBean;
 import org.springframework.web.multipart.MultipartFile;
 /**
  * 文件上传服务类
@@ -12,5 +13,7 @@ public interface FileService {
      */
     String uploadFile(MultipartFile file);
 
-    String goFastDFSUploadFile(MultipartFile file);
+    FileUploadBean goFastDFSUploadFile(MultipartFile file);
+
+    void goFastDFSDeleteFile(String md5);
 }

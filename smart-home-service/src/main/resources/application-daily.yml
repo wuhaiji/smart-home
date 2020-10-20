@@ -87,10 +87,6 @@ xxl:
       logpath: data/logs/xxl-job
       logretentiondays: 30
 
-#文件大小
-multipart:
-  maxRequestSize: 2000MB
-  maxFileSize: 2000MB
 #文件上传路径
 upload:
   file:
@@ -98,4 +94,8 @@ upload:
       prefix: D:/software/nginx-1.9.9/html/
       goFastDFS: http://192.168.0.108:8089/upload
     url: localhost/
+delete:
+  file:
+    path:
+      goFastDFS: http://192.168.0.108:8089/delete
 

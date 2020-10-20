@@ -42,7 +42,7 @@ public enum  TangCode implements ResultCode {
     CODE_ID_NULL_ERROR("40031","ID不能为空!"),
     CODE_LOCAL_NULL_ERROR("40032","local参数不能为null!"),
     CODE_LOCAL_EMPTY_ERROR("40032","local参数不能为空!"),
-
+    CODE_MD5_EMPTY_ERROR("40033","local参数不能为空!"),
 
     //业务错误
     BLANK_PHONE_NUMBER_EMPTY_ERROR("20001","手机号不能为空"),
@@ -63,6 +63,7 @@ public enum  TangCode implements ResultCode {
     JOB_NOT_EXISTS_ERROR("20016","任务不存在!"),
     DEVICE_NOT_EXISTS_ERROR("20017","设备不存在!"),
     FILE_NOT_EXISTS_ERROR("20018","文件错误!"),
+    FILE_DELETE_ERROR("20019","goFastDFS文件删除异常!"),
 
     //TOKEN
     CODE_TOKEN_ERROR("30005","无效TOKEN,TOKEN超时或异常!"),
