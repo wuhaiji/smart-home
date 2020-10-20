@@ -31,6 +31,18 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <!--feign file-->
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form-spring</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.ecoeler</groupId>

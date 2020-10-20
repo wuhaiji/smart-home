@@ -138,14 +138,17 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
                         )
                         .eq(DeviceType::getProductId, productId)
         );
-        device.setEnTypeName(deviceType.getEnTypeName());
-        device.setEventClass(deviceType.getEventClass());
-        device.setZhTypeName(deviceType.getZhTypeName());
-        device.setGatewayLike(deviceType.getGatewayLike());
-        //没有选择图标则为默认图标
-        if (device.getDeviceIcon() == null || "".equals(device.getDeviceIcon().trim())) {
-            device.setDeviceIcon(deviceType.getDefaultIcon());
+        if (deviceType != null) {
+            device.setEnTypeName(deviceType.getEnTypeName());
+            device.setEventClass(deviceType.getEventClass());
+            device.setZhTypeName(deviceType.getZhTypeName());
+            device.setGatewayLike(deviceType.getGatewayLike());
+            //没有选择图标则为默认图标
+            if (device.getDeviceIcon() == null || "".equals(device.getDeviceIcon().trim())) {
+                device.setDeviceIcon(deviceType.getDefaultIcon());
+            }
         }
+
         //没有选择设备状态 默认在线
         if (device.getNetState() == null) {
             device.setNetState(1);
@@ -221,7 +224,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
             }
         } else {
             deviceUpdateWrapper.in("room_id", roomIdList);
-            if(deviceMapper.update(device, deviceUpdateWrapper) > 0) {
+            if (deviceMapper.update(device, deviceUpdateWrapper) > 0) {
                 result = true;
             }
         }
@@ -253,11 +256,12 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
     /**
      * 修改设备
+     *
      * @param deviceDto 只修改设备的名称
      */
     @Override
     public void updateDevice(DeviceDto deviceDto) {
-        Device device=new Device();
+        Device device = new Device();
         device.setId(deviceDto.getId());
         device.setDeviceName(deviceDto.getDeviceName());
         baseMapper.updateById(device);

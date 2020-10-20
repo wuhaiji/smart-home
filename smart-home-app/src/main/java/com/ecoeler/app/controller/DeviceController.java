@@ -72,7 +72,7 @@ public class DeviceController {
     }
 
     @GoogleRequestSync
-    @PostMapping("/save")
+    @PostMapping("/add")
     public Result save( Device device){
         ExceptionUtil.notBlank(device.getDeviceId(), TangCode.CODE_DEVICE_ID_EMPTY_ERROR);
         ExceptionUtil.notBlank(device.getProductId(), TangCode.CODE_PRODUCT_ID_EMPTY_ERROR);

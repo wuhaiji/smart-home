@@ -29,7 +29,8 @@ public class DeviceTypeController {
     @Autowired
     private DeviceTypeService deviceTypeService;
     @PostMapping("/update")
-    Result update(@RequestBody DeviceType deviceType){
+    Result update(DeviceType deviceType){
+        log.info("devicetype:{}",deviceType);
         ExceptionUtil.notNull(deviceType.getId(), TangCode.CODE_ID_NULL_ERROR);
         log.info("smart-home-web->DeviceTypeController->begin update device type");
         return deviceTypeService.update(deviceType);

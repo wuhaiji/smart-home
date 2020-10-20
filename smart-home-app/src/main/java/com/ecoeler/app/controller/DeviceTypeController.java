@@ -35,8 +35,14 @@ public class DeviceTypeController {
     private DeviceTypeService deviceTypeService;
 
     @PostMapping("/primary")
-    public Result primary(){
-        return deviceTypeService.detailList();
+    public Result primary(String local){
+        ExceptionUtil.notNull(local,TangCode.CODE_LOCAL_NULL_ERROR);
+        ExceptionUtil.notBlank(local,TangCode.CODE_LOCAL_EMPTY_ERROR);
+        return deviceTypeService.detailList(local);
+    }
+    @PostMapping("/all")
+    public Result appList(){
+        return deviceTypeService.appList();
     }
 
 }
