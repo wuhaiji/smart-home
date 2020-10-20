@@ -111,6 +111,7 @@ public class FileServiceImpl implements FileService {
         params.put("md5", md5);
         String res = HttpUtil.post(deletePath, params);
         JSONObject jsonObject = JSONObject.parseObject(res);
+        log.info("res:{}",res);
         if (!"ok".equals(jsonObject.getString("status"))){
             log.error("goFastDFS 文件删除异常");
             throw new ServiceException(TangCode.FILE_DELETE_ERROR);
