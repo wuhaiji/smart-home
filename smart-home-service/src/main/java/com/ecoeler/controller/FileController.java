@@ -26,24 +26,12 @@ public class FileController {
     /**
      * 文件上传
      *
-     * @param file 文件
-     * @return 文件路径
-     */
-    @RequestMapping("/upload")
-    public Result uploadFile(@RequestBody MultipartFile file) {
-        log.info("smart-home-service->FileController->begin upload file");
-        String url = fileService.uploadFile(file);
-        return Result.ok(url);
-    }
-    /**
-     * 文件上传
-     *
      * @param file 文件 以及设备类型id
      * @return 文件路径
      */
     @RequestMapping("/go-fastDFS/upload")
     public Result goFastDFSUploadFile(@RequestBody MultipartFile file) {
-        log.info("smart-home-service->FileController->begin go fastDFS upload file");
+        log.info("smart-home-service->FileController->begin go-fastDFS upload file");
         return Result.ok(fileService.goFastDFSUploadFile(file));
     }
     /**
@@ -53,7 +41,7 @@ public class FileController {
      */
     @RequestMapping("/go-fastDFS/delete")
     public Result goFastDFSDeleteFile(@RequestParam String md5) {
-        log.info("smart-home-service->FileController->begin go fastDFS upload file");
+        log.info("smart-home-service->FileController->begin go-fastDFS upload file");
         fileService.goFastDFSDeleteFile(md5);
         return Result.ok();
     }

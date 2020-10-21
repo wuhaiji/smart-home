@@ -11,8 +11,6 @@ public interface FileService {
      * @param file 文件
      * @return 新文件的名称
      */
-    String uploadFile(MultipartFile file);
-
     FileUploadBean goFastDFSUploadFile(MultipartFile file);
 
     void goFastDFSDeleteFile(String md5);
