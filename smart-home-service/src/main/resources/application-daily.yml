@@ -37,9 +37,9 @@ spring:
       keep-alive: false
   #上传文件大小
   servlet:
-   multipart:
-    max-file-size: 500MB
-    max-request-size: 500MB
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 
 management:
   endpoints:
@@ -88,14 +88,8 @@ xxl:
       logretentiondays: 30
 
 #文件上传路径
-upload:
+goFastDFS:
   file:
-    path:
-      prefix: D:/software/nginx-1.9.9/html/
-      goFastDFS: http://192.168.0.108:8089/upload
-    url: localhost/
-delete:
-  file:
-    path:
-      goFastDFS: http://192.168.0.108:8089/delete
+    path: http://192.168.0.108:8089
+
 

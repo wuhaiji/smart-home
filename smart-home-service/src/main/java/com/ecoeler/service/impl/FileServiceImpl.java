@@ -31,15 +31,8 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class FileServiceImpl implements FileService {
-    @Value("${upload.file.path.goFastDFS}")
-    public String uploadPath;
-    @Value("${delete.file.path.goFastDFS}")
-    public String deletePath;
-    @Value("${upload.file.path.prefix}")
-    public String prefixPath;
-    @Value("${upload.file.url}")
-    public String prefixUrl;
-
+    @Value("${goFastDFS.file.path}")
+    public String goFastDFSPath;
 
     /**
      * 文件上传
@@ -47,37 +40,6 @@ public class FileServiceImpl implements FileService {
      * @param file 文件
      * @return
      */
-    @Override
-    public String uploadFile(MultipartFile file) {
-        try {
-            if (file == null) {
-                throw new ServiceException(TangCode.CODE_FILE_EMPTY_ERROR);
-            }
-            //原名
-            String oName = Optional.ofNullable(file.getOriginalFilename()).orElse("");
-            //后缀/
-            String extName = "";
-            if (!"".equals(oName.trim()) && oName.lastIndexOf(".") != -1) {
-                extName = oName.substring(oName.lastIndexOf("."));
-            }
-            //  oName原名 LocalDate.now().toString() 文件夹以上传日期分类
-            String dateString = LocalDate.now().toString() + "/";
-            File fileNew = new File(prefixPath + dateString);
-            if (!fileNew.exists()) {
-                fileNew.mkdirs();
-            }
-            //生成新名字
-            String newName = UUID.randomUUID().toString() + extName;
-            String path = prefixPath + dateString + newName;
-            File file1 = new File(path);
-            file.transferTo(file1);
-            //FileUtils.copyInputStreamToFile(file.getInputStream(), file1);
-            return prefixUrl + dateString + newName;
-        } catch (IOException e) {
-            log.error(e.getMessage(), e.getCause());
-            throw new ServiceException(TangCode.CODE_UPLOAD_FILE_FAIL);
-        }
-    }
 
     @Override
     public FileUploadBean goFastDFSUploadFile(MultipartFile file) {
@@ -93,10 +55,13 @@ public class FileServiceImpl implements FileService {
             params.put("file", isr);
             params.put("path", "smartHome/"+LocalDate.now().toString());
             params.put("output", "json");
-            String resp = HttpUtil.post(uploadPath, params);
+            String resp = HttpUtil.post(goFastDFSPath+"/upload", params);
             JSONObject jsonObject = JSONObject.parseObject(resp);
-            log.info("resp: {}", resp);
-            url = jsonObject.getString("url") + "?download=0";
+            url = jsonObject.getString("url");
+            if(url!=null){
+                int index=url.indexOf("?");
+                url=index!=-1?url.substring(0,index)+ "?download=0":url+ "?download=0";
+            }
             String md5 = jsonObject.getString("md5");
             return new FileUploadBean(url, md5);
         } catch (IOException e) {
@@ -109,9 +74,8 @@ public class FileServiceImpl implements FileService {
     public void goFastDFSDeleteFile(String md5) {
         Map<String, Object> params = new HashMap<>(6);
         params.put("md5", md5);
-        String res = HttpUtil.post(deletePath, params);
+        String res = HttpUtil.post(goFastDFSPath+"/delete", params);
         JSONObject jsonObject = JSONObject.parseObject(res);
-        log.info("res:{}",res);
         if (!"ok".equals(jsonObject.getString("status"))){
             log.error("goFastDFS 文件删除异常");
             throw new ServiceException(TangCode.FILE_DELETE_ERROR);
