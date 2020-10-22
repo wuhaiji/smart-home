@@ -20,13 +20,7 @@ public interface WebDeviceService {
      */
     @RequestMapping("/web_device/query/device/list")
      Result queryDeviceList(@RequestBody WebDeviceDto webDeviceDto);
-    /**
-     * 按条件分页查询设备类型列表
-     * @param webDeviceTypeDto 查询条件
-     * @return
-     */
-    @RequestMapping("/web_device/query/device/type")
-    Result queryDeviceTypeList(@RequestBody WebDeviceTypeDto webDeviceTypeDto);
+
 
     /***
      * 查询所有设备类型

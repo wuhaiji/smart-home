@@ -90,6 +90,7 @@ xxl:
 #文件上传路径
 goFastDFS:
   file:
-    path: http://192.168.0.108:8089
+    path: http://192.168.0.108:8089/
+    group: group1
 
 

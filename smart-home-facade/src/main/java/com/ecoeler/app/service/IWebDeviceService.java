@@ -35,13 +35,7 @@ public interface IWebDeviceService extends IService<Device> {
      */
     PageBean<Device> selectDeviceList(WebDeviceDto webDeviceDto);
 
-    /**
-     * 查询设备类型
-     *
-     * @return 设备类型列表
-     * @param webDeviceTypeDto
-     */
-    PageBean<DeviceType> selectDeviceType(WebDeviceTypeDto webDeviceTypeDto);
+
 
     List<DeviceType> selectAllDeviceType();
 }

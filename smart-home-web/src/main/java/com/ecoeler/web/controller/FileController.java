@@ -40,9 +40,9 @@ public class FileController {
      * @return 删除文件
      */
     @RequestMapping(value = "/go-fastDFS/delete")
-    Result goFastDFSUploadFile(String goFastDFSMD5){
-        ExceptionUtil.notBlank(Optional.ofNullable(goFastDFSMD5).orElse(""),TangCode.CODE_FILE_EMPTY_ERROR);
+    Result goFastDFSUploadFile(String path){
+        ExceptionUtil.notBlank(Optional.ofNullable(path).orElse(""),TangCode.CODE_FILE_EMPTY_ERROR);
         log.info("smart-home-web->DeviceTypeController->go-fastDFS begin delete file");
-        return fileService.goFastDFSDeleteFile(goFastDFSMD5);
+        return fileService.goFastDFSDeleteFile(path);
     };
 }

@@ -37,7 +37,7 @@ public interface FileService {
      * @return 删除文件
      */
     @RequestMapping(value = "/go-fastDFS/delete")
-    Result goFastDFSDeleteFile(@RequestParam String md5);
+    Result goFastDFSDeleteFile(@RequestParam String path);
 
     class MyConfig {
         @Bean
