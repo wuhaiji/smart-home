@@ -68,7 +68,7 @@ public class GoogleSmartHomeApp extends SmartHomeApp implements InitializingBean
     public void afterPropertiesSet() throws Exception {
 
         try {
-            InputStream resourceAsStream = GoogleSmartHomeApp.class.getClassLoader().getResourceAsStream("yoti-mart.json");
+            InputStream resourceAsStream = GoogleSmartHomeApp.class.getClassLoader().getResourceAsStream("yoti-smart.json");
             if (resourceAsStream != null) {
                 GoogleCredentials credentials = GoogleCredentials.fromStream(resourceAsStream);
                 this.setCredentials(credentials);
