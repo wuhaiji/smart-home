@@ -2,6 +2,7 @@ package com.ecoeler.controller;
 
 
 import com.ecoeler.app.bean.v1.DeviceTypeBean;
+import com.ecoeler.app.dto.v1.WebDeviceTypeDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.entity.DeviceType;
 import com.ecoeler.app.service.IDeviceTypeService;
@@ -43,6 +44,15 @@ public class DeviceTypeController {
     public Result update(@RequestBody DeviceType deviceType){
         deviceTypeService.updateById(deviceType);
         return Result.ok();
+    }
+
+    /***
+     * 分页按条件查询设备类型列表
+     * @return 设备类型列表
+     */
+    @RequestMapping("/query/device/type/list")
+    public Result queryDeviceTypeList(@RequestBody WebDeviceTypeDto webDeviceTypeDto) {
+        return Result.ok(deviceTypeService.selectDeviceType(webDeviceTypeDto));
     }
 
 

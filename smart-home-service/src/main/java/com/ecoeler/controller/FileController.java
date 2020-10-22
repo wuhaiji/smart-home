@@ -40,9 +40,9 @@ public class FileController {
      * @return 删除文件
      */
     @RequestMapping("/go-fastDFS/delete")
-    public Result goFastDFSDeleteFile(@RequestParam String md5) {
+    public Result goFastDFSDeleteFile(@RequestParam String path) {
         log.info("smart-home-service->FileController->begin go-fastDFS upload file");
-        fileService.goFastDFSDeleteFile(md5);
+        fileService.goFastDFSDeleteFile(path);
         return Result.ok();
     }
 }

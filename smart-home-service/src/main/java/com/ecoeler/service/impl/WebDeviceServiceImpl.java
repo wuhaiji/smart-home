@@ -100,43 +100,6 @@ public class WebDeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impl
         return result;
     }
 
-    /**
-     * 分页按条件查询设备类型
-     *
-     * @param webDeviceTypeDto
-     * @return
-     */
-    @Override
-    public PageBean<DeviceType> selectDeviceType(WebDeviceTypeDto webDeviceTypeDto) {
-
-        String typeName = Optional.ofNullable(webDeviceTypeDto.getTypeName()).orElse("");
-        String productId = Optional.ofNullable(webDeviceTypeDto.getProductId()).orElse("");
-        QueryWrapper<DeviceType> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().
-                select(DeviceType::getEnTypeName,
-                        DeviceType::getZhTypeName,
-                        DeviceType::getId,
-                        DeviceType::getProductId,
-                        DeviceType::getImage,
-                        DeviceType::getDefaultIcon,
-                        DeviceType::getCreateTime,
-                        DeviceType::getUpdateTime,
-                        DeviceType::getGoFastDFSMD5)
-                .eq(!"".equals(typeName.trim()), DeviceType::getZhTypeName, typeName)
-                .eq(!"".equals(productId.trim()), DeviceType::getProductId, productId)
-                .or()
-                .eq(!"".equals(typeName.trim()), DeviceType::getEnTypeName, typeName)
-                .eq(!"".equals(productId.trim()), DeviceType::getProductId, productId);
-        Page<DeviceType> page = new Page<>();
-        page.setCurrent(webDeviceTypeDto.getCurrent());
-        page.setSize(webDeviceTypeDto.getSize());
-        Page<DeviceType> deviceTypePage = deviceTypeMapper.selectPage(page, queryWrapper);
-        PageBean<DeviceType> result = new PageBean<>();
-        result.setList(deviceTypePage.getRecords());
-        result.setTotal(deviceTypePage.getTotal());
-        result.setPages(deviceTypePage.getPages());
-        return result;
-    }
 
     /**
      * 查询所有设备类型 下拉框

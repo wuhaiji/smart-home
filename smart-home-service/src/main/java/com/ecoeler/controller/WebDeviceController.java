@@ -59,15 +59,7 @@ public class WebDeviceController {
 
 
 
-    /***
-     * 分页按条件查询设备类型列表
-     * @return 设备类型列表
-     */
-    @RequestMapping("/query/device/type")
-    public Result queryDeviceTypeList(@RequestBody WebDeviceTypeDto webDeviceTypeDto) {
-        log.info("smart-home-service->WebDeviceController->begin query device type list");
-        return Result.ok(iWebDeviceService.selectDeviceType(webDeviceTypeDto));
-    }
+
     /***
      * 查询所有设备类型
      * @return 设备类型列表

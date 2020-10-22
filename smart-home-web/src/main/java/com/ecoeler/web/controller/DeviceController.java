@@ -3,6 +3,7 @@ package com.ecoeler.web.controller;
 import com.ecoeler.app.dto.v1.WebDeviceDto;
 import com.ecoeler.app.dto.v1.WebDeviceTypeDto;
 import com.ecoeler.app.entity.DeviceType;
+import com.ecoeler.feign.DeviceTypeService;
 import com.ecoeler.feign.WebDeviceService;
 import com.ecoeler.model.response.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,8 @@ import java.util.List;
 public class DeviceController {
     @Autowired
     private WebDeviceService webDeviceService;
+    @Autowired
+    private DeviceTypeService deviceTypeService;
     /**
      * 分页按条件查询设备列表
      * @return
@@ -43,7 +46,7 @@ public class DeviceController {
     @RequestMapping("query/device/type/list")
     public Result queryDeviceTypeList(WebDeviceTypeDto webDeviceTypeDto) {
         log.info("smart-home-web->RoleController->begin query device type list");
-        return webDeviceService.queryDeviceTypeList(webDeviceTypeDto);
+        return deviceTypeService.queryDeviceTypeList(webDeviceTypeDto);
     }
 
     /***
