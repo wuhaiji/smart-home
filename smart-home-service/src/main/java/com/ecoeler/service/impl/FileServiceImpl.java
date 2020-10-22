@@ -42,7 +42,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String goFastDFSUploadFile(MultipartFile file) {
-        String path = "";
         try {
             String filename = file.getOriginalFilename();
             String newName="";
@@ -55,7 +54,7 @@ public class FileServiceImpl implements FileService {
             params.put("path", "smartHome/"+LocalDate.now().toString());
             params.put("output", "json");
             String resp = HttpUtil.post(goFastDFSPath+goFastDFSGroup+"/upload", params);
-            log.info("resp:{}",resp);
+            //log.info("resp:{}",resp);
             JSONObject jsonObject = JSONObject.parseObject(resp);
             return  jsonObject.getString("path");
 
@@ -70,7 +69,7 @@ public class FileServiceImpl implements FileService {
         Map<String, Object> params = new HashMap<>(6);
         params.put("path",path);
         String res = HttpUtil.post(goFastDFSPath+goFastDFSGroup+"/delete", params);
-        log.info("resp:{}",res);
+        //log.info("resp:{}",res);
         JSONObject jsonObject = JSONObject.parseObject(res);
         if (!"ok".equals(jsonObject.getString("status"))){
             log.error("goFastDFS 文件删除异常");
