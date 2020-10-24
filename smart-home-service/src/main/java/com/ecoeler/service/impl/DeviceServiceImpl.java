@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ecoeler.app.bean.v1.DeviceBean;
 import com.ecoeler.app.dto.v1.DeviceDto;
 import com.ecoeler.app.entity.*;
 import com.ecoeler.app.mapper.*;
@@ -65,6 +66,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
     @Autowired
     private ITimerJobService iTimerJobService;
+
 
     @Override
     public void control(OrderInfo orderInfo) {
@@ -265,5 +267,15 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         device.setId(deviceDto.getId());
         device.setDeviceName(deviceDto.getDeviceName());
         baseMapper.updateById(device);
+    }
+
+    @Override
+    public List<DeviceBean> selectListRoomDevice(Long roomId) {
+        return deviceMapper.selectListRoomDevice(roomId);
+    }
+
+    @Override
+    public List<DeviceBean> selectListFamilyDevice(Long familyId) {
+        return deviceMapper.selectListFamilyDevice(familyId);
     }
 }

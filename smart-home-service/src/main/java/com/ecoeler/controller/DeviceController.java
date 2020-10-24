@@ -3,6 +3,7 @@ package com.ecoeler.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.ecoeler.app.bean.v1.DeviceBean;
 import com.ecoeler.app.dto.v1.DeviceDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.msg.OrderInfo;
@@ -30,16 +31,15 @@ public class DeviceController {
 
     @PostMapping("/list/room/device")
     public Result listRoomDevice(@RequestParam Long roomId){
-        QueryWrapper<Device> q=new QueryWrapper<>();
-        q.eq("room_id",roomId);
-        return Result.ok(deviceService.list(q));
+        List<DeviceBean> deviceBeans=deviceService.selectListRoomDevice(roomId);
+
+        return Result.ok(deviceBeans);
     }
 
     @PostMapping("/list/family/device")
     public Result listFamilyDevice(@RequestParam Long familyId){
-        QueryWrapper<Device> q=new QueryWrapper<>();
-        q.eq("family_id",familyId);
-        return Result.ok(deviceService.list(q));
+        List<DeviceBean> deviceBeans=deviceService.selectListFamilyDevice(familyId);
+        return Result.ok(deviceBeans);
     }
 
     @PostMapping("/move/device")
