@@ -7,8 +7,8 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "500m"
-        max-file: "3"
+        max-size: "50m"
+        max-file: "5"
     build:
       context: ./nginx-docker
       dockerfile: Dockerfile
@@ -23,7 +23,6 @@ services:
       - mynet #加入"mynet"网络
     volumes:
       - /data/smart-home/nginx/html:/nginx/html
-      - /data/smart-home/nginx/files:/nginx/files
       - /data/smart-home/nginx/logs:/var/log/nginx
       - /data/smart-home/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
@@ -34,33 +33,14 @@ services:
       - web
       - voice-alexa-web
       - voice-google-web
-      - godfs
-
-  godfs:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    image: fastdfs:1.0.0         #docker pull sjqzhang/go-fastdfs
-    container_name: godfs
-    privileged: true
-    restart: always
-    volumes:
-      - /data/smart-home/godfs/data:/usr/local/go-fastdfs/data
-    ports:
-      - "8080:8080"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "500m"
-        max-file: "3"
 
   redis:
     # 配置docker容器日志文件
     logging:
       driver: "json-file"
       options:
-        max-size: "500m"
-        max-file: "3"
+        max-size: "50m"
+        max-file: "5"
     build:
       context: ./redis-docker
       dockerfile: Dockerfile
@@ -81,21 +61,46 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "500m"
-        max-file: "3"
-    build:
-      context: ./nacos-docker
-      dockerfile: Dockerfile
-    image: sh-nacos
+        max-size: "50m"
+        max-file: "5"
+    image: nacos/nacos-server
     container_name: sh-nacos
     privileged: true
     ports:
       - "8848:8848"
     environment:
       - MODE=standalone
+      - JVM_XMS=256m
+      - JVM_XMX=256m
+      - JVM_XMN=128m
     restart: always
+    volumes:
+      - /data/smart-home/nacos/custom.properties:/home/nacos/init.d/custom.properties
+      - /data/smart-home/nacos/logs:/home/nacos/logs
     networks:
       - mynet
+
+
+  emqx:
+    # 配置docker容器日志文件
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    image: emqx/emqx:latest
+    container_name: sh-emqx
+    mem_limit: 388m
+    environment:
+      EMQX_LISTENER__TCP__EXTERNAL: 1883
+      EMQX_LISTENER__WS__EXTERNAL: 8083
+    restart: on-failure
+    networks:
+      - mynet
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "18083:18083"
 
   app-oauth2:
     # 配置docker容器日志文件
@@ -110,6 +115,20 @@ services:
     image: sh-app-oauth2
     privileged: true
     container_name: sh-app-oauth2
+    mem_limit: 388m
+    # MaxRAMPercentage=80.0:设置jvm使用容器最大内存(mem_limit)的80%
+    entrypoint: [
+        "java",
+        "-server",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseCGroupMemoryLimitForHeap",
+        "-XX:MaxRAMPercentage=80.0",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=/logs/HeapDump",
+        "-jar",
+        "/app.jar"
+    ]
+    command: mkdir /logs && mkdir /logs/HeapDump
     expose:
       - "80"
     restart: always
@@ -134,6 +153,20 @@ services:
     image: sh-web-oauth2
     privileged: true
     container_name: sh-web-oauth2
+    mem_limit: 388m
+    # MaxRAMPercentage=80.0:设置jvm使用容器最大内存(mem_limit)的80%
+    entrypoint: [
+        "java",
+        "-server",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseCGroupMemoryLimitForHeap",
+        "-XX:MaxRAMPercentage=80.0",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=/logs/HeapDump",
+        "-jar",
+        "/app.jar"
+    ]
+    command: mkdir /logs && mkdir /logs/HeapDump
     expose:
       - "80"
     restart: always
@@ -157,6 +190,20 @@ services:
       dockerfile: Dockerfile
     image: sh-app
     container_name: sh-app
+    mem_limit: 512m
+    # MaxRAMPercentage=80.0:设置jvm使用容器最大内存(mem_limit)的80%
+    entrypoint: [
+        "java",
+        "-server",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseCGroupMemoryLimitForHeap",
+        "-XX:MaxRAMPercentage=80.0",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=/logs/HeapDump",
+        "-jar",
+        "/app.jar"
+    ]
+    command: mkdir /logs && mkdir /logs/HeapDump
     privileged: true
     expose:
       - "80"
@@ -179,10 +226,24 @@ services:
         max-size: "500m"
         max-file: "3"
     build:
-      context: ./smart-home-service
+      context: ./smart-home-web
       dockerfile: Dockerfile
     image: sh-web
     container_name: sh-web
+    mem_limit: 388m
+    # MaxRAMPercentage=80.0:设置jvm使用容器最大内存(mem_limit)的80%
+    entrypoint: [
+        "java",
+        "-server",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseCGroupMemoryLimitForHeap",
+        "-XX:MaxRAMPercentage=80.0",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=/logs/HeapDump",
+        "-jar",
+        "/app.jar"
+    ]
+    command: mkdir /logs && mkdir /logs/HeapDump
     privileged: true
     expose:
       - "80"
@@ -209,6 +270,20 @@ services:
       dockerfile: Dockerfile
     image: sh-voice-google-web
     container_name: sh-voice-google-web
+    mem_limit: 256m
+    # MaxRAMPercentage=80.0:设置jvm使用容器最大内存(mem_limit)的80%
+    entrypoint: [
+        "java",
+        "-server",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseCGroupMemoryLimitForHeap",
+        "-XX:MaxRAMPercentage=80.0",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=/logs/HeapDump",
+        "-jar",
+        "/app.jar"
+    ]
+    command: mkdir /logs && mkdir /logs/HeapDump
     privileged: true
     expose:
       - "80"
@@ -235,6 +310,20 @@ services:
       dockerfile: Dockerfile
     image: sh-voice-alexa-web
     container_name: sh-voice-alexa-web
+    mem_limit: 256m
+    # MaxRAMPercentage=80.0:设置jvm使用容器最大内存(mem_limit)的80%
+    entrypoint: [
+        "java",
+        "-server",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseCGroupMemoryLimitForHeap",
+        "-XX:MaxRAMPercentage=80.0",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=/logs/HeapDump",
+        "-jar",
+        "/app.jar"
+    ]
+    command: mkdir /logs && mkdir /logs/HeapDump
     privileged: true
     expose:
       - "80"
@@ -260,6 +349,20 @@ services:
       context: ./smart-home-service
       dockerfile: Dockerfile
     image: sh-service
+    mem_limit: 1g
+    # MaxRAMPercentage=80.0:设置jvm使用容器最大内存(mem_limit)的80%
+    entrypoint: [
+        "java",
+        "-server",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseCGroupMemoryLimitForHeap",
+        "-XX:MaxRAMPercentage=80.0",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=/logs/HeapDump",
+        "-jar",
+        "/app.jar"
+    ]
+    command: mkdir /logs && mkdir /logs/HeapDump
     container_name: sh-service
     privileged: true
     expose:
@@ -274,7 +377,7 @@ services:
       - nacos
       - xxl-job-admin
       - redis
-      - godfs
+      - emqx
 
   xxl-job-admin:
     # 配置docker容器日志文件
@@ -288,6 +391,20 @@ services:
       dockerfile: Dockerfile
     image: sh-xxl-job-admin
     container_name: sh-xxl-job-admin
+    mem_limit: 512m
+    # MaxRAMPercentage=80.0:设置jvm使用容器最大内存(mem_limit)的80%
+    entrypoint: [
+        "java",
+        "-server",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseCGroupMemoryLimitForHeap",
+        "-XX:MaxRAMPercentage=80.0",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=/logs/HeapDump",
+        "-jar",
+        "/app.jar"
+    ]
+    command: mkdir /logs && mkdir /logs/HeapDump
     privileged: true
     expose:
       - "80"

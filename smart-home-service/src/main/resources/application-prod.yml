@@ -5,15 +5,15 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: sh-nacos:8848
+        server-addr: nacos:8848
   #    sentinel:
   #      transport:
-  #        dashboard: sh-sentinel:8858
+  #        dashboard: sentinel:8858
   application:
     name: smart-home-service
   redis:
     database: 0
-    host: sh-redis
+    host: redis
     port: 6379
     timeout: 5000
     jedis:
@@ -26,7 +26,7 @@ spring:
   datasource:
     username: yoti
     password: Yoti!@#$
-    url: jdbc:mysql://rm-bp1k4o59k68h7c603.mysql.rds.aliyuncs.com:3306/home?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://rm-rj9kz81i1kskvib9088250.mysql.rds.aliyuncs.com:3306/smart-home?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -34,6 +34,8 @@ spring:
       max-active: 10
       max-wait: 50000
       keep-alive-between-time-millis: 50000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
       keep-alive: false
 
 management:
@@ -50,9 +52,9 @@ ali:
 
 # mqtt 配置
 mqtt:
-  host: tcp://106.52.74.193:1883
-  username: tang
-  password: 321456
+  host: tcp://emqx:1883
+  username: guest
+  password: guest
 
 mybatis-plus:
   configuration:
@@ -62,8 +64,8 @@ mybatis-plus:
 # 邀请返回地址
 invite:
   host:
-    accept: sh-service:80/open/smart/home/accept/invite
-    refuse: sh-service:80/open/smart/home/refuse/invite
+    accept: service:80/open/smart/home/accept/invite
+    refuse: service:80/open/smart/home/refuse/invite
   # 发送邮件的有效时间
   effective:
     time: 7
@@ -72,7 +74,8 @@ invite:
 xxl:
   job:
     admin:
-      addresses: sh-xxl-job-admin:80/xxl-job-admin
+#      addresses: http://172.18.0.7:80/xxl-job-admin
+      addresses: http://xxl-job-admin:80/xxl-job-admin
     accessToken: # token
     executor: # 执行器信息
       appname: ${spring.application.name}
@@ -81,9 +84,9 @@ xxl:
       port: 9999
       logpath: /smart-home/sh-service/logs/xxl-job
       logretentiondays: 30
-#文件上传路径
-upload:
+
+#文件服务器路径
+goFastDFS:
   file:
-    path:
-      prefix: /smar-home/nginx/files
-    url: https://file.ecoeler.com/
+    path: http://file.ecoeler.com/
+    group: group1

@@ -12,12 +12,12 @@ spring:
   datasource:
     username: yoti
     password: Yoti!@#$
-    url: jdbc:mysql://rm-bp1k4o59k68h7c603.mysql.rds.aliyuncs.com:3306/home?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://rm-rj9kz81i1kskvib9088250.mysql.rds.aliyuncs.com:3306/smart-home?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     default-property-inclusion: non_null
   application:
-    name: web-oauth2
+    name: smart-home-web-oauth2
 
 management:
   endpoints:
