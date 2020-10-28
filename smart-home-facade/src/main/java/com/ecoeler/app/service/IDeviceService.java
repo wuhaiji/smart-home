@@ -61,4 +61,11 @@ public interface IDeviceService extends IService<Device> {
      * @return
      */
     List<DeviceBean> selectListFamilyDevice(Long familyId);
+
+    /**
+     * 根据楼层查询设备列表
+     * @param floorId 楼层id
+     * @return
+     */
+    List<Device> getFloorDeviceList(Long floorId);
 }

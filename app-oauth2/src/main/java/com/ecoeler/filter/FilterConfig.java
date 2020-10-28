@@ -25,15 +25,10 @@ public class FilterConfig {
         registrationBean.setFilter(
                 (ServletRequest request, ServletResponse response, FilterChain chain) -> {
                     HttpServletRequest res = (HttpServletRequest) request;
-
-                    if (!res.getRequestURI().contains("/static/")) {
-                        log.info("请求进来了");
-                        log.info("请求进来了");
-                        log.info("请求url:{}", res.getRequestURL());
-                        log.info("请求uri:{}", res.getRequestURI());
-                        log.info("请求参数：{}", JSON.toJSONString(res.getParameterMap()));
+                    if (!res.getRequestURI().contains("/static/") && !res.getRequestURI().contains("favicon.ico")) {
+                        log.info("requestUri:{}", res.getRequestURI());
+                        log.info("requestParameter：{}", JSON.toJSONString(res.getParameterMap()));
                     }
-
                     //继续调用Filter链
                     chain.doFilter(request, response);
                 });

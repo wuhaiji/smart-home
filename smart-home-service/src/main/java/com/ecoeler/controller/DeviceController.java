@@ -8,6 +8,7 @@ import com.ecoeler.app.dto.v1.DeviceDto;
 import com.ecoeler.app.entity.Device;
 import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.IDeviceService;
+import com.ecoeler.model.code.DeviceCode;
 import com.ecoeler.model.code.WJHCode;
 import com.ecoeler.model.response.Result;
 import com.ecoeler.util.ExceptionUtil;
@@ -83,4 +84,10 @@ public class DeviceController {
         return Result.ok(deviceService.removeDevice(roomIdList, familyId, removeFamilyBool));
     }
 
+    @RequestMapping("/floor/list")
+    public Result<List<Device>> getFloorDeviceList(@RequestParam Long floorId){
+        ExceptionUtil.notNull(floorId, DeviceCode.FLOOR_ID_ERROR);
+        List<Device> devices=deviceService.getFloorDeviceList(floorId);
+        return Result.ok(devices);
+    }
 }

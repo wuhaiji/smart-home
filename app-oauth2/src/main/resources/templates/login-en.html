@@ -17,7 +17,7 @@
         <div>
             <img src="/static/img/app-icon.png" class="img-circle img-responsive ava center-block app-icon" alt="icon">
         </div>
-        <form role="form" action="/login" method="post">
+        <form role="form" action="/login" method="post" onsubmit="return submitCheck()">
             <div class="form-group">
                 <h3 class="form-signin-heading">
                     Please sign in
@@ -48,7 +48,16 @@
 <script>
     let language = navigator.language;
     console.log("浏览器语言："+language)
-
+    let submitCount = 0;
+    function submitCheck() {
+        // let submitButton = document.getElementById("sb-btn");
+        if (submitCount === 0) {
+            submitCount++;
+            return true;
+        }
+        alert("Processing, please do not submit repeatedly, thank you!");
+        return false;
+    }
 </script>
 <style>
 

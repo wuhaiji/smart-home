@@ -30,7 +30,7 @@
         </div>
 
 
-        <form role="form" action="/oauth/authorize" method='post'>
+        <form role="form" action="/oauth/authorize" method='post' onsubmit="return submitCheck()">
             <div class="form-group">
                 <div class="context-text">
                     <div> 授权后该应用将会获得以下权限:</div>
@@ -43,7 +43,7 @@
                 <input name="client_id" th:value="${session.authorizationRequest.clientId}" type="hidden"/>
                 <input th:name="${s}" value="true" type="hidden" th:each="s : ${scopeList}"/>
 
-                <button class="btn btn-primary btn-block form-item" type="submit"> 确认授权</button>
+                <button id="sb-btn" class="btn btn-primary btn-block form-item" type="submit"> 确认授权</button>
             </div>
         </form>
     </div>
@@ -51,7 +51,21 @@
 </body>
 <script>
     let language = navigator.language;
-    console.log("浏览器语言2：" + language)
+    console.log("Browser language：" + language)
+
+    let submitCount = 0;
+
+    function submitCheck() {
+        // let submitButton = document.getElementById("sb-btn");
+        if (submitCount === 0) {
+            submitCount++;
+            return true;
+        }else{
+            alert("正在操作，请不要重复提交，谢谢！");
+            return false;
+        }
+
+    }
 </script>
 <style>
     .app-icon {

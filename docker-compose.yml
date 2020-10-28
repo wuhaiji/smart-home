@@ -90,17 +90,18 @@ services:
         max-file: "5"
     image: emqx/emqx:latest
     container_name: sh-emqx
-    mem_limit: 388m
+    mem_limit: 512m
     environment:
       EMQX_LISTENER__TCP__EXTERNAL: 1883
       EMQX_LISTENER__WS__EXTERNAL: 8083
     restart: on-failure
     networks:
       - mynet
+    expose:
+      - 1883
     ports:
-      - "1883:1883"
-      - "8083:8083"
-      - "18083:18083"
+      - "11113:1883"
+      - "15672:18083"
 
   app-oauth2:
     # 配置docker容器日志文件
@@ -128,7 +129,9 @@ services:
         "-jar",
         "/app.jar"
     ]
-    command: mkdir /logs && mkdir /logs/HeapDump
+    command: mkdir /logs && mkdir /logs/HeapDump && apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+    environment:
+      LANG: en_US.utf8
     expose:
       - "80"
     restart: always

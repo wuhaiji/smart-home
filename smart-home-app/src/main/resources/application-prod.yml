@@ -12,7 +12,7 @@ spring:
     resourceId: rs1
     clientId: c1
     clientSecret: secret
-    checkTokenUrl: http://app-oauth2/oauth/check_token
+    checkTokenUrl: http://smart-home-app-oauth2/oauth/check_token
   jackson:
     default-property-inclusion: non_null
     generator:

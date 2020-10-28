@@ -31,7 +31,7 @@ public class AppVoiceController {
         Long userId = PrincipalUtil.getUserId();
         data.put(AppVoiceConstant.DTO_KEY_USER_ID, userId);
         data.put(AppVoiceConstant.DTO_KEY_AUTHORIZATION, accessToken);
-
+        log.info("request data:{}",data);
         String action;
         try {
             action = appVoiceService.action(data);
@@ -46,7 +46,7 @@ public class AppVoiceController {
             jsonObject.put("payload", payload);
             action = jsonObject.toJSONString();
         }
-
+        log.info("response:{}",action);
         return JSONObject.parseObject(action);
     }
 

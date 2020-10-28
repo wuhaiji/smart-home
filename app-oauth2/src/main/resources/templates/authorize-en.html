@@ -29,7 +29,7 @@
         </div>
 
 
-        <form role="form" action="/oauth/authorize" method='post'>
+        <form role="form" action="/oauth/authorize" method='post' onsubmit="return submitCheck()">
             <div class="form-group">
                 <div class="context-text">
                     <div> After authorization, the app will get the following permissions:</div>
@@ -50,7 +50,18 @@
 </body>
 <script>
     let language = navigator.language;
-    console.log("浏览器语言2："+language)
+    console.log("Browser language："+language)
+
+    let submitCount = 0;
+    function submitCheck() {
+        let submitButton = document.getElementById("sb-btn");
+        if (submitCount === 0) {
+            submitCount++;
+            return true;
+        }
+        alert("Processing, please do not submit repeatedly, thank you!");
+        return false;
+    }
 </script>
 <style>
 

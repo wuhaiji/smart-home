@@ -35,11 +35,20 @@ public interface DeviceService {
 
     /**
      * 修改设备
+     *
      * @param deviceDto 只修改设备的名称
      */
     @PostMapping("/update")
-    Result update( @RequestBody DeviceDto deviceDto);
+    Result update(@RequestBody DeviceDto deviceDto);
 
     @PostMapping("/remove/device")
     Result removeDevice(@RequestBody List<Long> roomIdList, @RequestParam Long familyId, @RequestParam Boolean removeFamilyBool);
+
+    /**
+     * 查询楼层下设备列表
+     *
+     * @param floorId 楼层id
+     */
+    @PostMapping("/floor/list")
+    Result<List<Device>> getFloorDeviceList(@RequestParam Long floorId);
 }

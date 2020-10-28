@@ -37,7 +37,7 @@ public class AppVoiceController {
         data.put(AppVoiceConstant.DTO_KEY_USER_ID, userId);
         data.put(AppVoiceConstant.DTO_KEY_AUTHORIZATION, accessToken);
         String action = appVoiceService.action(data);
-
+        log.info("response:{}",action);
         return JSONObject.parseObject(action);
     }
 

@@ -12,18 +12,17 @@ import com.ecoeler.app.msg.OrderInfo;
 import com.ecoeler.app.service.IDeviceService;
 import com.ecoeler.app.service.ITimerJobService;
 import com.ecoeler.core.DeviceEvent;
-import com.ecoeler.model.code.TangCode;
-import com.ecoeler.util.ExceptionUtil;
+import com.ecoeler.exception.ServiceException;
+import com.ecoeler.model.code.DeviceCode;
+import com.ecoeler.utils.EptUtil;
+import com.ecoeler.utils.Query;
 import com.ecoeler.utils.SpringUtil;
 import com.ecoeler.utils.WebStatisticsUtil;
-import kotlin.jvm.internal.Lambda;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.misc.CRC16;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -277,5 +276,34 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     @Override
     public List<DeviceBean> selectListFamilyDevice(Long familyId) {
         return deviceMapper.selectListFamilyDevice(familyId);
+    }
+
+    @Override
+    public List<Device> getFloorDeviceList(Long floorId) {
+        //查询楼层id是否存在
+        try {
+            Floor floor = floorMapper.selectById(floorId);
+            if (floor == null) {
+                throw new ServiceException();
+            }
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            throw new ServiceException(DeviceCode.FLOOR_NOT_EXIST);
+        }
+
+        try {
+
+            //查询房间列表
+            List<Room> rooms = roomMapper.selectList(Query.of(Room.class).eq(floorId != null, "floor_id", floorId));
+            List<Long> roomIds = rooms.parallelStream().map(Room::getId).collect(Collectors.toList());
+            if (EptUtil.isEmpty(roomIds)) return new ArrayList<>();
+            //查询房间下的设备列表
+            return deviceMapper.selectList(Query.of(Device.class).in("room_id", roomIds));
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            throw new ServiceException(DeviceCode.FLOOR_DEVICES_SELECT_ERROR);
+        }
+
+
     }
 }

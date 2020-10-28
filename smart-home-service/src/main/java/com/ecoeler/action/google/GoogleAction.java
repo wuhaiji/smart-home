@@ -1,12 +1,11 @@
 package com.ecoeler.action.google;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ecoeler.app.bean.v1.DeviceInfo;
-import com.ecoeler.app.bean.v1.DeviceStateBean;
-import com.ecoeler.app.dto.v1.voice.DeviceKeyVoiceDto;
-import com.ecoeler.app.entity.*;
+import com.ecoeler.app.entity.AppUser;
+import com.ecoeler.app.entity.Device;
+import com.ecoeler.app.entity.Family;
+import com.ecoeler.app.entity.UserFamily;
 import com.ecoeler.app.mapper.*;
-import com.ecoeler.app.msg.KeyMsg;
 import com.ecoeler.app.service.AppVoiceActionService;
 import com.ecoeler.exception.ServiceException;
 import com.ecoeler.utils.EptUtil;
@@ -17,13 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
-import static com.ecoeler.app.constant.v1.AppVoiceConstant.*;
+import static com.ecoeler.app.constant.v1.AppVoiceConstant.DTO_KEY_USER_ID;
+import static com.ecoeler.app.constant.v1.AppVoiceConstant.GOOGLE_LINK_STATUS_IS_YES;
 
 @Component
 @Slf4j
@@ -214,7 +213,7 @@ public class GoogleAction {
      */
     public void reportState(String deviceId) {
         executor.execute(() -> {
-            log.info("deviceId:{}",deviceId);
+            log.info("deviceId:{}", deviceId);
             //-----------------------------------------------查询与该设备有关的用户----------------------------------------
             Device device = deviceMapper.selectOne(
                     Query.of(Device.class).eq("device_id", deviceId)
@@ -258,17 +257,20 @@ public class GoogleAction {
     /**
      * 处理google语音请求
      *
-     * @param data 请求参数map
+     * @param data 请求参数map {AppVoice,googleJson,accessToken}
      * @return
      */
     public String action(JSONObject data) {
         log.info("JSON smartHomeRequest：{}", data.toString());
+        //修改用户的google_link为1,表示用户已经连接googleHome
+        updateUserGoogleLinkStatus(data.getInteger(DTO_KEY_USER_ID), GOOGLE_LINK_STATUS_IS_YES);
         //转成google smartHome 请求参数对象
         SmartHomeRequest smartHomeRequest = SmartHomeRequest.Companion.create(data.toJSONString());
         //获取请求的数据
         SmartHomeRequest.RequestInputs[] inputs1 = smartHomeRequest.getInputs();
         //google规定的requestId
         String requestId = smartHomeRequest.getRequestId();
+
         //用于接收响应的数据
         JSONObject responseJson = new JSONObject();
         try {
@@ -322,6 +324,22 @@ public class GoogleAction {
         log.info("begin====================================================================================");
 
         return responseJson.toJSONString();
+    }
+
+    //修改用户google连接状态为1
+    private void updateUserGoogleLinkStatus(Integer userId, Integer googleLinkStatus) {
+        try {
+            AppUser appUser = appUserMapper.selectById(userId);
+            if (appUser == null) {
+                log.error("User does not exist");
+                return;
+            }
+            appUser.setGoogleLinkStatus(googleLinkStatus);
+            appUserMapper.updateById(appUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("Failed to modify user googleLinkStatus!");
+        }
     }
 
 
