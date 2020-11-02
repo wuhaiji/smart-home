@@ -280,27 +280,33 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
     @Override
     public List<Device> getFloorDeviceList(Long floorId) {
+
         //查询楼层id是否存在
+        Floor floor;
         try {
-            Floor floor = floorMapper.selectById(floorId);
-            if (floor == null) {
-                throw new ServiceException();
-            }
+            floor = floorMapper.selectById(floorId);
         } catch (ServiceException e) {
-            e.printStackTrace();
+            log.error("Query floor error：{}", e);
+            throw new ServiceException(DeviceCode.FLOOR_DEVICES_SELECT_ERROR);
+        }
+
+        if (floor == null) {
             throw new ServiceException(DeviceCode.FLOOR_NOT_EXIST);
         }
 
         try {
-
             //查询房间列表
-            List<Room> rooms = roomMapper.selectList(Query.of(Room.class).eq(floorId != null, "floor_id", floorId));
+            List<Room> rooms = roomMapper.selectList(
+                    Query.of(Room.class).eq(floorId != null, "floor_id", floorId)
+            );
             List<Long> roomIds = rooms.parallelStream().map(Room::getId).collect(Collectors.toList());
             if (EptUtil.isEmpty(roomIds)) return new ArrayList<>();
             //查询房间下的设备列表
-            return deviceMapper.selectList(Query.of(Device.class).in("room_id", roomIds));
+            return deviceMapper.selectList(
+                    Query.of(Device.class).in("room_id", roomIds)
+            );
         } catch (ServiceException e) {
-            e.printStackTrace();
+            log.error("Query floor devices error：{}", e);
             throw new ServiceException(DeviceCode.FLOOR_DEVICES_SELECT_ERROR);
         }
 

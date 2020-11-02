@@ -15,4 +15,8 @@ public class Query {
     public static <T> QueryWrapper<T> of(Class<T> tClass) {
         return new QueryWrapper<>();
     }
+
+    public static <T> QueryWrapper<T> of() {
+        return new QueryWrapper<>();
+    }
 }

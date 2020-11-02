@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @author tang
  * @since 2020/9/11
  */
-@FeignClient(value = "web-oauth2", path = "/oauth" , configuration = Oauth2FeignExceptionConfiguration.class)
+@FeignClient(value = "smart-home-web-oauth2", path = "/oauth" , configuration = Oauth2FeignExceptionConfiguration.class)
 public interface Oauth2ClientService {
 
     /**
